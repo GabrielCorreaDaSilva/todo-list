@@ -1,4 +1,4 @@
-# Webpack Template
+# Todo List
 
-Webpack template for JS projects [Odin Project Link](https://www.theodinproject.com)
+A Todo List project made in JS following the exercise [Project: Todo List](https://www.theodinproject.com/lessons/node-path-javascript-todo-list)
 
