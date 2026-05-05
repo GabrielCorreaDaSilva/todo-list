@@ -18,10 +18,3 @@ export function createTask({ name, description, duration, id = crypto.randomUUID
       }
    };
 }
-
-// export function createTask({ name = "test", description, duration, id = crypto.randomUUID() } = {}) {
-//    this.name = name;
-//    this.description = description;
-//    this.duration = duration;
-//    this.id = id;
-// }

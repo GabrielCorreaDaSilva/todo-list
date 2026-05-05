@@ -1,4 +1,4 @@
-const sampleTasks = [
+export const sampleTasks = [
     {
         name: "start",
         description: "start the project",
@@ -15,10 +15,3 @@ const sampleTasks = [
         duration: "2000 seconds"
     },
 ];
-
-
-export const loadSampleTaskData = (project) => {
-    sampleTasks.forEach(item => {
-        project.addTask(item);
-    });
-};
