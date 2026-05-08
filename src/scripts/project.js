@@ -7,7 +7,6 @@ export function createProject({ name, id = crypto.randomUUID() }, createTask) {
         setName: (newName) => { name = newName },
 
         getTasks: () => [...tasks],
-        getTasksData: () => tasks.map(task => task.getTask()),//to Service
 
         getId: () => id,
 
@@ -15,10 +14,6 @@ export function createProject({ name, id = crypto.randomUUID() }, createTask) {
             const result = tasks.find(task => task.getId() === id);
             return result || null;
         },
-        getTaskData: (id) => {
-            const result = tasks.find(task => task.getId() === id).getTask();
-            return result || null;
-        },// to Service
 
         removeTask: (id) => {
             const index = tasks.findIndex(task => task.getId() === id);

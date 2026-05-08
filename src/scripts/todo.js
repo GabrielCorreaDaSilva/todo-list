@@ -15,8 +15,11 @@ export function createTodo(createProject) {
         },
         removeProject: (id) => {
             const index = projects.findIndex(project => project.getId() === id);
-            if (index >= 0)
-                return projects.splice(index, 1);
+            if (index >= 0) {
+                const [removed] = projects.splice(index, 1);
+                return removed;
+            }
+                
             return null;
         },
     }
