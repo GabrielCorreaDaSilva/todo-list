@@ -8,13 +8,5 @@ export function createTask({ name, description, duration, id = crypto.randomUUID
       setName: (newName) => { name = newName; },
       setDescription: (newDescription) => { description = newDescription; },
       setDuration: (newDuration) => { duration = newDuration; },
-      getTask: () => {
-         return {
-            id,
-            name,
-            description,
-            duration
-         }
-      }
    };
 }
