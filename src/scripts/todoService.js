@@ -1,13 +1,14 @@
 export function todoService(todo) {
     const mapProject = (project) => ({
         id: project.getId(),
-        name: project.getName()
+        name: project.getName(),
+        tasks: project.getTasks().length,
     });
     const mapTask = (task) => ({
         id: task.getId(),
         name: task.getName(),
         description: task.getDescription(),
-        duration: task.getDuration()
+        duration: task.getDuration(),
     });
 
     return {
