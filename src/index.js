@@ -2,22 +2,20 @@ import "./styles/styles.css";
 import { createTask } from "./scripts/task.js";
 import { createProject } from "./scripts/project.js";
 import { createTodo } from "./scripts/todo.js";
-import { todoService, todoService, todoService } from "./scripts/todoService.js";
+import { todoService } from "./scripts/todoService.js";
+import { UIController } from "./scripts/UIController.js";
 
-import { sampleTasks } from "./scripts/sampleData.js";//testing
+import { injectSampleData } from "./scripts/sampleData.js";//testing
 
 const projectFactory = (data) => createProject(data, createTask);
 
 const todo = createTodo(projectFactory);
 
+injectSampleData(todo)// test 
+
 const service = todoService(todo);
 
-const project = createProject({ name: "Test" }, createTask);
+const ui = UIController(service);
 
-sampleTasks.forEach(t => project.addTask(t));
-
-console.log(project.getName());
-console.log(project.getId());
-console.log(project.getTasksData());
 
 
