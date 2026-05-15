@@ -17,8 +17,10 @@ export function createProject({ name, id = crypto.randomUUID() }, createTask) {
 
         removeTask: (id) => {
             const index = tasks.findIndex(task => task.getId() === id);
-            if (index >= 0)
-                return tasks.splice(index, 1);
+            if (index >= 0) {
+                const [removed] = tasks.splice(index, 1);
+                return removed;
+            }
             return null;
         },
 

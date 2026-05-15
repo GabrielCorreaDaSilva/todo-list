@@ -28,7 +28,5 @@ export function injectSampleData(todo) {
         shuffledTasks.forEach(task => {
             project.addTask(task);
         });
-
-        console.log(project)
     });
 }
