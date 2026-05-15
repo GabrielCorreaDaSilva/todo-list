@@ -1,7 +1,54 @@
 export function UIController(service) {
 
     const content = document.querySelector("#content");
+    const modal = createModal();
 
+    function createModal() {
+        const body = document.querySelector("body");
+        const modal = document.createElement("dialog");
+        body.append(modal);
+        return modal;
+    }
+    function createProjectForm() {
+        const form = document.createElement("form");
+        form.classList.add("project-form");
+
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+
+        const nameInput = document.createElement("input");
+        Object.assign(nameInput, {
+            id: "project-name",
+            type: "text",
+            name: "name",
+            placeholder: "Name (Max. 32)",
+            size: 32,
+            required: true
+        });
+
+        const nameInputLabel = document.createElement("label");
+        nameInputLabel.setAttribute("for", "project-name");
+        nameInputLabel.textContent = "Project name: "
+
+        const buttonsContainer = document.createElement("div");
+        buttonsContainer.classList.add("buttons-container");
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.classList.add("confirm-button");
+        confirmBtn.textContent = "Confirm";
+        confirmBtn.type = "submit";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.classList.add("cancel-button");
+        cancelBtn.textContent = "Cancel";
+
+        inputContainer.append(nameInput, nameInputLabel);
+        buttonsContainer.append(confirmBtn, cancelBtn);
+
+        form.append(inputContainer, buttonsContainer);
+
+        return form;
+    }
     function createProjectCard(project) {
 
         const projectCard = document.createElement("div");
@@ -55,6 +102,11 @@ export function UIController(service) {
         const todoView = document.createElement("div");
         todoView.classList.add("todo-container");
 
+        const addProjectBtn = document.createElement("button");
+        addProjectBtn.classList.add("add-project-button");
+        addProjectBtn.textContent = "New project";
+        todoView.append(addProjectBtn);
+
         projects.forEach(project => {
             todoView.append(createProjectCard(project));
         });
@@ -72,10 +124,10 @@ export function UIController(service) {
         const closeView = document.createElement("button");
         closeView.classList.add("close-project-view");
         closeView.textContent = "Return";
-        closeView.addEventListener("click", () => {
-            content.textContent = "";
-            renderTodoView();
-        });
+
+        const addTaskBtn = document.createElement("button");
+        addTaskBtn.classList.add("add-task-button");
+        addTaskBtn.textContent = "New task";
 
         const tasksContainer = document.createElement("div");
         const tasks = service.getTasks(project.id);
@@ -105,13 +157,29 @@ export function UIController(service) {
         service.removeTask(projectView.dataset.id, taskCard.dataset.id);
         taskCard.remove();
     }
+    function handleAddBtn(form) {
+        modal.showModal();
+        modal.textContent = "";
+        modal.append(form);
+    }
 
     function bindEvents() {
         content.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
             const taskCard = e.target.closest(".task-card");
+            const closeProjectView = e.target.closest(".close-project-view");
+            const addProjectBtn = e.target.closest(".add-project-button");
 
+            if (addProjectBtn) {
+                handleAddBtn(createProjectForm());
+                return;
+            }
+            if (closeProjectView) {
+                content.textContent = "";
+                renderTodoView();
+                return;
+            }
             if (deleteButton && projectCard) {
                 handleDeleteProject(projectCard);
                 return;
@@ -125,6 +193,36 @@ export function UIController(service) {
                 renderProjectView(projectCard.dataset.id);
                 return;
             }
+        });
+        modal.addEventListener("click", (e) => {
+            const cancelBtn = e.target.closest(".cancel-button");
+
+            if (cancelBtn) {
+                modal.close();
+                return;
+            }
+
+        });
+        modal.addEventListener("submit", (e) => {
+            const isProjectForm = e.target.classList.contains("project-form");
+
+            e.preventDefault();
+            const form = e.target;
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+
+            }
+            const formData = new FormData(form);
+            if (isProjectForm) {
+                const projectData = Object.fromEntries(formData.entries());
+                const newProject = service.addProject(projectData);
+                content.append(createProjectCard(newProject));
+            }
+            modal.close();
+            return;
+
         });
     }
 
