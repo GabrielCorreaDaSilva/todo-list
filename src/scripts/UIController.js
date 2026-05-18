@@ -141,12 +141,11 @@ export function UIController(service) {
     }
 
     function renderTodoView() {
-        content.append(createTodoView(service.getProjects()));
+        content.replaceChildren(createTodoView(service.getProjects()));
     }
     function renderProjectView(projectId) {
         const project = service.getProject(projectId);
-        content.textContent = "";
-        content.append(createProjectView(project));
+        content.replaceChildren(createProjectView(project));
     }
 
     function handleDeleteProject(projectCard) {
