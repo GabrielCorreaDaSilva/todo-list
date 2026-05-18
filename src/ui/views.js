@@ -12,11 +12,15 @@ export function createProjectCard(project) {
     taskCounter.classList.add("task-counter");
     taskCounter.textContent = `Tasks: ${project.tasks}`;
 
+    const projectDuration = document.createElement("p");
+    projectDuration.classList.add("project-duration");
+    projectDuration.textContent = `Duration: ${project.duration}`;
+
     const delBtn = document.createElement("button");
     delBtn.classList.add("delete-button");
     delBtn.textContent = "X";
 
-    projectCard.append(title, taskCounter, delBtn);
+    projectCard.append(title, taskCounter, projectDuration, delBtn);
 
     return projectCard;
 }

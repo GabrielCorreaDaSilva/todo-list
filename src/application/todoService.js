@@ -1,9 +1,14 @@
 export function todoService(todo) {
-    const mapProject = (project) => ({
-        id: project.getId(),
-        name: project.getName(),
-        tasks: project.getTasks().length,
-    });
+
+    const mapProject = (project) => {
+        const tasks = project.getTasks();
+        return {
+            id: project.getId(),
+            name: project.getName(),
+            tasks: tasks.length,
+            duration: tasks.reduce((total, task) => total + task.getDuration(), 0)
+        };
+    };
     const mapTask = (task) => ({
         id: task.getId(),
         name: task.getName(),
@@ -62,6 +67,6 @@ export function todoService(todo) {
             const removed = project.removeTask(id);
 
             return removed ? mapTask(removed) : null;
-        },
+        }
     }
 }
