@@ -2,17 +2,17 @@ const sampleTasks = [
     {
         name: "a",
         description: "change z",
-        duration: "15 seconds"
+        duration: 15
     },
     {
         name: "b",
         description: "develop x",
-        duration: "9000 seconds"
+        duration: 12
     },
     {
         name: "c",
         description: "finish y",
-        duration: "2000 seconds"
+        duration: 55
     },
 ];
 

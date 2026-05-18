@@ -1,11 +1,11 @@
 import "./styles/styles.css";
-import { createTask } from "./scripts/task.js";
-import { createProject } from "./scripts/project.js";
-import { createTodo } from "./scripts/todo.js";
-import { todoService } from "./scripts/todoService.js";
-import { UIController } from "./scripts/UIController.js";
+import { createTask } from "./domain/task.js";
+import { createProject } from "./domain/project.js";
+import { createTodo } from "./domain/todo.js";
+import { todoService } from "./application/todoService.js";
+import { UIController } from "./ui/UIController.js";
 
-import { injectSampleData } from "./scripts/sampleData.js";//testing
+import { injectSampleData } from "./data/sampleData.js";//testing
 
 const projectFactory = (data) => createProject(data, createTask);
 

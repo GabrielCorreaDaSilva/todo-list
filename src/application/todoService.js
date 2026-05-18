@@ -62,6 +62,6 @@ export function todoService(todo) {
             const removed = project.removeTask(id);
 
             return removed ? mapTask(removed) : null;
-        }
+        },
     }
 }
