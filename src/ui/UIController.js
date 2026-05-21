@@ -35,12 +35,12 @@ export function UIController(service) {
 
         }
     }
-    function handleProjectSubmit(projectData) {
+    function handleCreateProject(projectData) {
         const newProject = service.addProject(projectData);
         const projectContainer = content.querySelector(".project-container");
         projectContainer.append(createProjectCard(newProject));
     }
-    function handleTaskSubmit(taskData, projectId) {
+    function handleCreateTask(taskData, projectId) {
         const newTask = service.addTask(projectId, { ...taskData, duration: parseInt(taskData.duration) });
         const taskContainer = content.querySelector(".task-container");
         taskContainer.append(createTaskCard(newTask));
@@ -49,7 +49,7 @@ export function UIController(service) {
     function handleAddTask(projectId) {
         openModal(
             createTaskForm({
-                onSubmit: (taskData) => handleTaskSubmit(taskData, projectId)
+                onSubmit: (taskData) => handleCreateTask(taskData, projectId)
             },
                 projectId),
             modal
@@ -59,7 +59,7 @@ export function UIController(service) {
     function handleAddProject() {
         openModal(
             createProjectForm({
-                onSubmit: handleProjectSubmit
+                onSubmit: handleCreateProject
             }),
             modal
         );
