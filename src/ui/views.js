@@ -34,6 +34,10 @@ export function createTaskCard(task) {
     title.classList.add("title");
     title.textContent = task.name;
 
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("edit-button");
+    editBtn.textContent = "Edit";
+
     const description = document.createElement("p");
     description.classList.add("title");
     description.textContent = `Description: ${task.description}`;
@@ -46,7 +50,7 @@ export function createTaskCard(task) {
     delBtn.classList.add("delete-button");
     delBtn.textContent = "X";
 
-    taskCard.append(title, description, duration, delBtn);
+    taskCard.append(title, description, duration, delBtn, editBtn);
 
     return taskCard;
 }
@@ -75,7 +79,16 @@ export function createProjectView(project, tasks) {
     projectView.dataset.id = project.id;
 
     const title = document.createElement("h1");
+    title.classList.add("title");
     title.textContent = project.name;
+
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("edit-button");
+    editBtn.textContent = "Edit";
+
+    const titleContainer = document.createElement("div");
+    titleContainer.classList.add("title-container");
+    titleContainer.append(title, editBtn);
 
     const closeView = document.createElement("button");
     closeView.classList.add("close-project-view");
@@ -91,7 +104,7 @@ export function createProjectView(project, tasks) {
         tasksContainer.append(createTaskCard(task));
     });
 
-    projectView.append(title, tasksContainer, closeView, addTaskBtn)
+    projectView.append(titleContainer, tasksContainer, closeView, addTaskBtn)
 
     return projectView;
 }

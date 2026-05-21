@@ -9,7 +9,7 @@ export function createModal({
     return modal;
 }
 
-export function handleAddBtn(form, modal) {
+export function openModal(form, modal) {
     modal.replaceChildren(form);
     modal.showModal();
 }

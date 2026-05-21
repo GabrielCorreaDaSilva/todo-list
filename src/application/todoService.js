@@ -67,6 +67,20 @@ export function todoService(todo) {
             const removed = project.removeTask(id);
 
             return removed ? mapTask(removed) : null;
-        }
+        },
+        editProject: (projectId, data) => {
+            const project = todo.getProject(projectId);
+            if (!project) return null;
+            project.setName(data.name);
+            return mapProject(project);
+        },
+        editTask: (projectId, taskId, data) => {
+            const task = todo.getTask(projectId, taskId);
+            if (!task) return null;
+            task.setName(data.name);
+            task.setDescription(data.description);
+            task.setDuration(data.duration);
+            return mapTask(task);
+        },
     }
 }

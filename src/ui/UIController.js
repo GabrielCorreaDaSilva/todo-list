@@ -1,6 +1,6 @@
 import { createTaskCard, createProjectCard, createProjectView, createTodoView } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
-import { createModal, handleAddBtn } from "./modal.js";
+import { createModal, openModal } from "./modal.js";
 
 export function UIController(service) {
 
@@ -28,16 +28,45 @@ export function UIController(service) {
         service.removeTask(projectView.dataset.id, taskCard.dataset.id);
         taskCard.remove();
     }
+
+    function handleEdit(e) {
+        const isProject = e.target.closest(".title-container");
+        const isTask = e.target.closest(".task-card");
+        if (isProject) {
+
+        }
+        if (isTask) {
+
+        }
+    }
     function handleProjectSubmit(projectData) {
         const newProject = service.addProject(projectData);
         const projectContainer = content.querySelector(".project-container");
         projectContainer.append(createProjectCard(newProject));
     }
     function handleTaskSubmit(taskData, projectId) {
-        
-        const newTask = service.addTask(projectId, {...taskData, duration: parseInt(taskData.duration)});
+        const newTask = service.addTask(projectId, { ...taskData, duration: parseInt(taskData.duration) });
         const taskContainer = content.querySelector(".task-container");
         taskContainer.append(createTaskCard(newTask));
+    }
+
+    function handleAddTask(projectId) {
+        openModal(
+            createTaskForm(projectId),
+            modal
+        );
+    }
+
+    function handleAddProject() {
+        openModal(
+            createProjectForm(),
+            modal
+        );
+        return;
+    }
+
+    function handleEditTask() {
+
     }
 
     function bindEvents() {
@@ -46,16 +75,16 @@ export function UIController(service) {
             const projectCard = e.target.closest(".project-card");
             const taskCard = e.target.closest(".task-card");
             const closeProjectView = e.target.closest(".close-project-view");
+            const projectView = e.target.closest(".project-container");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
-            const projectView = e.target.closest(".project-container");
 
             if (addProjectBtn) {
-                handleAddBtn(createProjectForm(), modal);
+                handleAddProject();
                 return;
             }
             if (addTaskBtn) {
-                handleAddBtn(createTaskForm(projectView.dataset.id), modal);
+                handleAddTask(projectView.dataset.id);
                 return;
             }
             if (closeProjectView) {
