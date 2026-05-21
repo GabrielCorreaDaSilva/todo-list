@@ -35,7 +35,7 @@ export function createTaskCard(task) {
     title.textContent = task.name;
 
     const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-button");
+    editBtn.classList.add("edit-button", "edit-task");
     editBtn.textContent = "Edit";
 
     const description = document.createElement("p");
@@ -83,7 +83,7 @@ export function createProjectView(project, tasks) {
     title.textContent = project.name;
 
     const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-button");
+    editBtn.classList.add("edit-button", "edit-project");
     editBtn.textContent = "Edit";
 
     const titleContainer = document.createElement("div");

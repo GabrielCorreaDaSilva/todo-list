@@ -45,8 +45,26 @@ export function UIController(service) {
         const taskContainer = content.querySelector(".task-container");
         taskContainer.append(createTaskCard(newTask));
     }
+    function handleEditProject(projectId, projectData, projectView) {
+        const editedProject = service.editProject(projectId, projectData);
+        const projectTitle = projectView.querySelector(".title");
+        projectTitle.textContent = editedProject.name;
+    }
+    function handleEditTask(projectId, taskData, taskId, taskCard) {
+        const editedTask = service.editTask(projectId, taskId, taskData);
+        const editedCard = createTaskCard(editedTask);
+        taskCard.replaceWith(editedCard);
+    }
 
-    function handleAddTask(projectId) {
+    function handleAddProjectBtn() {
+        openModal(
+            createProjectForm({
+                onSubmit: handleCreateProject
+            }),
+            modal
+        );
+    }
+    function handleAddTaskBtn(projectId) {
         openModal(
             createTaskForm({
                 onSubmit: (taskData) => handleCreateTask(taskData, projectId)
@@ -55,16 +73,28 @@ export function UIController(service) {
             modal
         );
     }
-
-    function handleAddProject() {
+    function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
+        const project = service.getProject(projectId);
         openModal(
             createProjectForm({
-                onSubmit: handleCreateProject
+                name: project.name,
+                onSubmit: (projectData) => handleEditProject(projectId, projectData, projectView)
             }),
             modal
         );
-        return;
     }
+    function handleEditTaskBtn(projectId, taskCard, taskId = taskCard.dataset.id) {
+        const task = service.getTask(projectId, taskId);
+        openModal(
+            createTaskForm({
+                ...task,
+                onSubmit: (taskData) => handleEditTask(projectId, taskData, taskId, taskCard)
+            },
+                projectId),
+            modal
+        );
+    }
+
 
 
     function bindEvents() {
@@ -76,14 +106,22 @@ export function UIController(service) {
             const projectView = e.target.closest(".project-container");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
+            const editProject = e.target.closest(".edit-project");
+            const editTask = e.target.closest(".edit-task");
 
             if (addProjectBtn) {
-                handleAddProject();
+                handleAddProjectBtn();
                 return;
             }
             if (addTaskBtn) {
-                handleAddTask(projectView.dataset.id);
+                handleAddTaskBtn(projectView.dataset.id);
                 return;
+            }
+            if (editProject) {
+                handleEditProjectBtn(projectView);
+            }
+            if (editTask) {
+                handleEditTaskBtn(projectView.dataset.id, taskCard)
             }
             if (closeProjectView) {
                 content.textContent = "";

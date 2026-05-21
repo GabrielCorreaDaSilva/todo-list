@@ -75,7 +75,9 @@ export function todoService(todo) {
             return mapProject(project);
         },
         editTask: (projectId, taskId, data) => {
-            const task = todo.getTask(projectId, taskId);
+            const project = todo.getProject(projectId);
+            if (!project) return null;
+            const task = project.getTask(taskId);
             if (!task) return null;
             task.setName(data.name);
             task.setDescription(data.description);
