@@ -1,4 +1,4 @@
-export function createProjectForm({ name = "" } = {}) {
+export function createProjectForm({ name = "" , onSubmit} = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form");
 
@@ -36,13 +36,12 @@ export function createProjectForm({ name = "" } = {}) {
     buttonsContainer.append(confirmBtn, cancelBtn);
 
     form.append(inputContainer, buttonsContainer);
-
+    bindEvents(form, onSubmit);
     return form;
 }
-export function createTaskForm(projectId, { name = "", description = "", duration = "" } = {}) {
+export function createTaskForm({ name = "", description = "", duration = "" , onSubmit} = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form");
-    form.dataset.id = projectId;
 
     const inputContainer = document.createElement("div");
     inputContainer.classList.add("input-container");
@@ -107,6 +106,24 @@ export function createTaskForm(projectId, { name = "", description = "", duratio
     buttonsContainer.append(confirmBtn, cancelBtn);
 
     form.append(inputContainer, buttonsContainer);
-
+    bindEvents(form, onSubmit);
     return form;
+}
+
+function bindEvents(form, onSubmit) {
+    form.addEventListener("submit", (e) => {
+
+        e.preventDefault();
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+
+        }
+        const projectId = form.dataset.id;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        onSubmit(data);
+    });
 }

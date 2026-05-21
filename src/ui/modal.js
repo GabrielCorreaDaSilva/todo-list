@@ -1,10 +1,7 @@
-export function createModal({
-    onProjectSubmit,
-    onTaskSubmit
-}) {
+export function createModal() {
     const body = document.querySelector("body");
     const modal = document.createElement("dialog");
-    bindEvents(modal, onProjectSubmit, onTaskSubmit);
+    bindEvents(modal);
     body.append(modal);
     return modal;
 }
@@ -25,28 +22,6 @@ function bindEvents(modal, onProjectSubmit, onTaskSubmit) {
 
     });
     modal.addEventListener("submit", (e) => {
-        const isProjectForm = e.target.classList.contains("project-form");
-        const isTaskForm = e.target.classList.contains("task-form");
-
-        e.preventDefault();
-        const form = e.target;
-
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-
-        }
-        const projectId = form.dataset.id;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        if (isProjectForm) {
-            onProjectSubmit(data);
-        }
-        if (isTaskForm) {
-            onTaskSubmit(data, projectId);
-        }
         modal.close();
-        return;
     });
 }

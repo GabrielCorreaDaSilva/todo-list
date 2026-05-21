@@ -5,11 +5,7 @@ import { createModal, openModal } from "./modal.js";
 export function UIController(service) {
 
     const content = document.querySelector("#content");
-    const modal = createModal({
-        onProjectSubmit: handleProjectSubmit,
-        onTaskSubmit: handleTaskSubmit
-    });
-
+    const modal = createModal();
 
     function renderTodoView() {
         content.replaceChildren(createTodoView(service.getProjects()));
@@ -52,22 +48,24 @@ export function UIController(service) {
 
     function handleAddTask(projectId) {
         openModal(
-            createTaskForm(projectId),
+            createTaskForm({
+                onSubmit: (taskData) => handleTaskSubmit(taskData, projectId)
+            },
+                projectId),
             modal
         );
     }
 
     function handleAddProject() {
         openModal(
-            createProjectForm(),
+            createProjectForm({
+                onSubmit: handleProjectSubmit
+            }),
             modal
         );
         return;
     }
 
-    function handleEditTask() {
-
-    }
 
     function bindEvents() {
         content.addEventListener("click", (e) => {
