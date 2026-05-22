@@ -1,3 +1,5 @@
+import EditIcon from '../icons/square-edit-outline.svg';
+
 export function createProjectCard(project) {
 
     const projectCard = document.createElement("div");
@@ -36,14 +38,14 @@ export function createTaskCard(task) {
 
     const editBtn = document.createElement("button");
     editBtn.classList.add("edit-button", "edit-task");
-    editBtn.textContent = "Edit";
+    editBtn.innerHTML = EditIcon;
 
     const description = document.createElement("p");
-    description.classList.add("title");
+    description.classList.add("description");
     description.textContent = `Description: ${task.description}`;
 
     const duration = document.createElement("p");
-    duration.classList.add("title");
+    duration.classList.add("duration");
     duration.textContent = `Duration:  ${task.duration}`;
 
     const delBtn = document.createElement("button");
@@ -84,7 +86,7 @@ export function createProjectView(project, tasks) {
 
     const editBtn = document.createElement("button");
     editBtn.classList.add("edit-button", "edit-project");
-    editBtn.textContent = "Edit";
+    editBtn.innerHTML = EditIcon;
 
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
