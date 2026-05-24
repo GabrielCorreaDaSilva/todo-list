@@ -1,6 +1,13 @@
 export function createProjectForm({ name = "", onSubmit } = {}) {
     const form = document.createElement("form");
-    form.classList.add("project-form");
+    form.classList.add("project-form", "form");
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = name || "New Project";
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
 
     const inputContainer = document.createElement("div");
     inputContainer.classList.add("input-container");
@@ -35,13 +42,20 @@ export function createProjectForm({ name = "", onSubmit } = {}) {
     inputContainer.append(nameInput, nameInputLabel);
     buttonsContainer.append(confirmBtn, cancelBtn);
 
-    form.append(inputContainer, buttonsContainer);
+    form.append(title, line, inputContainer, buttonsContainer);
     bindEvents(form, onSubmit);
     return form;
 }
 export function createTaskForm({ name = "", description = "", duration = "", onSubmit } = {}) {
     const form = document.createElement("form");
-    form.classList.add("task-form");
+    form.classList.add("task-form", "form");
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = name || "New Task";
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
 
     const wrapper = document.createElement("div");
     wrapper.classList.add("input-container-wrapper");
@@ -52,7 +66,7 @@ export function createTaskForm({ name = "", description = "", duration = "", onS
     const buttonsContainer = createButtons();
     wrapper.append(nameContainer, durationContainer, descriptionContainer);
 
-    form.append(wrapper, buttonsContainer);
+    form.append(title, line, wrapper, buttonsContainer);
     bindEvents(form, onSubmit);
     return form;
 

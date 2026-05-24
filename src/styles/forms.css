@@ -5,6 +5,17 @@
     font-size: 1rem;
 }
 
+.form .title {
+    text-align: center;
+}
+
+.form .line {
+    border-color: rgb(0,0,0,80%);
+    width: 80%;
+    margin: 12px auto;
+
+}
+
 .input-container input,
 .input-container textarea {
     padding: 6px;
@@ -60,7 +71,7 @@
 
 }
 
-.input-container-wrapper > .input-container {
+.input-container-wrapper>.input-container {
     flex: 1;
 }
 
@@ -72,5 +83,22 @@
     place-self: center;
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 18px;
+}
+
+.buttons-container button {
+    background-color: var(--gray-background);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.buttons-container button:hover {
+    background-color: #737373;
+}
+
+.form button {
+    transition: all ease 0.333s;
 }
