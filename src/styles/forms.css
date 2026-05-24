@@ -19,11 +19,12 @@
 .input-container input,
 .input-container textarea {
     padding: 6px;
-    border-radius: 10px;
+    border-radius: 6px;
     appearance: none;
     border: 1px solid var(--gray-background);
     outline: none;
     width: 100%;
+    resize: none;
 }
 
 /* Remove auto fill background color */
@@ -32,10 +33,6 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
-}
-
-.input-container textarea {
-    border-radius: 10px;
 }
 
 .input-container label {
