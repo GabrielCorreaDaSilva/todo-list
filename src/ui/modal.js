@@ -1,6 +1,7 @@
 export function createModal() {
     const body = document.querySelector("body");
     const modal = document.createElement("dialog");
+    modal.classList.add("modal");
     bindEvents(modal);
     body.append(modal);
     return modal;

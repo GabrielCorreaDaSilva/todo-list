@@ -1,0 +1,76 @@
+.input-container {
+    padding: 20px;
+    position: relative;
+    display: flex;
+    font-size: 1rem;
+}
+
+.input-container input,
+.input-container textarea {
+    padding: 6px;
+    border-radius: 10px;
+    appearance: none;
+    border: 1px solid var(--gray-background);
+    outline: none;
+    width: 100%;
+}
+
+.input-container textarea {
+    border-radius: 10px;
+}
+
+.input-container label {
+    position: absolute;
+    top: 25px;
+    left: 28px;
+    color: gray;
+    transition: all ease 0.3s;
+}
+
+.input-container input:focus+label,
+.input-container input:not(:placeholder-shown)+label,
+.input-container textarea:focus+label,
+.input-container textarea:not(:placeholder-shown)+label {
+    top: 0;
+    left: 26px;
+    color: black;
+}
+
+.input-container input:user-valid,
+.input-container input:user-valid+label,
+.input-container textarea:user-valid,
+.input-container textarea:user-valid+label {
+    color: green;
+    border-color: green;
+}
+
+.input-container input:user-invalid,
+.input-container input:user-invalid+label,
+.input-container textarea:user-invalid,
+.input-container textarea:user-invalid+label {
+    color: rgb(171, 2, 2);
+    border-color: rgb(171, 2, 2);
+    ;
+}
+
+.input-container-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+}
+
+.input-container-wrapper > .input-container {
+    flex: 1;
+}
+
+.input-container-wrapper> :last-child {
+    flex: 100%;
+}
+
+.buttons-container {
+    place-self: center;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}

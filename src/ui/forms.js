@@ -1,4 +1,4 @@
-export function createProjectForm({ name = "" , onSubmit} = {}) {
+export function createProjectForm({ name = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form");
 
@@ -10,15 +10,15 @@ export function createProjectForm({ name = "" , onSubmit} = {}) {
         id: "project-name",
         type: "text",
         name: "name",
+        placeholder: "",
         value: name,
-        placeholder: "Name (Max. 32)",
-        size: 32,
+        maxlength: 32,
         required: true
     });
 
     const nameInputLabel = document.createElement("label");
     nameInputLabel.setAttribute("for", "project-name");
-    nameInputLabel.textContent = "Project name: ";
+    nameInputLabel.textContent = "Project name (Max. 32):";
 
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");
@@ -39,57 +39,91 @@ export function createProjectForm({ name = "" , onSubmit} = {}) {
     bindEvents(form, onSubmit);
     return form;
 }
-export function createTaskForm({ name = "", description = "", duration = "" , onSubmit} = {}) {
+export function createTaskForm({ name = "", description = "", duration = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form");
 
-    const inputContainer = document.createElement("div");
-    inputContainer.classList.add("input-container");
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("input-container-wrapper");
 
-    const nameInputLabel = document.createElement("label");
-    nameInputLabel.setAttribute("for", "task-name");
-    nameInputLabel.textContent = "Task name: ";
+    const nameContainer = createName(name);
+    const descriptionContainer = createDescription(description);
+    const durationContainer = createDuration(duration);
+    const buttonsContainer = createButtons();
+    wrapper.append(nameContainer, durationContainer, descriptionContainer);
 
-    const nameInput = document.createElement("input");
-    Object.assign(nameInput, {
-        id: "task-name",
-        type: "text",
-        name: "name",
-        value: name,
-        placeholder: "Name (Max. 32)",
-        size: 32,
-        required: true
-    });
+    form.append(wrapper, buttonsContainer);
+    bindEvents(form, onSubmit);
+    return form;
 
-    const descriptionInputLabel = document.createElement("label");
-    descriptionInputLabel.setAttribute("for", "task-description");
-    descriptionInputLabel.textContent = "Task description: ";
+    function createName(name) {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
 
-    const descriptionInput = document.createElement("textarea");
-    Object.assign(descriptionInput, {
-        id: "task-description",
-        name: "description",
-        placeholder: "Description...",
-        size: 128,
-        required: true
-    });
-    descriptionInput.textContent = description;
+        const nameInput = document.createElement("input");
+        Object.assign(nameInput, {
+            id: "task-name",
+            type: "text",
+            name: "name",
+            placeholder: "",
+            value: name,
+            maxLength: 32,
+            required: true
+        });
+        const nameInputLabel = document.createElement("label");
+        nameInputLabel.setAttribute("for", "task-name");
+        nameInputLabel.textContent = "Name (Max. 32):";
 
-    const durationInputLabel = document.createElement("label");
-    durationInputLabel.setAttribute("for", "task-duration");
-    durationInputLabel.textContent = "Task duration: ";
+        inputContainer.append(nameInput, nameInputLabel);
+        return inputContainer;
+    }
+    function createDuration(duration) {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
 
-    const durationInput = document.createElement("input");
-    Object.assign(durationInput, {
-        id: "task-duration",
-        name: "duration",
-        value: duration,
-        type: "number",
-        placeholder: "Duration...",
-        max: 128,
-        required: true
-    });
+        const durationInput = document.createElement("input");
+        Object.assign(durationInput, {
+            id: "task-duration",
+            name: "duration",
+            value: duration,
+            type: "number",
+            placeholder: "",
+            max: 128,
+            required: true
+        });
 
+        const durationInputLabel = document.createElement("label");
+        durationInputLabel.setAttribute("for", "task-duration");
+        durationInputLabel.textContent = "Duration: ";
+        inputContainer.append(durationInput, durationInputLabel);
+        return inputContainer;
+    }
+    function createDescription(description) {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+
+        const descriptionInput = document.createElement("textarea");
+        Object.assign(descriptionInput, {
+            id: "task-description",
+            name: "description",
+            placeholder: "",
+            maxLength: 80,
+            required: true
+        });
+        descriptionInput.value = description;
+
+        const descriptionInputLabel = document.createElement("label");
+        descriptionInputLabel.setAttribute("for", "task-description");
+        descriptionInputLabel.textContent = "Task description: ";
+
+        inputContainer.append(descriptionInput, descriptionInputLabel);
+        return inputContainer;
+    }
+}
+
+
+
+function createButtons() {
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");
 
@@ -101,13 +135,8 @@ export function createTaskForm({ name = "", description = "", duration = "" , on
     const cancelBtn = document.createElement("button");
     cancelBtn.classList.add("cancel-button");
     cancelBtn.textContent = "Cancel";
-
-    inputContainer.append(nameInput, nameInputLabel, descriptionInput, descriptionInputLabel, durationInput, descriptionInputLabel);
     buttonsContainer.append(confirmBtn, cancelBtn);
-
-    form.append(inputContainer, buttonsContainer);
-    bindEvents(form, onSubmit);
-    return form;
+    return buttonsContainer;
 }
 
 function bindEvents(form, onSubmit) {

@@ -13,15 +13,20 @@ body {
     height: 100vh;
 }
 
+html {
+    background-color: var(--gray-background);
+}
+
 #content {
     margin: 0 15vw;
+    height: 100%;
     background-color: white;
 }
 
 .title-container {
     display: flex;
     flex-direction: row;
-    padding: 0 12px 0 12px;
+    padding: 12px 0;
 }
 
 .title-container .edit-button {
@@ -33,20 +38,25 @@ body {
     border-radius: 1rem;
 }
 
-.task-container {
-    margin: 12px;
+.task-container,
+.project-container {
     display: grid;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-columns: repeat(5, minmax(150px, 200px));
+    grid-template-rows: repeat(auto-fit, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 12px;
 }
 
-.task-card {
+.card {
     position: relative;
     border: 2px solid black;
     border-radius: 6px;
     padding: 12px;
 }
+
+.card .title {
+    padding-bottom: 8px;
+}
+
 
 .task-card .edit-button {
     display: flex;
@@ -60,7 +70,9 @@ body {
     border-radius: 1rem;
 }
 
-.task-card .delete-button {
+.task-card .delete-button,
+.project-card .delete-button,
+.close-project-view {
     text-align: center;
     position: absolute;
     top: 2px;
@@ -72,7 +84,9 @@ body {
 
 .task-card .delete-button,
 .task-card .edit-button,
-.title-container .edit-button {
+.title-container .edit-button,
+.project-card .delete-button,
+.close-project-view {
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -80,13 +94,17 @@ body {
 
 .task-card .delete-button:hover,
 .task-card .edit-button:hover,
-.title-container .edit-button:hover {
+.title-container .edit-button:hover,
+.project-card .delete-button:hover,
+.close-project-view:hover {
     background-color: var(--gray-background);
     color: white;
 }
 
 .task-card .edit-button:hover svg,
-.title-container .edit-button:hover svg {
+.title-container .edit-button:hover svg,
+.task-card .edit-button:active svg,
+.title-container .edit-button:active svg {
     fill: white;
 }
 
@@ -95,24 +113,50 @@ body {
     height: auto;
 }
 
-.project-container {
+.todo-view,
+.project-view {
     position: relative;
 }
 
-/* .project-container .close-project-view {
-    position: absolute;
-    top: 0;
-    right: 0;
+.todo-view,
+.project-view {
+    position: relative;
+    padding: 20px;
 }
 
-.project-container .add-task-button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-} */
-
-.task-card .delete-button,
-.task-card .edit-button,
-.title-container .edit-button {
-    transition: all ease 0.1s;
+#content button {
+    transition: all ease 0.333s;
 }
+
+.task-card button:active,
+.project-card button:active,
+.title-container button:active {
+    background-color: #737373;
+}
+
+.add-project-button,
+.add-task-button {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: green;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.add-project-button:hover,
+.add-task-button:hover {
+    background-color: rgb(0, 178, 0);
+}
+
+.add-project-button:active,
+.add-task-button:active {
+    background-color: rgb(1, 62, 1);
+
+}
+

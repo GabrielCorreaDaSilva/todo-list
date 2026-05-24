@@ -1,4 +1,6 @@
 import "./styles/styles.css";
+import "./styles/modal.css";
+import "./styles/forms.css";
 import { createTask } from "./domain/task.js";
 import { createProject } from "./domain/project.js";
 import { createTodo } from "./domain/todo.js";

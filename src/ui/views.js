@@ -3,7 +3,7 @@ import EditIcon from '../icons/square-edit-outline.svg';
 export function createProjectCard(project) {
 
     const projectCard = document.createElement("div");
-    projectCard.classList.add("project-card");
+    projectCard.classList.add("project-card", "card");
     projectCard.dataset.id = project.id;
 
     const title = document.createElement("h2");
@@ -16,7 +16,7 @@ export function createProjectCard(project) {
 
     const projectDuration = document.createElement("p");
     projectDuration.classList.add("project-duration");
-    projectDuration.textContent = `Duration: ${project.duration}`;
+    projectDuration.textContent = `Duration: ${project.duration} days`;
 
     const delBtn = document.createElement("button");
     delBtn.classList.add("delete-button");
@@ -29,7 +29,7 @@ export function createProjectCard(project) {
 export function createTaskCard(task) {
 
     const taskCard = document.createElement("div");
-    taskCard.classList.add("task-card");
+    taskCard.classList.add("task-card","card");
     taskCard.dataset.id = task.id;
 
     const title = document.createElement("h2");
@@ -46,7 +46,7 @@ export function createTaskCard(task) {
 
     const duration = document.createElement("p");
     duration.classList.add("duration");
-    duration.textContent = `Duration:  ${task.duration}`;
+    duration.textContent = `Duration:  ${task.duration} days`;
 
     const delBtn = document.createElement("button");
     delBtn.classList.add("delete-button");
@@ -59,7 +59,8 @@ export function createTaskCard(task) {
 
 export function createTodoView(projects) {
     const todoView = document.createElement("div");
-    todoView.classList.add("todo-container");
+    todoView.classList.add("todo-view");
+
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
 
@@ -77,7 +78,7 @@ export function createTodoView(projects) {
 }
 export function createProjectView(project, tasks) {
     const projectView = document.createElement("div")
-    projectView.classList.add("project-container");
+    projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
 
     const title = document.createElement("h1");
@@ -94,7 +95,7 @@ export function createProjectView(project, tasks) {
 
     const closeView = document.createElement("button");
     closeView.classList.add("close-project-view");
-    closeView.textContent = "Return";
+    closeView.textContent = "X";
 
     const addTaskBtn = document.createElement("button");
     addTaskBtn.classList.add("add-task-button");

@@ -103,7 +103,7 @@ export function UIController(service) {
             const projectCard = e.target.closest(".project-card");
             const taskCard = e.target.closest(".task-card");
             const closeProjectView = e.target.closest(".close-project-view");
-            const projectView = e.target.closest(".project-container");
+            const projectView = e.target.closest(".project-view");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
             const editProject = e.target.closest(".edit-project");
