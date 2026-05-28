@@ -16,13 +16,24 @@ export function UIController(service) {
         content.replaceChildren(createProjectView(project, tasks));
     }
 
-    function handleDeleteProject(projectCard) {
-        service.removeProject(projectCard.dataset.id);
-        projectCard.remove();
+    function handleDeleteProject(card) {
+        card.classList.add("fade-out");
+        service.removeProject(card.dataset.id);
+        card.addEventListener(
+            "transitionend",
+            () => card.remove(),
+            { once: true }
+        );
     }
-    function handleDeleteTask(projectView, taskCard) {
-        service.removeTask(projectView.dataset.id, taskCard.dataset.id);
-        taskCard.remove();
+    function handleDeleteTask(projectView, card) {
+        card.classList.add("fade-out");
+        service.removeTask(projectView.dataset.id, card.dataset.id);
+        card.addEventListener(
+            "transitionend",
+            () => card.remove(),
+            { once: true }
+        );
+
     }
 
     function handleEdit(e) {

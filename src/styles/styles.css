@@ -42,8 +42,9 @@ html {
 .project-container {
     display: grid;
     grid-template-rows: repeat(auto-fit, 1fr);
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 425px));
     gap: 12px;
+    justify-content: center;
 }
 
 .card {
@@ -166,3 +167,11 @@ html {
 
 }
 
+.card {
+    transition: all 0.5s ease;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.8);
+}
