@@ -27,6 +27,9 @@ html {
     display: flex;
     flex-direction: row;
     padding: 12px 0;
+    margin-left:6px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #7373735d;
 }
 
 .title-container .edit-button {
