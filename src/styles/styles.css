@@ -49,10 +49,12 @@ html {
 
 .card {
     position: relative;
-    border: 2px solid black;
     border-radius: 6px;
     padding: 12px;
     line-break: auto;
+    transition: all 0.3s ease;
+    border: none;
+    background-color: white;
 }
 
 .card p {
@@ -165,10 +167,6 @@ html {
 .add-task-button:active {
     background-color: rgb(1, 62, 1);
 
-}
-
-.card {
-    transition: all 0.5s ease;
 }
 
 .fade-out {
