@@ -16,36 +16,16 @@ export function UIController(service) {
         content.replaceChildren(createProjectView(project, tasks));
     }
 
-    function handleDeleteProject(card) {
+    function removeCard(card) {
         card.classList.add("fade-out");
-        service.removeProject(card.dataset.id);
-        card.addEventListener(
-            "transitionend",
-            () => card.remove(),
-            { once: true }
-        );
-    }
-    function handleDeleteTask(projectView, card) {
-        card.classList.add("fade-out");
-        service.removeTask(projectView.dataset.id, card.dataset.id);
-        card.addEventListener(
-            "transitionend",
-            () => card.remove(),
-            { once: true }
-        );
-
+        setTimeout(() => card.remove(), 300);
     }
 
-    function handleEdit(e) {
-        const isProject = e.target.closest(".title-container");
-        const isTask = e.target.closest(".task-card");
-        if (isProject) {
-
-        }
-        if (isTask) {
-
-        }
+    function handleDelete(card, remove) {
+        remove();
+        removeCard(card);
     }
+
     function handleCreateProject(projectData) {
         const newProject = service.addProject(projectData);
         const projectContainer = content.querySelector(".project-container");
@@ -139,12 +119,12 @@ export function UIController(service) {
                 renderTodoView();
                 return;
             }
-            if (deleteButton && projectCard) {
-                handleDeleteProject(projectCard);
+            if (projectCard && deleteButton) {
+                handleDelete(projectCard, () => service.removeProject(projectCard.dataset.id));
                 return;
             }
-            if (deleteButton && taskCard) {
-                handleDeleteTask(projectView, taskCard);
+            if (taskCard && deleteButton) {
+                handleDelete(taskCard, () => service.removeTask(projectView.dataset.id, taskCard.dataset.id));
                 return;
             }
             if (projectCard) {
