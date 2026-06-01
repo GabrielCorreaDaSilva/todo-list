@@ -16,14 +16,10 @@ export function UIController(service) {
         content.replaceChildren(createProjectView(project, tasks));
     }
 
-    function removeCard(card) {
-        card.classList.add("fade-out");
-        setTimeout(() => card.remove(), 300);
-    }
-
-    function handleDelete(card, remove) {
-        remove();
-        removeCard(card);
+    function handleDelete(element, remove) {
+        element.classList.add("fade-out");
+        setTimeout(() => element.remove(), 300);
+        remove(element);
     }
 
     function handleCreateProject(projectData) {
