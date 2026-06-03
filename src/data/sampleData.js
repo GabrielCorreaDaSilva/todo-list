@@ -23,7 +23,9 @@ export function injectSampleData(todo) {
         const shuffledTasks = [...sampleTasks]
             .sort(() => Math.random() - 0.5);
         shuffledTasks.forEach(task => {
-            project.addTask({ ...task, duration: Math.floor(Math.random() * 50) });
+            const newTask = { ...task, duration: Math.floor(Math.random() * 50) }
+            // console.log(newTask)
+            todo.addTask(project.getId(), newTask);
         });
     });
 }

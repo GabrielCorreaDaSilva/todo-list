@@ -8,18 +8,19 @@ export function UIController(service) {
     const modal = createModal();
 
     function renderTodoView() {
+        console.log(service.getProjects())
         content.replaceChildren(createTodoView(service.getProjects()));
     }
     function renderProjectView(projectId) {
-        const project = service.getProject(projectId);
-        const tasks = service.getTasks(projectId);
-        content.replaceChildren(createProjectView(project, tasks));
+        const project = service.getItem(projectId);
+        const items = service.getChildren(projectId);
+        content.replaceChildren(createProjectView(project, items));
     }
 
-    function handleDelete(element, remove) {
+    function handleDelete(element) {
         element.classList.add("fade-out");
         setTimeout(() => element.remove(), 300);
-        removeCard(card);
+        service.removeItem(element.dataset.id);
     }
 
     function handleCreateProject(projectData) {
@@ -82,8 +83,6 @@ export function UIController(service) {
         );
     }
 
-
-
     function bindEvents() {
         content.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
@@ -116,11 +115,11 @@ export function UIController(service) {
                 return;
             }
             if (projectCard && deleteButton) {
-                handleDelete(projectCard, () => service.removeProject(projectCard.dataset.id));
+                handleDelete(projectCard);
                 return;
             }
             if (taskCard && deleteButton) {
-                handleDelete(taskCard, () => service.removeTask(projectView.dataset.id, taskCard.dataset.id));
+                handleDelete(taskCard);
                 return;
             }
             if (projectCard) {

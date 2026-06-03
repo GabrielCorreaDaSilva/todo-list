@@ -12,7 +12,7 @@ export function createProjectCard(project) {
 
     const taskCounter = document.createElement("p");
     taskCounter.classList.add("task-counter");
-    taskCounter.textContent = `Tasks: ${project.tasks}`;
+    taskCounter.textContent = `Remaining's: ${project.remaining}`;
 
     const projectDuration = document.createElement("p");
     projectDuration.classList.add("project-duration");

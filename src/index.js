@@ -10,9 +10,10 @@ import { UIController } from "./ui/UIController.js";
 
 import { injectSampleData } from "./data/sampleData.js";//testing
 
-const projectFactory = (data) => createProject(data, createTask);
-
-const todo = createTodo(projectFactory);
+const todo = createTodo(
+    createProject,
+    createTask,
+);
 
 injectSampleData(todo)// test 
 

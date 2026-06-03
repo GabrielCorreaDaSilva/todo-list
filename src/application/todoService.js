@@ -1,12 +1,21 @@
 export function todoService(todo) {
 
+    const getTasks = () => {
+        const items = todo.getItems();
+        return items.filter(item => item.getType() === "task");
+    };
+
     const mapProject = (project) => {
-        const tasks = project.getTasks();
+        const children = todo.getChildren(project.getId());
+        const projectDuration = children
+            .filter(item => ["task", "subtask"].includes(item.getType()))
+            .reduce((total, item) => total + item.getDuration(), 0);
+        const remainingTodos = children.filter(item => !item.getStatus())
         return {
             id: project.getId(),
             name: project.getName(),
-            tasks: tasks.length,
-            duration: tasks.reduce((total, task) => total + task.getDuration(), 0)
+            remaining: remainingTodos.length,
+            duration: projectDuration
         };
     };
     const mapTask = (task) => ({
@@ -14,44 +23,22 @@ export function todoService(todo) {
         name: task.getName(),
         description: task.getDescription(),
         duration: task.getDuration(),
+        type: task.getType()
     });
 
+    const mapItem = (item) => {
+        const type = item.getType();
+        if (type === "project") return mapProject(item);
+        if (type === "task" || type === "subtask") return mapTask(item);
+    }
+
     return {
-        getProjects: () => todo.getProjects().map(mapProject),
-
-        getProject: (id) => {
-            const project = todo.getProject(id);
-            if (!project) return null;
-
-            return mapProject(project);
-        },
-
         addProject: (data) => {
             const project = todo.addProject(data);
 
             return mapProject(project);
         },
 
-        removeProject: (id) => {
-            const removed = todo.removeProject(id);
-
-            return removed ? mapProject(removed) : null;
-        },
-
-        getTasks: (projectId) => {
-            const project = todo.getProject(projectId)
-            if (!project) return [];
-
-            return project.getTasks().map(mapTask);
-        },
-        getTask: (projectId, id) => {
-            const project = todo.getProject(projectId)
-            if (!project) return null;
-
-            const task = project.getTask(id);
-
-            return task ? mapTask(task) : null;
-        },
         addTask: (projectId, data) => {
             const project = todo.getProject(projectId);
             if (!project) return null;
@@ -60,29 +47,32 @@ export function todoService(todo) {
 
             return mapTask(task);
         },
-        removeTask: (projectId, id) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
 
-            const removed = project.removeTask(id);
+        getProjects: () => {
+            const items = todo.getItems();
+            return items.filter(item => item.getType() === "project").map(mapItem);
+        },
 
-            return removed ? mapTask(removed) : null;
+        getChildren: (parentId, type = null) => todo.getChildren(parentId, type).map(mapItem),
+
+        getItem: (id) => {
+            const item = todo.getItem(id);
+            if (!item) return null;
+
+            return mapItem(item);
         },
-        editProject: (projectId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-            project.setName(data.name);
-            return mapProject(project);
+
+        removeItem: (id) => {
+            const removed = todo.removeItem(id);
+
+            return removed ? mapItem(removed) : null;
         },
-        editTask: (projectId, taskId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-            const task = project.getTask(taskId);
-            if (!task) return null;
-            task.setName(data.name);
-            task.setDescription(data.description);
-            task.setDuration(data.duration);
-            return mapTask(task);
+
+        editItem: (itemId, data) => {
+            const item = todo.getItem(itemId);
+            if (!item) return null;
+            item.update(data);
+            return mapItem(item);
         },
     }
 }

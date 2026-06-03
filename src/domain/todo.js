@@ -1,25 +1,34 @@
-export function createTodo(createProject) {
-    const projects = [];
+export function createTodo(createProject, createTask) {
+    const items = [];
 
     return {
-        getProjects: () => [...projects],
-        getProject: (id) => {
-            const result = projects.find(project => project.getId() === id);
+        getItems: () => [...items],
+        getItem: (id) => {
+            const result = items.find(item => item.getId() === id);
             return result || null;
+        },
+
+        getChildren: (parentId, type = null) => {
+            return items.filter(item => item.getParentId?.() === parentId && (type === null || item.getType() === type))
         },
 
         addProject: (data) => {
             const newProject = createProject(data);
-            projects.push(newProject);
+            items.push(newProject);
             return newProject;
         },
-        removeProject: (id) => {
-            const index = projects.findIndex(project => project.getId() === id);
+        addTask: (parentId, data) => {
+            const newTask = createTask(parentId, data);
+            items.push(newTask);
+            return newTask;
+        },
+        removeItem: (id) => {
+            const index = items.findIndex(item => item.getId() === id);
             if (index >= 0) {
-                const [removed] = projects.splice(index, 1);
+                const [removed] = items.splice(index, 1);
                 return removed;
             }
-                
+
             return null;
         },
     }
