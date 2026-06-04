@@ -41,7 +41,6 @@ html {
     border-radius: 1rem;
 }
 
-.task-container,
 .project-container {
     display: grid;
     grid-template-rows: repeat(auto-fit, 1fr);

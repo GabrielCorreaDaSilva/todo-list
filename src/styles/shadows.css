@@ -4,6 +4,7 @@
 .add-task-button,
 input,
 textarea,
-.form button {
+.form button,
+.list-item .item {
     box-shadow: 1px 2px 2px 2px #0000007d;
 }

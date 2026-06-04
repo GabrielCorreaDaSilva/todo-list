@@ -39,11 +39,8 @@ export function todoService(todo) {
             return mapProject(project);
         },
 
-        addTask: (projectId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-
-            const task = project.addTask(data);
+        addTask: (parentId, data) => {
+            const task = todo.addTask(parentId, data);
 
             return mapTask(task);
         },

@@ -26,36 +26,6 @@ export function createProjectCard(project) {
 
     return projectCard;
 }
-export function createTaskCard(task) {
-
-    const taskCard = document.createElement("div");
-    taskCard.classList.add("task-card","card");
-    taskCard.dataset.id = task.id;
-
-    const title = document.createElement("h2");
-    title.classList.add("title");
-    title.textContent = task.name;
-
-    const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-button", "edit-task");
-    editBtn.innerHTML = EditIcon;
-
-    const description = document.createElement("p");
-    description.classList.add("description");
-    description.textContent = `Description: ${task.description}`;
-
-    const duration = document.createElement("p");
-    duration.classList.add("duration");
-    duration.textContent = `Duration:  ${task.duration} days`;
-
-    const delBtn = document.createElement("button");
-    delBtn.classList.add("delete-button");
-    delBtn.textContent = "X";
-
-    taskCard.append(title, description, duration, delBtn, editBtn);
-
-    return taskCard;
-}
 
 export function createTodoView(projects) {
     const todoView = document.createElement("div");
@@ -101,13 +71,41 @@ export function createProjectView(project, tasks) {
     addTaskBtn.classList.add("add-task-button");
     addTaskBtn.textContent = "New task";
 
-    const tasksContainer = document.createElement("div");
-    tasksContainer.classList.add("task-container");
-    tasks.forEach(task => {
-        tasksContainer.append(createTaskCard(task));
-    });
+    const itemListWrapper = document.createElement("div");
+    itemListWrapper.classList.add("list-container");
 
-    projectView.append(titleContainer, tasksContainer, closeView, addTaskBtn)
+    const itemList = document.createElement("ul");
+    itemList.classList.add("item-list");
+    tasks.forEach(task => {
+        itemList.append(createTaskItem(task));
+    });
+    itemListWrapper.append(itemList);
+
+    projectView.append(titleContainer, itemListWrapper, closeView, addTaskBtn)
 
     return projectView;
+}
+
+export function createTaskItem(task) {
+    const li = document.createElement("li");
+    li.classList.add("list-item");
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("task-item", "item");
+
+    const content = document.createElement("div");
+    content.classList.add("item-content");
+
+    const name = document.createElement("p");
+    name.classList.add("name");
+
+    name.textContent = "#" + task.name;
+    const duration = document.createElement("p");
+    duration.textContent = "Duration:  " + task.duration + " days";
+
+    content.append(name, duration)
+    wrapper.append(content);
+    li.append(wrapper);
+
+    return li;
 }

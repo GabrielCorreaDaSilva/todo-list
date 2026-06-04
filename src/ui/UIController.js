@@ -1,4 +1,4 @@
-import { createTaskCard, createProjectCard, createProjectView, createTodoView } from "./views.js";
+import { createProjectCard, createProjectView, createTodoView, createTaskItem } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
 import { createModal, openModal } from "./modal.js";
 
@@ -8,7 +8,6 @@ export function UIController(service) {
     const modal = createModal();
 
     function renderTodoView() {
-        console.log(service.getProjects())
         content.replaceChildren(createTodoView(service.getProjects()));
     }
     function renderProjectView(projectId) {
@@ -30,8 +29,8 @@ export function UIController(service) {
     }
     function handleCreateTask(taskData, projectId) {
         const newTask = service.addTask(projectId, { ...taskData, duration: parseInt(taskData.duration) });
-        const taskContainer = content.querySelector(".task-container");
-        taskContainer.append(createTaskCard(newTask));
+        const itemList = content.querySelector(".item-list");
+        itemList.append(createTaskItem(newTask));
     }
     function handleEditProject(projectId, projectData, projectView) {
         const editedProject = service.editProject(projectId, projectData);
@@ -40,7 +39,7 @@ export function UIController(service) {
     }
     function handleEditTask(projectId, taskData, taskId, taskCard) {
         const editedTask = service.editTask(projectId, taskId, taskData);
-        const editedCard = createTaskCard(editedTask);
+        const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
     }
 

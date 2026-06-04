@@ -1,0 +1,31 @@
+.item-list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item {
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.1s ease;
+}
+
+.task-item {
+    background-color: rgb(139, 252, 139, 0.6);
+}
+
+.list-item .task-item:hover {
+    transform: scale(1.01);
+    background-color: rgb(57, 249, 67);
+}
+
+.item-content {
+    display: flex;
+    flex-direction: row;
+    gap:2rem;
+}
+
+.item-content .name {
+    font-weight: bold  ;
+}
