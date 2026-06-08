@@ -5,27 +5,99 @@
     gap: 12px;
 }
 
-.item {
-    padding: 6px;
+.item,
+.add-task-button {
+    padding: 16px;
     border-radius: 6px;
     transition: all 0.1s ease;
+    font-size: 1.15rem;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
 }
 
-.task-item {
-    background-color: rgb(139, 252, 139, 0.6);
+.list-item .item:hover,
+.add-task-button:hover {
+    background-color: rgb(239, 242, 242);
 }
 
-.list-item .task-item:hover {
-    transform: scale(1.01);
-    background-color: rgb(57, 249, 67);
+.add-task-button::first-letter {
+    color: rgb(29, 225, 26);
+    font-weight: bold;
+    letter-spacing: 1.2rem;
 }
 
 .item-content {
     display: flex;
     flex-direction: row;
-    gap:2rem;
+    gap: 1rem;
 }
 
 .item-content .name {
-    font-weight: bold  ;
+    font-weight: bold;
+}
+
+.add-task-button::before {
+    content: "";
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    background: rgb(12, 196, 12);
+    margin-right: 14px;
+
+    clip-path: polygon(45% 0%,
+            55% 0%,
+            55% 45%,
+            100% 45%,
+            100% 55%,
+            55% 55%,
+            55% 100%,
+            45% 100%,
+            45% 55%,
+            0% 55%,
+            0% 45%,
+            45% 45%);
+
+    position: relative;
+    top: 2px;
+    left: 1px;
+}
+
+
+.item-content input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: none;
+    border: 1px solid gray;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 4px;
+    display: inline-grid;
+    transition: all ease 0.2s;
+    place-content: center;
+    cursor: pointer;
+}
+
+.item-content input[type="checkbox"]:checked {
+    background-color: #2b6cb0;
+    border-color: #2b6cb0;
+}
+
+/* Checkmark Symbol */
+.item-content input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #ffffff;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1) rotate(10deg);
 }

@@ -1,6 +1,8 @@
 import EditIcon from '../icons/square-edit-outline.svg';
 
 export function createProjectCard(project) {
+    const components = [];
+    const isSystem = project.type === "system"
 
     const projectCard = document.createElement("div");
     projectCard.classList.add("project-card", "card");
@@ -9,20 +11,26 @@ export function createProjectCard(project) {
     const title = document.createElement("h2");
     title.classList.add("title");
     title.textContent = project.name;
+    components.push(title);
 
     const taskCounter = document.createElement("p");
     taskCounter.classList.add("task-counter");
     taskCounter.textContent = `Remaining's: ${project.remaining}`;
+    components.push(taskCounter);
 
     const projectDuration = document.createElement("p");
     projectDuration.classList.add("project-duration");
     projectDuration.textContent = `Duration: ${project.duration} days`;
+    components.push(projectDuration);
 
-    const delBtn = document.createElement("button");
-    delBtn.classList.add("delete-button");
-    delBtn.textContent = "X";
+    if (!isSystem) {
+        const delBtn = document.createElement("button");
+        delBtn.classList.add("delete-button");
+        delBtn.textContent = "X";
+        components.push(delBtn);
+    }
 
-    projectCard.append(title, taskCounter, projectDuration, delBtn);
+    projectCard.append(...components);
 
     return projectCard;
 }
@@ -47,29 +55,35 @@ export function createTodoView(projects) {
     return todoView;
 }
 export function createProjectView(project, tasks) {
+    const components = [];
+    const isSystem = project.type === "system";
+    console.log(project)
+
     const projectView = document.createElement("div")
     projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
 
+    const titleContainer = document.createElement("div");
+    titleContainer.classList.add("title-container");
+
+
     const title = document.createElement("h1");
     title.classList.add("title");
     title.textContent = project.name;
+    titleContainer.append(title);
 
-    const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-button", "edit-project");
-    editBtn.innerHTML = EditIcon;
-
-    const titleContainer = document.createElement("div");
-    titleContainer.classList.add("title-container");
-    titleContainer.append(title, editBtn);
+    if (!isSystem) {
+        const editBtn = document.createElement("button");
+        editBtn.classList.add("edit-button", "edit-project");
+        editBtn.innerHTML = EditIcon;
+        titleContainer.append(editBtn);
+    }
+    components.push(titleContainer);
 
     const closeView = document.createElement("button");
     closeView.classList.add("close-project-view");
     closeView.textContent = "X";
-
-    const addTaskBtn = document.createElement("button");
-    addTaskBtn.classList.add("add-task-button");
-    addTaskBtn.textContent = "New task";
+    components.push(closeView);
 
     const itemListWrapper = document.createElement("div");
     itemListWrapper.classList.add("list-container");
@@ -80,8 +94,14 @@ export function createProjectView(project, tasks) {
         itemList.append(createTaskItem(task));
     });
     itemListWrapper.append(itemList);
+    components.push(itemListWrapper);
 
-    projectView.append(titleContainer, itemListWrapper, closeView, addTaskBtn)
+    const addTaskBtn = document.createElement("button");
+    addTaskBtn.classList.add("add-task-button");
+    addTaskBtn.textContent = " Add Task";
+    components.push(addTaskBtn);
+
+    projectView.append(...components)
 
     return projectView;
 }
@@ -90,20 +110,26 @@ export function createTaskItem(task) {
     const li = document.createElement("li");
     li.classList.add("list-item");
 
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("task-item", "item");
+    const wrapper = document.createElement("button");
+    wrapper.classList.add("item");
 
     const content = document.createElement("div");
     content.classList.add("item-content");
 
+    const checkbox = document.createElement("input");
+    Object.assign(checkbox, {
+            id: "check",
+            type: "checkbox",
+        });
+
     const name = document.createElement("p");
     name.classList.add("name");
 
-    name.textContent = "#" + task.name;
+    name.textContent = task.name;
     const duration = document.createElement("p");
     duration.textContent = "Duration:  " + task.duration + " days";
 
-    content.append(name, duration)
+    content.append(checkbox, name, duration)
     wrapper.append(content);
     li.append(wrapper);
 

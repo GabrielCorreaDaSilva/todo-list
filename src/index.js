@@ -16,9 +16,10 @@ const todo = createTodo(
     createTask,
 );
 
-injectSampleData(todo)// test 
 
 const service = todoService(todo);
+
+injectSampleData(service)// test 
 
 const ui = UIController(service);
 

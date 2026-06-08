@@ -8,7 +8,8 @@ export function UIController(service) {
     const modal = createModal();
 
     function renderTodoView() {
-        content.replaceChildren(createTodoView(service.getProjects()));
+        const projectList = service.getProjects();
+        content.replaceChildren(createTodoView(projectList));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
@@ -129,7 +130,7 @@ export function UIController(service) {
     }
 
     function init() {
-        renderTodoView();
+        renderProjectView("personal");
         bindEvents();
     }
 

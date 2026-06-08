@@ -1,6 +1,14 @@
 export function createTodo(createProject, createTask) {
     const items = [];
 
+    const personal = createProject({
+        type: "system",
+        name: "Personal",
+        id: "personal"
+    });
+
+    items.push(personal);
+
     return {
         getItems: () => [...items],
         getItem: (id) => {

@@ -14,6 +14,7 @@ export function todoService(todo) {
         return {
             id: project.getId(),
             name: project.getName(),
+            type: project.getType(),
             remaining: remainingTodos.length,
             duration: projectDuration
         };
@@ -28,8 +29,9 @@ export function todoService(todo) {
 
     const mapItem = (item) => {
         const type = item.getType();
-        if (type === "project") return mapProject(item);
+        if (type === "project" || type === "system") return mapProject(item);
         if (type === "task" || type === "subtask") return mapTask(item);
+        return "WRONG TYPE";
     }
 
     return {
@@ -47,7 +49,7 @@ export function todoService(todo) {
 
         getProjects: () => {
             const items = todo.getItems();
-            return items.filter(item => item.getType() === "project").map(mapItem);
+            return items.filter(item => ["project", "system"].includes(item.getType())).map(mapItem);
         },
 
         getChildren: (parentId, type = null) => todo.getChildren(parentId, type).map(mapItem),

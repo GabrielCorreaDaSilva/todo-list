@@ -27,7 +27,8 @@ html {
     display: flex;
     flex-direction: row;
     padding: 12px 0;
-    margin-left:6px;
+    font-size: 1.5rem;
+    margin-left: 6px;
     margin-bottom: 12px;
     border-bottom: 1px solid #7373735d;
 }
@@ -57,6 +58,10 @@ html {
     transition: all 0.3s ease;
     border: none;
     background-color: white;
+}
+
+.card:hover {
+    transform: scale(1.02);
 }
 
 .card p {
@@ -145,8 +150,7 @@ html {
     background-color: #737373;
 }
 
-.add-project-button,
-.add-task-button {
+.add-project-button {
     position: absolute;
     bottom: -50px;
     left: 50%;
@@ -160,13 +164,11 @@ html {
     cursor: pointer;
 }
 
-.add-project-button:hover,
-.add-task-button:hover {
+.add-project-button:hover {
     background-color: rgb(0, 178, 0);
 }
 
-.add-project-button:active,
-.add-task-button:active {
+.add-project-button:active {
     background-color: rgb(1, 62, 1);
 
 }
