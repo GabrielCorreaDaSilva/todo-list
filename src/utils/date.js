@@ -1,7 +1,7 @@
 import { format, differenceInCalendarDays, startOfToday, parse } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 
-export function cleanDate(date) {
+export function parseInputToData(date) {
     return parse(
         date,
         "yyyy-MM-dd",
@@ -19,4 +19,7 @@ export const formatWeekDay = (date) => {
 }
 export const formatDayMonth = (date) => {
     return format(date, "d MMM");
+}
+export const formatToInputString = (date) => {
+    return format(date,"yyyy-MM-dd")
 }

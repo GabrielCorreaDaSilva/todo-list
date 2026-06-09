@@ -1,4 +1,4 @@
-import { cleanDate } from "../utils/date.js";
+import { parseInputToData, formatToInputString } from "../utils/date.js";
 
 export function createProjectForm({ name = "", onSubmit } = {}) {
     const form = document.createElement("form");
@@ -48,7 +48,7 @@ export function createProjectForm({ name = "", onSubmit } = {}) {
     bindEvents(form, onSubmit);
     return form;
 }
-export function createTaskForm({ name = "", description = "", duration = "", date = "", onSubmit } = {}) {
+export function createTaskForm({ name = "", description = "", duration = "", dueDate, isImportant = false, onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form", "form");
 
@@ -65,7 +65,8 @@ export function createTaskForm({ name = "", description = "", duration = "", dat
 
     wrapper.append(
         createName(name),
-        createDueDate(date),
+        createDueDate(dueDate),
+        createImportant(isImportant),
         createDescription(description),
     );
 
@@ -90,6 +91,7 @@ export function createTaskForm({ name = "", description = "", duration = "", dat
         const nameInputLabel = document.createElement("label");
         nameInputLabel.setAttribute("for", "task-name");
         nameInputLabel.textContent = "Name (Max. 32):";
+        nameInputLabel.classList.add("overhead");
 
         inputContainer.append(nameInput, nameInputLabel);
         return inputContainer;
@@ -111,11 +113,12 @@ export function createTaskForm({ name = "", description = "", duration = "", dat
         const descriptionInputLabel = document.createElement("label");
         descriptionInputLabel.setAttribute("for", "task-description");
         descriptionInputLabel.textContent = "Task description: ";
+        descriptionInputLabel.classList.add("overhead");
 
         inputContainer.append(descriptionInput, descriptionInputLabel);
         return inputContainer;
     }
-    function createDueDate(date) {
+    function createDueDate(dueDate) {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
 
@@ -124,19 +127,38 @@ export function createTaskForm({ name = "", description = "", duration = "", dat
             id: "due-date",
             type: "date",
             name: "dueDate",
-            placeholder: "",
-            value: date,
+            value: dueDate
+                ? formatToInputString(dueDate)
+                : "",
         });
         const dateInputLabel = document.createElement("label");
         dateInputLabel.setAttribute("for", "due-date");
         dateInputLabel.textContent = "Date:";
+        dateInputLabel.classList.add("overhead");
 
         inputContainer.append(dateInput, dateInputLabel);
         return inputContainer;
     }
+    function createImportant(isImportant) {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+
+        const IsImportantInput = document.createElement("input");
+        Object.assign(IsImportantInput, {
+            id: "is-important-checkbox",
+            type: "checkbox",
+            name: "isImportant",
+            checked: isImportant,
+        });
+        const IsImportantInputLabel = document.createElement("label");
+        IsImportantInputLabel.setAttribute("for", "is-important-checkbox");
+        IsImportantInputLabel.textContent = "Important: ";
+        IsImportantInputLabel.classList.add("is-important-label");
+
+        inputContainer.append(IsImportantInputLabel, IsImportantInput);
+        return inputContainer;
+    }
 }
-
-
 
 function createButtons() {
     const buttonsContainer = document.createElement("div");
@@ -150,6 +172,8 @@ function createButtons() {
     const cancelBtn = document.createElement("button");
     cancelBtn.classList.add("cancel-button");
     cancelBtn.textContent = "Cancel";
+    cancelBtn.type = "button";
+
     buttonsContainer.append(confirmBtn, cancelBtn);
     return buttonsContainer;
 }
@@ -164,11 +188,12 @@ function bindEvents(form, onSubmit) {
             return;
 
         }
-        const projectId = form.dataset.id;
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-
-
-        onSubmit({...data, dueDate: cleanDate(data.dueDate)});
+        data.isImportant = data.isImportant === "on";
+        if (data.dueDate) {
+            data.dueDate = parseInputToData(data.dueDate);
+        }
+        onSubmit(data);
     });
 }

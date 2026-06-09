@@ -1,4 +1,4 @@
-import { cleanDate } from "../utils/date.js";
+import { parseInputToData } from "../utils/date.js";
 
 
 const sampleTasks = [
@@ -25,7 +25,7 @@ export function injectSampleData(todo) {
             .sort(() => Math.random() - 0.5);
         shuffledTasks.forEach(task => {
             todo.addTask(project.id, {
-                ...task, dueDate: cleanDate("2026-06-11"), isImportant:true
+                ...task, dueDate: parseInputToData("2026-06-11"), isImportant: true
             });
         });
     }

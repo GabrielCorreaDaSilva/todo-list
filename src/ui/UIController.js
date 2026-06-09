@@ -34,12 +34,13 @@ export function UIController(service) {
         itemList.append(createTaskItem(newTask));
     }
     function handleEditProject(projectId, projectData, projectView) {
-        const editedProject = service.editProject(projectId, projectData);
+        const editedProject = service.editItem(projectId, projectData);
         const projectTitle = projectView.querySelector(".title");
         projectTitle.textContent = editedProject.name;
     }
-    function handleEditTask(projectId, taskData, taskId, taskCard) {
-        const editedTask = service.editTask(projectId, taskId, taskData);
+    function handleEditTask(taskData, taskId, taskCard) {
+        console.log(taskData)
+        const editedTask = service.editItem(taskId, taskData);
         const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
     }
@@ -71,14 +72,13 @@ export function UIController(service) {
             modal
         );
     }
-    function handleEditTaskBtn(projectId, taskCard, taskId = taskCard.dataset.id) {
-        const task = service.getTask(projectId, taskId);
+    function handleEditTaskBtn(taskCard, taskId = taskCard.dataset.id) {
+        const task = service.getItem(taskId);
         openModal(
             createTaskForm({
                 ...task,
-                onSubmit: (taskData) => handleEditTask(projectId, taskData, taskId, taskCard)
-            },
-                projectId),
+                onSubmit: (taskData) => handleEditTask(taskData, taskId, taskCard)
+            }),
             modal
         );
     }
@@ -87,13 +87,13 @@ export function UIController(service) {
         content.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
-            const taskCard = e.target.closest(".task-card");
+            const task = e.target.closest(".list-item");
             const closeProjectView = e.target.closest(".close-project-view");
             const projectView = e.target.closest(".project-view");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
             const editProject = e.target.closest(".edit-project");
-            const editTask = e.target.closest(".edit-task");
+            const editTask = e.target.closest(".item");
 
             if (addProjectBtn) {
                 handleAddProjectBtn();
@@ -107,7 +107,7 @@ export function UIController(service) {
                 handleEditProjectBtn(projectView);
             }
             if (editTask) {
-                handleEditTaskBtn(projectView.dataset.id, taskCard)
+                handleEditTaskBtn(task, task.dataset.id)
             }
             if (closeProjectView) {
                 content.textContent = "";
@@ -116,10 +116,6 @@ export function UIController(service) {
             }
             if (projectCard && deleteButton) {
                 handleDelete(projectCard);
-                return;
-            }
-            if (taskCard && deleteButton) {
-                handleDelete(taskCard);
                 return;
             }
             if (projectCard) {

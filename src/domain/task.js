@@ -2,21 +2,22 @@ export function createTask(_parentId, { type = "task", isComplete = false, paren
 
    return {
       getParentId: () => parentId,
+      setParentId: (newParentId) => {
+         parentId = newParentId;
+      },
       getId: () => id,
       getName: () => name,
       getDescription: () => description,
       getType: () => type,
       getStatus:() => isComplete,
       toggleComplete: () => isComplete = !isComplete,
-      toggleImportant: () => !isImportant,
       getIsImportant: () => isImportant,
       getDueDate: () => dueDate,
       update: (data) => {
          name = data.name;
          description = data.description;
-         type = data.type;
-         parentId = data.parentId;
          dueDate = data.dueDate;
+         isImportant = data.isImportant;
       }
    };
 }

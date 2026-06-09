@@ -106,6 +106,7 @@ export function createTaskItem(task) {
     const components = [];
     const li = document.createElement("li");
     li.classList.add("list-item");
+    li.dataset.id = task.id;
 
     const wrapper = document.createElement("button");
     wrapper.classList.add("item");

@@ -16,7 +16,7 @@
 
 }
 
-.input-container input,
+.input-container input:not([type="checkbox"]),
 .input-container textarea {
     padding: 6px;
     border-radius: 6px;
@@ -24,6 +24,9 @@
     border: 1px solid var(--gray-background);
     outline: none;
     width: 100%;
+}
+
+.input-container textarea {
     resize: none;
 }
 
@@ -35,7 +38,7 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
-.input-container label {
+.input-container label.overhead {
     position: absolute;
     top: 25px;
     left: 28px;
@@ -43,8 +46,12 @@ input:-webkit-autofill:active {
     transition: all ease 0.3s;
 }
 
-.input-container input:focus+label,
-.input-container input:not(:placeholder-shown)+label,
+.input-container label.is-important-label {
+    place-content: center;
+}
+
+.input-container input:not([type="checkbox"]):focus+label,
+.input-container input:not([type="checkbox"]):not(:placeholder-shown)+label,
 .input-container textarea:focus+label,
 .input-container textarea:not(:placeholder-shown)+label {
     top: 0;
@@ -52,21 +59,20 @@ input:-webkit-autofill:active {
     color: black;
 }
 
-.input-container input:user-valid,
-.input-container input:user-valid+label,
+.input-container input:not([type="checkbox"]):user-valid,
+.input-container input:not([type="checkbox"]):user-valid+label,
 .input-container textarea:user-valid,
 .input-container textarea:user-valid+label {
     color: green;
     border-color: green;
 }
 
-.input-container input:user-invalid,
-.input-container input:user-invalid+label,
+.input-container input:not([type="checkbox"]):user-invalid,
+.input-container input:not([type="checkbox"]):user-invalid+label,
 .input-container textarea:user-invalid,
 .input-container textarea:user-invalid+label {
     color: rgb(171, 2, 2);
     border-color: rgb(171, 2, 2);
-    ;
 }
 
 .input-container-wrapper {
@@ -106,4 +112,42 @@ input:-webkit-autofill:active {
 
 .form button {
     transition: all ease 0.333s;
+}
+
+.form input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: none;
+    border: 1px solid gray;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 4px;
+    display: inline-grid;
+    transition: all ease 0.2s;
+    place-content: center;
+    cursor: pointer;
+    position: relative;
+    top: 7px;
+    left: 12px;
+}
+
+.form input[type="checkbox"]:checked {
+    background-color: #2b6cb0;
+    border-color: #2b6cb0;
+}
+
+/* Checkmark Symbol */
+.form input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #ffffff;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.form input[type="checkbox"]:checked::before {
+    transform: scale(1) rotate(10deg);
 }
