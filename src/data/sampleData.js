@@ -1,3 +1,6 @@
+import { cleanDate } from "../utils/date.js";
+
+
 const sampleTasks = [
     {
         name: "a",
@@ -21,8 +24,9 @@ export function injectSampleData(todo) {
         const shuffledTasks = [...sampleTasks]
             .sort(() => Math.random() - 0.5);
         shuffledTasks.forEach(task => {
-            const newTask = { ...task, duration: Math.floor(Math.random() * 50) }
-            todo.addTask(project.id, newTask);
+            todo.addTask(project.id, {
+                ...task, dueDate: cleanDate("2026-06-11"), isImportant:true
+            });
         });
     }
     const personal = todo.getItem("personal");

@@ -1,3 +1,5 @@
+import { cleanDate } from "../utils/date.js";
+
 export function createProjectForm({ name = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form", "form");
@@ -46,7 +48,7 @@ export function createProjectForm({ name = "", onSubmit } = {}) {
     bindEvents(form, onSubmit);
     return form;
 }
-export function createTaskForm({ name = "", description = "", duration = "", onSubmit } = {}) {
+export function createTaskForm({ name = "", description = "", duration = "", date = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form", "form");
 
@@ -60,13 +62,14 @@ export function createTaskForm({ name = "", description = "", duration = "", onS
     const wrapper = document.createElement("div");
     wrapper.classList.add("input-container-wrapper");
 
-    const nameContainer = createName(name);
-    const descriptionContainer = createDescription(description);
-    const durationContainer = createDuration(duration);
-    const buttonsContainer = createButtons();
-    wrapper.append(nameContainer, durationContainer, descriptionContainer);
 
-    form.append(title, line, wrapper, buttonsContainer);
+    wrapper.append(
+        createName(name),
+        createDueDate(date),
+        createDescription(description),
+    );
+
+    form.append(title, line, wrapper, createButtons());
     bindEvents(form, onSubmit);
     return form;
 
@@ -91,27 +94,6 @@ export function createTaskForm({ name = "", description = "", duration = "", onS
         inputContainer.append(nameInput, nameInputLabel);
         return inputContainer;
     }
-    function createDuration(duration) {
-        const inputContainer = document.createElement("div");
-        inputContainer.classList.add("input-container");
-
-        const durationInput = document.createElement("input");
-        Object.assign(durationInput, {
-            id: "task-duration",
-            name: "duration",
-            value: duration,
-            type: "number",
-            placeholder: "",
-            max: 128,
-            required: true
-        });
-
-        const durationInputLabel = document.createElement("label");
-        durationInputLabel.setAttribute("for", "task-duration");
-        durationInputLabel.textContent = "Duration: ";
-        inputContainer.append(durationInput, durationInputLabel);
-        return inputContainer;
-    }
     function createDescription(description) {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
@@ -131,6 +113,25 @@ export function createTaskForm({ name = "", description = "", duration = "", onS
         descriptionInputLabel.textContent = "Task description: ";
 
         inputContainer.append(descriptionInput, descriptionInputLabel);
+        return inputContainer;
+    }
+    function createDueDate(date) {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+
+        const dateInput = document.createElement("input");
+        Object.assign(dateInput, {
+            id: "due-date",
+            type: "date",
+            name: "dueDate",
+            placeholder: "",
+            value: date,
+        });
+        const dateInputLabel = document.createElement("label");
+        dateInputLabel.setAttribute("for", "due-date");
+        dateInputLabel.textContent = "Date:";
+
+        inputContainer.append(dateInput, dateInputLabel);
         return inputContainer;
     }
 }
@@ -167,6 +168,7 @@ function bindEvents(form, onSubmit) {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        onSubmit(data);
+
+        onSubmit({...data, dueDate: cleanDate(data.dueDate)});
     });
 }

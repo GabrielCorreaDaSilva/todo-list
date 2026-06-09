@@ -6,25 +6,21 @@ export function todoService(todo) {
     };
 
     const mapProject = (project) => {
-        const children = todo.getChildren(project.getId());
-        const projectDuration = children
-            .filter(item => ["task", "subtask"].includes(item.getType()))
-            .reduce((total, item) => total + item.getDuration(), 0);
-        const remainingTodos = children.filter(item => !item.getStatus())
+        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus())
         return {
             id: project.getId(),
             name: project.getName(),
             type: project.getType(),
             remaining: remainingTodos.length,
-            duration: projectDuration
         };
     };
     const mapTask = (task) => ({
         id: task.getId(),
         name: task.getName(),
         description: task.getDescription(),
-        duration: task.getDuration(),
-        type: task.getType()
+        dueDate: task.getDueDate(),
+        type: task.getType(),
+        isImportant: task.getIsImportant()
     });
 
     const mapItem = (item) => {

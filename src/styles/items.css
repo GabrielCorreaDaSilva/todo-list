@@ -79,6 +79,8 @@
     transition: all ease 0.2s;
     place-content: center;
     cursor: pointer;
+    position: relative;
+    top: 1px;
 }
 
 .item-content input[type="checkbox"]:checked {

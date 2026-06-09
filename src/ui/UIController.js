@@ -29,7 +29,7 @@ export function UIController(service) {
         projectContainer.append(createProjectCard(newProject));
     }
     function handleCreateTask(taskData, projectId) {
-        const newTask = service.addTask(projectId, { ...taskData, duration: parseInt(taskData.duration) });
+        const newTask = service.addTask(projectId, taskData);
         const itemList = content.querySelector(".item-list");
         itemList.append(createTaskItem(newTask));
     }

@@ -1,4 +1,6 @@
 import EditIcon from '../icons/square-edit-outline.svg';
+import { formatWeekDay, formatDayMonth, isWithinWeek } from '../utils/date.js';
+
 
 export function createProjectCard(project) {
     const components = [];
@@ -17,11 +19,6 @@ export function createProjectCard(project) {
     taskCounter.classList.add("task-counter");
     taskCounter.textContent = `Remaining's: ${project.remaining}`;
     components.push(taskCounter);
-
-    const projectDuration = document.createElement("p");
-    projectDuration.classList.add("project-duration");
-    projectDuration.textContent = `Duration: ${project.duration} days`;
-    components.push(projectDuration);
 
     if (!isSystem) {
         const delBtn = document.createElement("button");
@@ -57,7 +54,6 @@ export function createTodoView(projects) {
 export function createProjectView(project, tasks) {
     const components = [];
     const isSystem = project.type === "system";
-    console.log(project)
 
     const projectView = document.createElement("div")
     projectView.classList.add("project-view");
@@ -107,6 +103,7 @@ export function createProjectView(project, tasks) {
 }
 
 export function createTaskItem(task) {
+    const components = [];
     const li = document.createElement("li");
     li.classList.add("list-item");
 
@@ -118,18 +115,33 @@ export function createTaskItem(task) {
 
     const checkbox = document.createElement("input");
     Object.assign(checkbox, {
-            id: "check",
-            type: "checkbox",
-        });
+        id: "check",
+        type: "checkbox",
+    });
+    components.push(checkbox);
 
     const name = document.createElement("p");
     name.classList.add("name");
-
     name.textContent = task.name;
-    const duration = document.createElement("p");
-    duration.textContent = "Duration:  " + task.duration + " days";
+    components.push(name);
 
-    content.append(checkbox, name, duration)
+    if (task.dueDate) {
+        const dueDate = document.createElement("p");
+        dueDate.classList.add("due-date");
+        isWithinWeek(task.dueDate)
+            ? dueDate.textContent = formatWeekDay(task.dueDate)
+            : dueDate.textContent = formatDayMonth(task.dueDate)
+        components.push(dueDate);
+    }
+
+    if (task.isImportant) {
+        const isImportant = document.createElement("p");
+        isImportant.classList.add("is-important");
+        isImportant.textContent = "Important";
+        components.push(isImportant);
+    }
+
+    content.append(...components);
     wrapper.append(content);
     li.append(wrapper);
 
