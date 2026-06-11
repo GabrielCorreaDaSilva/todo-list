@@ -45,7 +45,7 @@ export function todoService(todo) {
 
         getProjects: () => {
             const items = todo.getItems();
-            return items.filter(item => ["project", "system"].includes(item.getType())).map(mapItem);
+            return items.filter(item => ["project"].includes(item.getType())).map(mapItem);
         },
 
         getChildren: (parentId, type = null) => todo.getChildren(parentId, type).map(mapItem),

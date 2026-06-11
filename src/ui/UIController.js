@@ -5,9 +5,10 @@ import { createModal, openModal } from "./modal.js";
 export function UIController(service) {
 
     const content = document.querySelector("#content");
+    const nav = document.querySelector("#sidebar-nav");
     const modal = createModal();
 
-    function renderTodoView() {
+    function renderAllProjectsView() {
         const projectList = service.getProjects();
         content.replaceChildren(createTodoView(projectList));
     }
@@ -15,6 +16,48 @@ export function UIController(service) {
         const project = service.getItem(projectId);
         const items = service.getChildren(projectId);
         content.replaceChildren(createProjectView(project, items));
+    }
+    function renderNav() {
+        const list = document.createElement("ul");
+        list.id = "sidebar"
+        const personal = createPersonalBtn();
+        const AllProjects = createAllProjectsBtn();
+        list.append(personal, AllProjects)
+        nav.append(list);
+
+        function changeCurrentNavItem(current) {
+            const buttons = nav.querySelectorAll("button");
+            buttons.forEach(button => button.classList.remove("current-view"));
+            current.classList.add("current-view");
+        }
+
+        function createPersonalBtn() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("open-personal");
+            Btn.textContent = "My Tasks";
+            Btn.addEventListener("click", (e) => {
+                changeCurrentNavItem(e.target);
+                renderProjectView("personal")
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
+
+        function createAllProjectsBtn() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("open-projects");
+            Btn.textContent = "My Projects";
+            Btn.addEventListener("click", (e) => {
+                changeCurrentNavItem(e.target);
+                renderAllProjectsView();
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
     }
 
     function handleDelete(element) {
@@ -111,7 +154,7 @@ export function UIController(service) {
             }
             if (closeProjectView) {
                 content.textContent = "";
-                renderTodoView();
+                renderAllProjectsView();
                 return;
             }
             if (projectCard && deleteButton) {
@@ -126,6 +169,7 @@ export function UIController(service) {
     }
 
     function init() {
+        renderNav()
         renderProjectView("personal");
         bindEvents();
     }

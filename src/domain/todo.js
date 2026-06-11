@@ -3,7 +3,7 @@ export function createTodo(createProject, createTask) {
 
     const personal = createProject({
         type: "system",
-        name: "Personal",
+        name: "My Tasks",
         id: "personal"
     });
 
