@@ -3,5 +3,5 @@
 input,
 textarea,
 .form button {
-    box-shadow: 1px 1px 1px 1px #0000005d;
+    box-shadow: 1px 1px 2px 1px #0000005d;
 }

@@ -20,12 +20,12 @@ export function createProjectCard(project) {
     taskCounter.textContent = `Remaining's: ${project.remaining}`;
     components.push(taskCounter);
 
-    if (!isSystem) {
-        const delBtn = document.createElement("button");
-        delBtn.classList.add("delete-button");
-        delBtn.textContent = "X";
-        components.push(delBtn);
-    }
+
+    const delBtn = document.createElement("button");
+    delBtn.classList.add("delete-button");
+    delBtn.textContent = "X";
+    components.push(delBtn);
+
 
     projectCard.append(...components);
 
@@ -68,18 +68,11 @@ export function createProjectView(project, tasks) {
     title.textContent = project.name;
     titleContainer.append(title);
 
-    if (!isSystem) {
-        const editBtn = document.createElement("button");
-        editBtn.classList.add("edit-button", "edit-project");
-        editBtn.innerHTML = EditIcon;
-        titleContainer.append(editBtn);
-    }
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("edit-button", "edit-project");
+    editBtn.innerHTML = EditIcon;
+    titleContainer.append(editBtn);
     components.push(titleContainer);
-
-    const closeView = document.createElement("button");
-    closeView.classList.add("close-project-view");
-    closeView.textContent = "X";
-    components.push(closeView);
 
     const itemListWrapper = document.createElement("div");
     itemListWrapper.classList.add("list-container");

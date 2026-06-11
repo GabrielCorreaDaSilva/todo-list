@@ -131,7 +131,6 @@ export function UIController(service) {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
             const task = e.target.closest(".list-item");
-            const closeProjectView = e.target.closest(".close-project-view");
             const projectView = e.target.closest(".project-view");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
@@ -152,11 +151,7 @@ export function UIController(service) {
             if (editTask) {
                 handleEditTaskBtn(task, task.dataset.id)
             }
-            if (closeProjectView) {
-                content.textContent = "";
-                renderAllProjectsView();
-                return;
-            }
+
             if (projectCard && deleteButton) {
                 handleDelete(projectCard);
                 return;
