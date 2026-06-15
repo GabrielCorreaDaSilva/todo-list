@@ -6,7 +6,6 @@ export function createProject({ type = "project", name, id = crypto.randomUUID()
         getType: () => type,
         update: (data) => {
             name = data.name;
-            type = data.type;
         }
     }
 

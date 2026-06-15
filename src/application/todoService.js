@@ -66,7 +66,6 @@ export function todoService(todo) {
         editItem: (itemId, data) => {
             const item = todo.getItem(itemId);
             if (!item) return null;
-            console.log(mapItem(item))
             item.update(data);
             return mapItem(item);
         },

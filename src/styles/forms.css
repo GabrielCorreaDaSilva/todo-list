@@ -40,7 +40,7 @@ input:-webkit-autofill:active {
 
 .input-container label.overhead {
     position: absolute;
-    top: 25px;
+    top: 26px;
     left: 28px;
     color: gray;
     transition: all ease 0.3s;

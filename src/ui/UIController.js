@@ -29,7 +29,7 @@ export function UIController(service) {
         const projects = createProjectsSection(service.getProjects().slice(0, 5));
 
         list.append(personal, AllProjects, projects);
-        nav.append(list);
+        nav.replaceChildren(list);
 
         function changeCurrentNavItem(current) {
             const buttons = nav.querySelectorAll("button");
@@ -114,7 +114,6 @@ export function UIController(service) {
         projectTitle.textContent = editedProject.name;
     }
     function handleEditTask(taskData, taskId, taskCard) {
-        console.log(taskData)
         const editedTask = service.editItem(taskId, taskData);
         const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
@@ -196,7 +195,7 @@ export function UIController(service) {
     }
 
     function init() {
-        renderNav()
+        renderNav();
         renderProjectView("personal");
         bindEvents();
     }

@@ -28,6 +28,7 @@ export function createProjectForm({ name = "", onSubmit } = {}) {
     const nameInputLabel = document.createElement("label");
     nameInputLabel.setAttribute("for", "project-name");
     nameInputLabel.textContent = "Project name (Max. 32):";
+    nameInputLabel.classList.add("overhead");
 
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");
