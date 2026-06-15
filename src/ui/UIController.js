@@ -1,7 +1,6 @@
 import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
 import { createModal, openModal } from "./modal.js";
-import { te } from "date-fns/locale";
 
 export function UIController(service) {
 
@@ -148,9 +147,10 @@ export function UIController(service) {
     }
     function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
         const project = service.getItem(projectId);
+        console.log(project)
         openModal(
             createProjectForm({
-                name: project.name,
+                ...project,
                 onSubmit: (projectData) => handleEditProject(projectId, projectData, projectView)
             }),
             modal

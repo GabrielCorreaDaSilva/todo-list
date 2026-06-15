@@ -85,8 +85,7 @@ body {
     padding: 12px 0;
     font-size: 1.5rem;
     margin-left: 6px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #7373735d;
+    /* margin-bottom: 12px; */
 }
 
 .title-container .edit-button {
@@ -96,6 +95,21 @@ body {
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 1rem;
+}
+
+.line {
+    border-color: #7373735d;
+    margin-left: 6px;
+    margin-bottom: 16px;
+}
+
+.description {
+    padding: 12px;
+    padding-left: 6px;
+    font-size: 1.2rem;
+    color: rgb(105, 103, 103);
+    width: 90ch;
+    overflow-wrap: break-word;
 }
 
 .project-container {

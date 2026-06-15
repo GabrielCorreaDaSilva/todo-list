@@ -85,6 +85,17 @@ export function createProjectView(project, tasks) {
     }
     components.push(titleContainer);
 
+    if (project.description) {
+        const description = document.createElement("p");
+        description.classList.add("description");
+        description.textContent = project.description;
+        components.push(description);
+    }
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
+    components.push(line);
+
     const itemListWrapper = document.createElement("div");
     itemListWrapper.classList.add("list-container");
 

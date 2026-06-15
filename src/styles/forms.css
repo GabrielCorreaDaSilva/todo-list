@@ -30,6 +30,10 @@
     resize: none;
 }
 
+.project-form textarea {
+    height: 80px;
+}
+
 /* Remove auto fill background color */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

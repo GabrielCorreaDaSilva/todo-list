@@ -10,6 +10,7 @@ export function todoService(todo) {
         return {
             id: project.getId(),
             name: project.getName(),
+            description: project.getDescription(),
             type: project.getType(),
             remaining: remainingTodos.length,
         };
