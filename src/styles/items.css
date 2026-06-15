@@ -119,7 +119,6 @@ input[type="checkbox"]:checked::before {
     font-weight: bold;
     font-size: 0.75rem;
     position: relative;
-    top: -8px;
 }
 .due-date {
     color: rgba(5, 75, 239, 0.845);
@@ -129,12 +128,10 @@ input[type="checkbox"]:checked::before {
     font-weight: bold;
     font-size: 0.75rem;
     position: relative;
-    top: -8px;
 }
 
 .completed .item,
 .completed .item:hover {
     color: rgba(5, 75, 239, 0.845);
     background-color: rgba(1, 124, 255, 0.116);
-    /* border: 1px solid rgba(5, 75, 239, 0.845); */
 }
