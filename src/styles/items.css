@@ -24,18 +24,17 @@
     background-color: rgb(239, 242, 242);
 }
 
-
-.add-task-button {
-    color: gray;
-}
-.add-task-button:hover {
-    color: black;
-}
-
 .add-task-button::first-letter {
     color: rgb(29, 225, 26);
     font-weight: bold;
     letter-spacing: 1.2rem;
+}
+
+.add-task-button {
+    opacity: 0.7;
+}
+.add-task-button:hover {
+    opacity: 1;
 }
 
 .item-content {

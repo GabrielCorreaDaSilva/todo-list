@@ -1,4 +1,4 @@
-import { createProjectCard, createProjectView, createTodoView, createTaskItem } from "./views.js";
+import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
 import { createModal, openModal } from "./modal.js";
 
@@ -10,7 +10,7 @@ export function UIController(service) {
 
     function renderAllProjectsView() {
         const projectList = service.getProjects();
-        content.replaceChildren(createTodoView(projectList));
+        content.replaceChildren(createAllProjectsView(projectList));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
@@ -33,7 +33,7 @@ export function UIController(service) {
 
         function createPersonalBtn() {
             const Btn = document.createElement("button");
-            Btn.classList.add("open-personal");
+            Btn.classList.add("open-personal", "current-view");
             Btn.textContent = "My Tasks";
             Btn.addEventListener("click", (e) => {
                 changeCurrentNavItem(e.target);

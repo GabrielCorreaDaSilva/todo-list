@@ -32,9 +32,18 @@ export function createProjectCard(project) {
     return projectCard;
 }
 
-export function createTodoView(projects) {
+export function createAllProjectsView(projects) {
     const todoView = document.createElement("div");
     todoView.classList.add("todo-view");
+
+    const titleContainer = document.createElement("div");
+    titleContainer.classList.add("title-container");
+
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = "My Projects";
+    titleContainer.append(title);
 
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
@@ -47,7 +56,7 @@ export function createTodoView(projects) {
     const addProjectBtn = document.createElement("button");
     addProjectBtn.classList.add("add-project-button");
     addProjectBtn.textContent = "New project";
-    todoView.append(projectContainer, addProjectBtn);
+    todoView.append(titleContainer, projectContainer, addProjectBtn);
 
     return todoView;
 }
@@ -68,10 +77,12 @@ export function createProjectView(project, tasks) {
     title.textContent = project.name;
     titleContainer.append(title);
 
-    const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-button", "edit-project");
-    editBtn.innerHTML = EditIcon;
-    titleContainer.append(editBtn);
+    if (project.type !== "system") {
+        const editBtn = document.createElement("button");
+        editBtn.classList.add("edit-button", "edit-project");
+        editBtn.innerHTML = EditIcon;
+        titleContainer.append(editBtn);
+    }
     components.push(titleContainer);
 
     const itemListWrapper = document.createElement("div");
