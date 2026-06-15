@@ -1,6 +1,7 @@
 import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
 import { createModal, openModal } from "./modal.js";
+import { te } from "date-fns/locale";
 
 export function UIController(service) {
 
@@ -20,9 +21,14 @@ export function UIController(service) {
     function renderNav() {
         const list = document.createElement("ul");
         list.id = "sidebar"
+
         const personal = createPersonalBtn();
+
         const AllProjects = createAllProjectsBtn();
-        list.append(personal, AllProjects)
+
+        const projects = createProjectsSection(service.getProjects().slice(0, 5));
+
+        list.append(personal, AllProjects, projects);
         nav.append(list);
 
         function changeCurrentNavItem(current) {
@@ -57,6 +63,32 @@ export function UIController(service) {
             li.classList.add("sidebar-item")
             li.append(Btn);
             return li;
+        }
+
+        function createProjectsSection(projects) {
+            const projectItem = (project) => {
+                const Btn = document.createElement("button");
+                const symbol = document.createElement("p");
+                symbol.textContent = "#";
+                const text = document.createElement("p");
+                text.textContent = project.name;
+
+                Btn.append(symbol, text);
+                Btn.addEventListener("click", (e) => {
+                    changeCurrentNavItem(e.target);
+                    renderProjectView(project.id)
+                });
+                const li = document.createElement("li");
+                li.classList.add("sidebar-item")
+                li.append(Btn);
+                return li;
+            }
+
+            const projectList = document.createElement("ul");
+            projectList.classList.add("project-list");
+
+            projects.forEach(project => projectList.append(projectItem(project)));
+            return projectList;
         }
     }
 
@@ -106,7 +138,7 @@ export function UIController(service) {
         );
     }
     function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
-        const project = service.getProject(projectId);
+        const project = service.getItem(projectId);
         openModal(
             createProjectForm({
                 name: project.name,

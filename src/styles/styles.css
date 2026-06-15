@@ -25,18 +25,29 @@ body {
     grid-template-columns: 300px 1fr;
 }
 
-#sidebar {
+#sidebar,
+.project-list {
     width: 100%;
     height: 100%;
     list-style: none;
     justify-items: center;
-    padding-top: 12px;
     background-color: #f6f6f6;
+}
+
+#sidebar .project-list button {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding-left: 50px;
+}
+
+#sidebar .project-list button p:first-child {
+    font-weight: bold;
 }
 
 .sidebar-item {
     width: 90%;
-    margin-bottom: 6px;
+    margin-top: 6px;
 }
 
 #sidebar button {
