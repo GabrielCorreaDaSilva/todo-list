@@ -35,6 +35,7 @@ export function createProjectCard(project) {
 export function createAllProjectsView(projects) {
     const todoView = document.createElement("div");
     todoView.classList.add("todo-view");
+    todoView.dataset.id = "all projects";
 
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
@@ -44,6 +45,9 @@ export function createAllProjectsView(projects) {
     title.classList.add("title");
     title.textContent = "My Projects";
     titleContainer.append(title);
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
 
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
@@ -56,7 +60,7 @@ export function createAllProjectsView(projects) {
     const addProjectBtn = document.createElement("button");
     addProjectBtn.classList.add("add-project-button");
     addProjectBtn.textContent = "New project";
-    todoView.append(titleContainer, projectContainer, addProjectBtn);
+    todoView.append(titleContainer, line, projectContainer, addProjectBtn);
 
     return todoView;
 }
@@ -135,7 +139,7 @@ export function createTaskItem(task) {
         type: "checkbox",
     });
 
-    if(task.isCompleted) {
+    if (task.isCompleted) {
         checkbox.checked = true;
         li.classList.add("completed");
     }

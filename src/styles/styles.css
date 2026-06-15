@@ -29,7 +29,6 @@ body {
 #sidebar,
 .project-list {
     width: 100%;
-    height: 100%;
     list-style: none;
     justify-items: center;
     background-color: #f6f6f6;
@@ -64,8 +63,14 @@ body {
 }
 
 .open-personal,
-.open-projects {
+.open-projects,
+.add-project {
     font-weight: bold;
+}
+
+.add-project::first-letter {
+    color: rgb(5, 216, 5);
+    font-weight: bolder;
 }
 
 #sidebar button:hover,
@@ -85,7 +90,6 @@ body {
     padding: 12px 0;
     font-size: 1.5rem;
     margin-left: 6px;
-    /* margin-bottom: 12px; */
 }
 
 .title-container .edit-button {

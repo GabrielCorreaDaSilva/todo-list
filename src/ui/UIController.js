@@ -17,7 +17,7 @@ export function UIController(service) {
         const items = service.getChildren(projectId);
         content.replaceChildren(createProjectView(project, items));
     }
-    function renderNav(currentId = "personal") {
+    function renderNav(viewId = content.querySelector("div").dataset.id) {
         const list = document.createElement("ul");
         list.id = "sidebar"
 
@@ -26,15 +26,16 @@ export function UIController(service) {
         const AllProjects = createAllProjectsBtn();
 
         const projects = createProjectsSection(service.getProjects().slice(0, 5));
+        const addProject = createAddProject();
 
-        list.append(personal, AllProjects, projects);
+        list.append(personal, AllProjects, projects, addProject);
         nav.replaceChildren(list);
-        changeCurrentNavItem(currentId);
+        changeCurrentNavItem(viewId);
 
-        function changeCurrentNavItem(currentId) {
+        function changeCurrentNavItem(viewId) {
             const buttons = nav.querySelectorAll("button");
             buttons.forEach(button => {
-                if (currentId === button.dataset.id) {
+                if (viewId === button.dataset.id) {
                     button.classList.add("current-view");
                 } else {
                     button.classList.remove("current-view");
@@ -65,6 +66,21 @@ export function UIController(service) {
             Btn.dataset.id = "all projects"
             Btn.addEventListener("click", (e) => {
                 changeCurrentNavItem(e.target.dataset.id);
+                renderAllProjectsView();
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
+
+        function createAddProject() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("add-project");
+            Btn.textContent = "+ New project";
+            Btn.dataset.id = "new project"
+            Btn.addEventListener("click", (e) => {
+                handleAddProjectBtn();
                 renderAllProjectsView();
             });
             const li = document.createElement("li");
@@ -111,6 +127,7 @@ export function UIController(service) {
         const newProject = service.addProject(projectData);
         const projectContainer = content.querySelector(".project-container");
         projectContainer.append(createProjectCard(newProject));
+        renderNav();
     }
     function handleCreateTask(taskData, projectId) {
         const newTask = service.addTask(projectId, taskData);
@@ -209,6 +226,7 @@ export function UIController(service) {
 
             if (projectCard && deleteButton) {
                 handleDelete(projectCard);
+                renderNav();
                 return;
             }
             if (projectCard) {
@@ -219,9 +237,9 @@ export function UIController(service) {
     }
 
     function init() {
-        renderNav();
         renderProjectView("personal");
         bindEvents();
+        renderNav();
     }
 
     document.addEventListener("DOMContentLoaded", () => {
