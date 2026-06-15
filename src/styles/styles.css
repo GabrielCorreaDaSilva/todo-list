@@ -9,8 +9,10 @@
 }
 
 html,
-body {
-    height: 100vh;
+body,
+#content,
+#sidebar {
+    min-height: 100vh;
 }
 
 html {
@@ -19,7 +21,6 @@ html {
 
 body {
     margin: 0 5vw;
-    height: 100%;
     background-color: white;
     display: grid;
     grid-template-columns: 300px 1fr;

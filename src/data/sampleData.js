@@ -16,7 +16,7 @@ const sampleTasks = [
     },
 ];
 
-const sampleProjects = [{ name: "proj1" }, { name: "proj2" }, { name: "proj3" }, { name: "proj4" }, { name: "proj5" },];
+const sampleProjects = [{ name: "proj1" }, { name: "proj2" }, { name: "proj3" }, { name: "proj4" }, { name: "proj5" }, { name: "proj6" }, { name: "proj7" }, { name: "proj8" }, { name: "proj9" },];
 
 export function injectSampleData(todo) {
 
