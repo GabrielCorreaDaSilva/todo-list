@@ -167,16 +167,30 @@ export function UIController(service) {
         );
     }
 
+    function handleCheck(item, id = item.dataset.id) {
+        service.toggleComplete(id);
+        if (item.classList.contains("completed")) {
+            item.classList.remove("completed");
+        }
+        else item.classList.add("completed");
+    }
+
     function bindEvents() {
         content.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
-            const task = e.target.closest(".list-item");
+            const item = e.target.closest(".list-item");
             const projectView = e.target.closest(".project-view");
             const addProjectBtn = e.target.closest(".add-project-button");
             const addTaskBtn = e.target.closest(".add-task-button");
             const editProject = e.target.closest(".edit-project");
             const editTask = e.target.closest(".item");
+            const checkItem = e.target.closest("#check");
+
+            if (checkItem) {
+                handleCheck(item);
+                return;
+            }
 
             if (addProjectBtn) {
                 handleAddProjectBtn();
@@ -190,7 +204,7 @@ export function UIController(service) {
                 handleEditProjectBtn(projectView);
             }
             if (editTask) {
-                handleEditTaskBtn(task, task.dataset.id)
+                handleEditTaskBtn(item, item.dataset.id)
             }
 
             if (projectCard && deleteButton) {

@@ -134,6 +134,11 @@ export function createTaskItem(task) {
         id: "check",
         type: "checkbox",
     });
+
+    if(task.isCompleted) {
+        checkbox.checked = true;
+        li.classList.add("completed");
+    }
     components.push(checkbox);
 
     const name = document.createElement("p");

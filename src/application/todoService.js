@@ -21,7 +21,8 @@ export function todoService(todo) {
         description: task.getDescription(),
         dueDate: task.getDueDate(),
         type: task.getType(),
-        isImportant: task.getIsImportant()
+        isImportant: task.getIsImportant(),
+        isCompleted: task.getStatus(),
     });
 
     const mapItem = (item) => {
@@ -64,11 +65,17 @@ export function todoService(todo) {
             return removed ? mapItem(removed) : null;
         },
 
-        editItem: (itemId, data) => {
-            const item = todo.getItem(itemId);
+        editItem: (id, data) => {
+            const item = todo.getItem(id);
             if (!item) return null;
             item.update(data);
             return mapItem(item);
         },
+
+        toggleComplete: (id) => {
+            const item = todo.getItem(id);
+            item.toggleComplete();
+            return mapItem(item);
+        }
     }
 }

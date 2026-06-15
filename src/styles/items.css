@@ -2,7 +2,7 @@
     list-style-type: none;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
 }
 
 .item,
@@ -109,4 +109,32 @@
 
 input[type="checkbox"]:checked::before {
     transform: scale(1) rotate(10deg);
+}
+
+.is-important {
+    color: rgba(239, 5, 5, 0.845);
+    border: 1px solid rgba(239, 5, 5, 0.845);
+    border-radius: 6px;
+    padding: 2px 4px;
+    font-weight: bold;
+    font-size: 0.75rem;
+    position: relative;
+    top: -8px;
+}
+.due-date {
+    color: rgba(5, 75, 239, 0.845);
+    border: 1px solid rgba(5, 75, 239, 0.845);
+    border-radius: 6px;
+    padding: 2px 4px;
+    font-weight: bold;
+    font-size: 0.75rem;
+    position: relative;
+    top: -8px;
+}
+
+.completed .item,
+.completed .item:hover {
+    color: rgba(5, 75, 239, 0.845);
+    background-color: rgba(1, 124, 255, 0.116);
+    /* border: 1px solid rgba(5, 75, 239, 0.845); */
 }
