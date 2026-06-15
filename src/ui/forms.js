@@ -1,3 +1,4 @@
+import { isToday } from "date-fns";
 import { parseInputToData, formatToInputString } from "../utils/date.js";
 
 export function createProjectForm({ name = "", description = "", onSubmit } = {}) {
@@ -69,7 +70,6 @@ function createName(inputId, label, name) {
     return inputContainer;
 }
 function createDescription(inputId, label, description) {
-    console.log(description)
     const inputContainer = document.createElement("div");
     inputContainer.classList.add("input-container");
 
@@ -100,6 +100,7 @@ function createDueDate(dueDate) {
         id: "due-date",
         type: "date",
         name: "dueDate",
+        min:formatToInputString(Date.now()),
         value: dueDate
             ? formatToInputString(dueDate)
             : "",
