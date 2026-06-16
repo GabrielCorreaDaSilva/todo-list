@@ -8,6 +8,10 @@
     --gray-background: #454545
 }
 
+html {
+    overflow: hidden
+}
+
 html,
 body,
 #content,
