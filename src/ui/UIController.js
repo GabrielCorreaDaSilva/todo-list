@@ -122,7 +122,6 @@ export function UIController(service) {
         setTimeout(() => element.remove(), 300);
         service.removeItem(element.dataset.id);
     }
-
     function handleCreateProject(projectData) {
         const newProject = service.addProject(projectData);
         const projectContainer = content.querySelector(".project-container");
@@ -144,7 +143,6 @@ export function UIController(service) {
         const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
     }
-
     function handleAddProjectBtn() {
         openModal(
             createProjectForm({
@@ -208,7 +206,15 @@ export function UIController(service) {
                 handleCheck(item);
                 return;
             }
-
+            if (item && deleteButton) {
+                handleDelete(item);
+                return;
+            }
+            if (projectCard && deleteButton) {
+                handleDelete(projectCard);
+                renderNav();
+                return;
+            }
             if (addProjectBtn) {
                 handleAddProjectBtn();
                 return;
@@ -222,12 +228,6 @@ export function UIController(service) {
             }
             if (editTask) {
                 handleEditTaskBtn(item, item.dataset.id)
-            }
-
-            if (projectCard && deleteButton) {
-                handleDelete(projectCard);
-                renderNav();
-                return;
             }
             if (projectCard) {
                 renderProjectView(projectCard.dataset.id);

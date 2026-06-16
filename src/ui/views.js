@@ -1,7 +1,6 @@
 import EditIcon from '../icons/square-edit-outline.svg';
 import { formatWeekDay, formatDayMonth, isWithinWeek } from '../utils/date.js';
 
-
 export function createProjectCard(project) {
     const components = [];
     const isSystem = project.type === "system"
@@ -20,12 +19,7 @@ export function createProjectCard(project) {
     taskCounter.textContent = `Remaining's: ${project.remaining}`;
     components.push(taskCounter);
 
-
-    const delBtn = document.createElement("button");
-    delBtn.classList.add("delete-button");
-    delBtn.textContent = "X";
-    components.push(delBtn);
-
+    createDelBtn(components);
 
     projectCard.append(...components);
 
@@ -40,7 +34,6 @@ export function createAllProjectsView(projects) {
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
 
-
     const title = document.createElement("h1");
     title.classList.add("title");
     title.textContent = "My Projects";
@@ -51,7 +44,6 @@ export function createAllProjectsView(projects) {
 
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
-
 
     projects.forEach(project => {
         projectContainer.append(createProjectCard(project));
@@ -166,9 +158,18 @@ export function createTaskItem(task) {
         components.push(isImportant);
     }
 
+    createDelBtn(components);
+
     content.append(...components);
     wrapper.append(content);
     li.append(wrapper);
 
     return li;
+}
+
+function createDelBtn(components) {
+    const delBtn = document.createElement("button");
+    delBtn.classList.add("delete-button");
+    delBtn.textContent = "X";
+    components.push(delBtn);
 }

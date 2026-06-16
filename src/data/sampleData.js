@@ -5,14 +5,20 @@ const sampleTasks = [
     {
         name: "a",
         description: "change z",
+        isImportant: true,
+        dueDate: Date.now()
     },
     {
         name: "b",
         description: "develop x",
+        isImportant: true,
+        dueDate: Date.now()
     },
     {
         name: "c",
         description: "finish y",
+        isImportant: true,
+        dueDate: Date.now()
     },
 ];
 
@@ -20,18 +26,43 @@ const sampleProjects = [{ name: "proj1" }, { name: "proj2" }, { name: "proj3" },
 
 export function injectSampleData(todo) {
 
-    const addTask = (project) => {
-        const shuffledTasks = [...sampleTasks]
-            .sort(() => Math.random() - 0.5);
-        shuffledTasks.forEach(task => {
+    const addTask = (project, tasks = [...sampleTasks].sort(() => Math.random() - 0.5)) => {
+        tasks.forEach(task => {
             todo.addTask(project.id, {
-                ...task, dueDate: parseInputToData("2026-06-11"), isImportant: true
+                ...task
             });
         });
     }
     const personal = todo.getItem("personal");
 
-    addTask(personal);
+    addTask(
+        personal,
+        [
+            {
+                name: "local storage",
+                description: " - ",
+            },
+            {
+                name: "task view",
+                description: " - ",
+            },
+            {
+                name: "task view: notes",
+                description: " - ",
+            },
+            {
+                name: "task view: checklist",
+                description: " - ",
+            },
+            {
+                name: "confirm screen when deleting",
+                description: " - ",
+            },
+            {
+                name: "dueDate: Today e Tomorrow",
+                description: " - ",
+            },]
+    );
 
 
     sampleProjects.forEach(projectName => {
