@@ -1,14 +1,18 @@
+import { storage } from "../data/storage.js";
 import { parseInputToDate } from "../utils/date.js";
 
 export function createTodo(createProject, createTask) {
     const items = [];
 
-    const personal = createProject({
-        type: "system",
-        name: "My Tasks",
-        id: "personal"
-    });
-    items.push(personal);
+
+    if (!storage.load()) {
+        const personal = createProject({
+            type: "system",
+            name: "My Tasks",
+            id: "personal"
+        });
+        items.push(personal);
+    }
 
     function createItem(data) {
         if (data.type === "task") {
@@ -18,7 +22,6 @@ export function createTodo(createProject, createTask) {
             return createProject(data);
         }
     }
-
     return {
 
         import: (savedData) => savedData.forEach(item => {

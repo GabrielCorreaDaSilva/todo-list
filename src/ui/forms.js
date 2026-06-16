@@ -1,9 +1,10 @@
 import { isToday } from "date-fns";
-import {parseInputToDate, formatToInputString } from "../utils/date.js";
+import { parseInputToDate, formatToInputString } from "../utils/date.js";
 
-export function createProjectForm({ name = "", description = "", onSubmit } = {}) {
+export function createProjectForm({ name = "", description = "", type, onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form", "form");
+    form.dataset.type = "project";
 
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -24,6 +25,7 @@ export function createProjectForm({ name = "", description = "", onSubmit } = {}
 export function createTaskForm({ name = "", description = "", duration = "", dueDate, isImportant = false, onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form", "form");
+    form.dataset.type = "task";
 
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -100,7 +102,7 @@ function createDueDate(dueDate) {
         id: "due-date",
         type: "date",
         name: "dueDate",
-        min:formatToInputString(Date.now()),
+        min: formatToInputString(Date.now()),
         value: dueDate
             ? formatToInputString(dueDate)
             : "",
@@ -164,6 +166,7 @@ function bindEvents(form, onSubmit) {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
         data.isImportant = data.isImportant === "on";
+        data.type = form.dataset.type;
         if (data.dueDate) {
             data.dueDate = parseInputToDate(data.dueDate);
         }

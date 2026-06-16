@@ -16,7 +16,7 @@ export function createProjectCard(project) {
 
     const taskCounter = document.createElement("p");
     taskCounter.classList.add("task-counter");
-    taskCounter.textContent = `Remaining's: ${project.remaining}`;
+    taskCounter.textContent = `Remaining's: ${project.remaining || "0"}`;
     components.push(taskCounter);
 
     createDelBtn(components);

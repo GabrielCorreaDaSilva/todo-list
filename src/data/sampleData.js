@@ -1,5 +1,4 @@
-import { parseInputToData } from "../utils/date.js";
-
+import { parseInputToData, getRandomDateInNext20Days } from "../utils/date.js";
 
 const sampleTasks = [
     {
@@ -26,12 +25,13 @@ const sampleProjects = ["proj1", "proj2", "proj3", "proj4", "proj5", "proj6", "p
 
 export function injectSampleData(todo) {
 
-    const addTask = (project, tasks = [...sampleTasks].sort(() => Math.random() - 0.5)) => {
+    const addTask = (project, tasks = [...sampleTasks].sort(() => Math.random() - 0.5), date = '') => {
         tasks.forEach(task => {
             const newTask = {
                 ...task,
                 parentId: project.getId(),
                 type: "task",
+                dueDate: date
             }
             todo.addItem(newTask);
         });
@@ -41,10 +41,6 @@ export function injectSampleData(todo) {
     addTask(
         personal,
         [
-            {
-                name: "local storage",
-                description: " - ",
-            },
             {
                 name: "task view",
                 description: " - ",
@@ -64,12 +60,18 @@ export function injectSampleData(todo) {
             {
                 name: "dueDate: Today e Tomorrow",
                 description: " - ",
-            },]
+            },
+            {
+                name: "Project: sections",
+                description: " - ",
+            },
+        ],
+        getRandomDateInNext20Days()
     );
 
     sampleProjects.forEach(projectName => {
 
-        const project = todo.addItem({ type: "project", name: projectName});
+        const project = todo.addItem({ type: "project", name: projectName });
 
         addTask(project);
     });

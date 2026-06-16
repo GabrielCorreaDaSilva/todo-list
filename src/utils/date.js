@@ -23,3 +23,12 @@ export const formatDayMonth = (date) => {
 export const formatToInputString = (date) => {
     return format(date,"yyyy-MM-dd")
 }
+export function getRandomDateInNext20Days() {
+  const today = new Date();
+
+  const twentyDaysInMs = 20 * 24 * 60 * 60 * 1000; 
+  
+  const randomMs = Math.random() * twentyDaysInMs; 
+  
+  return new Date(today.getTime() + randomMs);
+}

@@ -15,7 +15,7 @@ export function todoService(todo, storage) {
             name: project.getName(),
             description: project.getDescription(),
             type: project.getType(),
-            remaining: remainingTodos.length,
+            remaining: remainingTodos.length || "0",
         };
     };
     const mapTask = (task) => ({
@@ -42,7 +42,7 @@ export function todoService(todo, storage) {
         }
 
         if (itemData.type === "task") {
-            if(itemData.dueDate){
+            if (item.getDueDate()) {
                 itemData.dueDate = formatToInputString(item.getDueDate())
             }
 
@@ -50,20 +50,22 @@ export function todoService(todo, storage) {
                 ...itemData,
                 parentId: item.getParentId(),
                 isImportant: item.getIsImportant(),
-                isCompleted: item.getStatus(),
+                isComplete: item.getStatus(),
             }
         }
         return itemData;
     }
 
-    const exportData = () => storage.save(todo.getItems().map(mapItemForStorage));
+    const exportData = () => {
+        return todo.getItems().map(mapItemForStorage);
+    }
 
     return {
 
         exportData,
         addItem: (data) => {
             const item = todo.addItem(data);
-            exportData();
+            storage.save(exportData());
             return mapItemForStorage(item);
         },
 
@@ -77,13 +79,12 @@ export function todoService(todo, storage) {
         getItem: (id) => {
             const item = todo.getItem(id);
             if (!item) return null;
-
             return mapItem(item);
         },
 
         removeItem: (id) => {
             const removed = todo.removeItem(id);
-            exportData();
+            storage.save(exportData());
             return removed ? mapItem(removed) : null;
         },
 
@@ -91,14 +92,14 @@ export function todoService(todo, storage) {
             const item = todo.getItem(id);
             if (!item) return null;
             item.update(data);
-            exportData();
+            storage.save(exportData());
             return mapItem(item);
         },
 
         toggleComplete: (id) => {
             const item = todo.getItem(id);
             item.toggleComplete();
-            exportData();
+            storage.save(exportData());
             return mapItem(item);
         }
     }
