@@ -1,7 +1,7 @@
 import { format, differenceInCalendarDays, startOfToday, parse } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 
-export function parseInputToData(date) {
+export function parseInputToDate(date) {
     return parse(
         date,
         "yyyy-MM-dd",

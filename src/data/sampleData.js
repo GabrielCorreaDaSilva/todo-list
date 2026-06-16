@@ -22,15 +22,18 @@ const sampleTasks = [
     },
 ];
 
-const sampleProjects = [{ name: "proj1" }, { name: "proj2" }, { name: "proj3" }, { name: "proj4" }, { name: "proj5" }, { name: "proj6" }, { name: "proj7" }, { name: "proj8" }, { name: "proj9" },];
+const sampleProjects = ["proj1", "proj2", "proj3", "proj4", "proj5", "proj6", "proj7", "proj8", "proj9"];
 
 export function injectSampleData(todo) {
 
     const addTask = (project, tasks = [...sampleTasks].sort(() => Math.random() - 0.5)) => {
         tasks.forEach(task => {
-            todo.addTask(project.id, {
-                ...task
-            });
+            const newTask = {
+                ...task,
+                parentId: project.getId(),
+                type: "task",
+            }
+            todo.addItem(newTask);
         });
     }
     const personal = todo.getItem("personal");
@@ -64,11 +67,11 @@ export function injectSampleData(todo) {
             },]
     );
 
-
     sampleProjects.forEach(projectName => {
 
-        const project = todo.addProject(projectName);
+        const project = todo.addItem({ type: "project", name: projectName});
 
         addTask(project);
     });
+
 }

@@ -1,3 +1,5 @@
+import { parseInputToDate } from "../utils/date.js";
+
 export function createTodo(createProject, createTask) {
     const items = [];
 
@@ -6,10 +8,28 @@ export function createTodo(createProject, createTask) {
         name: "My Tasks",
         id: "personal"
     });
-
     items.push(personal);
 
+    function createItem(data) {
+        if (data.type === "task") {
+            return createTask(data);
+        }
+        if (data.type === "project" || data.type === "system") {
+            return createProject(data);
+        }
+    }
+
     return {
+
+        import: (savedData) => savedData.forEach(item => {
+            if (item.dueDate) {
+                item = {
+                    ...item,
+                    dueDate: parseInputToDate(item.dueDate)
+                };
+            }
+            items.push(createItem(item))
+        }),
         getItems: () => [...items],
         getItem: (id) => {
             const result = items.find(item => item.getId() === id);
@@ -20,15 +40,10 @@ export function createTodo(createProject, createTask) {
             return items.filter(item => item.getParentId?.() === parentId && (type === null || item.getType() === type))
         },
 
-        addProject: (data) => {
-            const newProject = createProject(data);
-            items.push(newProject);
-            return newProject;
-        },
-        addTask: (parentId, data) => {
-            const newTask = createTask(parentId, data);
-            items.push(newTask);
-            return newTask;
+        addItem: (data) => {
+            const newItem = createItem(data);
+            items.push(newItem);
+            return newItem;
         },
         removeItem: (id) => {
             const index = items.findIndex(item => item.getId() === id);

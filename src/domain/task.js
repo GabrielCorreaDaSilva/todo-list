@@ -1,4 +1,4 @@
-export function createTask(_parentId, { type = "task", isComplete = false, parentId = _parentId, name, description, dueDate, isImportant, id = crypto.randomUUID() }) {
+export function createTask({ type = "task", isComplete = false, parentId = "personal", name, description, dueDate, isImportant, id = crypto.randomUUID() }) {
 
    return {
       getParentId: () => parentId,

@@ -1,5 +1,5 @@
 import { isToday } from "date-fns";
-import { parseInputToData, formatToInputString } from "../utils/date.js";
+import {parseInputToDate, formatToInputString } from "../utils/date.js";
 
 export function createProjectForm({ name = "", description = "", onSubmit } = {}) {
     const form = document.createElement("form");
@@ -165,7 +165,7 @@ function bindEvents(form, onSubmit) {
         const data = Object.fromEntries(formData.entries());
         data.isImportant = data.isImportant === "on";
         if (data.dueDate) {
-            data.dueDate = parseInputToData(data.dueDate);
+            data.dueDate = parseInputToDate(data.dueDate);
         }
         onSubmit(data);
     });

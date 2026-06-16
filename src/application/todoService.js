@@ -1,4 +1,7 @@
-export function todoService(todo) {
+import { formatToInputString } from "../utils/date.js";
+import { storage } from "../data/storage.js";
+
+export function todoService(todo, storage) {
 
     const getTasks = () => {
         const items = todo.getItems();
@@ -24,25 +27,44 @@ export function todoService(todo) {
         isImportant: task.getIsImportant(),
         isCompleted: task.getStatus(),
     });
-
     const mapItem = (item) => {
         const type = item.getType();
         if (type === "project" || type === "system") return mapProject(item);
         if (type === "task" || type === "subtask") return mapTask(item);
         return "WRONG TYPE";
     }
+    const mapItemForStorage = (item) => {
+        const itemData = {
+            id: item.getId(),
+            name: item.getName(),
+            description: item.getDescription(),
+            type: item.getType(),
+        }
+
+        if (itemData.type === "task") {
+            if(itemData.dueDate){
+                itemData.dueDate = formatToInputString(item.getDueDate())
+            }
+
+            return {
+                ...itemData,
+                parentId: item.getParentId(),
+                isImportant: item.getIsImportant(),
+                isCompleted: item.getStatus(),
+            }
+        }
+        return itemData;
+    }
+
+    const exportData = () => storage.save(todo.getItems().map(mapItemForStorage));
 
     return {
-        addProject: (data) => {
-            const project = todo.addProject(data);
 
-            return mapProject(project);
-        },
-
-        addTask: (parentId, data) => {
-            const task = todo.addTask(parentId, data);
-
-            return mapTask(task);
+        exportData,
+        addItem: (data) => {
+            const item = todo.addItem(data);
+            exportData();
+            return mapItemForStorage(item);
         },
 
         getProjects: () => {
@@ -61,7 +83,7 @@ export function todoService(todo) {
 
         removeItem: (id) => {
             const removed = todo.removeItem(id);
-
+            exportData();
             return removed ? mapItem(removed) : null;
         },
 
@@ -69,12 +91,14 @@ export function todoService(todo) {
             const item = todo.getItem(id);
             if (!item) return null;
             item.update(data);
+            exportData();
             return mapItem(item);
         },
 
         toggleComplete: (id) => {
             const item = todo.getItem(id);
             item.toggleComplete();
+            exportData();
             return mapItem(item);
         }
     }

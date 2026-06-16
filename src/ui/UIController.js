@@ -123,13 +123,13 @@ export function UIController(service) {
         service.removeItem(element.dataset.id);
     }
     function handleCreateProject(projectData) {
-        const newProject = service.addProject(projectData);
+        const newProject = service.addItem(projectData);
         const projectContainer = content.querySelector(".project-container");
         projectContainer.append(createProjectCard(newProject));
         renderNav();
     }
     function handleCreateTask(taskData, projectId) {
-        const newTask = service.addTask(projectId, taskData);
+        const newTask = service.addItem( {...taskData, parentId: projectId});
         const itemList = content.querySelector(".item-list");
         itemList.append(createTaskItem(newTask));
     }
