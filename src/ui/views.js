@@ -79,9 +79,7 @@ export function createProjectView(project, tasks) {
     components.push(titleContainer);
 
     if (project.description) {
-        const description = document.createElement("p");
-        description.classList.add("description");
-        description.textContent = project.description;
+        const description = createDescription(project);
         components.push(description);
     }
 
@@ -109,7 +107,6 @@ export function createProjectView(project, tasks) {
 
     return projectView;
 }
-
 
 export function createTaskItem(task) {
     const components = [];
@@ -163,6 +160,13 @@ export function createTaskItem(task) {
     li.append(wrapper);
     
     return li;
+}
+
+function createDescription(project) {
+    const description = document.createElement("p");
+    description.classList.add("description");
+    description.textContent = project.description;
+    return description;
 }
 
 function createDelBtn(components) {
