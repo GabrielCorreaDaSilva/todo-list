@@ -1,0 +1,109 @@
+.item-list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.list-item {
+    transition: all ease 0.8s;
+}
+
+
+.item-content {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.item,
+.add-item-button {
+    padding: 16px;
+    border-radius: 6px;
+    transition: all 0.1s ease;
+    font-size: 1.15rem;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+}
+
+.item {
+    position: relative;
+}
+
+.list-item .item:hover,
+.add-item-button:hover {
+    background-color: rgb(239, 242, 242);
+}
+
+.add-item-button {
+    opacity: 0.7;
+    background-color: rgb(239, 242, 242, 0.7);
+    margin-top: 6px;
+}
+
+.add-item-button:hover {
+    opacity: 1;
+}
+
+.add-item-button::first-letter {
+    color: rgb(29, 225, 26);
+    font-weight: bold;
+    letter-spacing: 1.2rem;
+}
+
+.add-item-button::before {
+    content: "";
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    background: rgb(12, 196, 12);
+    margin-right: 14px;
+
+    clip-path: polygon(45% 0%,
+            55% 0%,
+            55% 45%,
+            100% 45%,
+            100% 55%,
+            55% 55%,
+            55% 100%,
+            45% 100%,
+            45% 55%,
+            0% 55%,
+            0% 45%,
+            45% 45%);
+
+    position: relative;
+    top: 2px;
+    left: 1px;
+}
+
+.completed .item,
+.completed .item:hover {
+    color: rgba(5, 75, 239, 0.845);
+    background-color: rgba(1, 124, 255, 0.116);
+}
+
+.is-important {
+    color: rgba(239, 5, 5, 0.845);
+    border: 1px solid rgba(239, 5, 5, 0.845);
+    border-radius: 6px;
+    padding: 2px 4px;
+    font-weight: bold;
+    position: relative;
+}
+
+.due-date {
+    color: rgba(5, 75, 239, 0.845);
+    border: 1px solid rgba(5, 75, 239, 0.845);
+    border-radius: 6px;
+    padding: 2px 4px;
+    font-weight: bold;
+    position: relative;
+}

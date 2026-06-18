@@ -1,6 +1,6 @@
-import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem } from "./views.js";
+import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
-import { createModal, openModal } from "./modal.js";
+import { createModal, openModal, refreshModal } from "./modal.js";
 import { createHandlers } from "./handlers.js";
 
 export function UIController(service) {
@@ -8,6 +8,8 @@ export function UIController(service) {
     const content = document.querySelector("#content");
     const nav = document.querySelector("#sidebar-nav");
     const modal = createModal();
+    const formModal = createModal();
+
     const handlers = createHandlers({
         service,
         createTaskForm,
@@ -17,7 +19,7 @@ export function UIController(service) {
         openModal,
         createTaskItem,
         createProjectCard,
-        modal,
+        modal: formModal,
     })
 
     function renderAllProjectsView() {
@@ -28,6 +30,18 @@ export function UIController(service) {
         const project = service.getItem(projectId);
         const items = service.getChildren(projectId);
         content.replaceChildren(createProjectView(project, items));
+    }
+    function renderTaskView(taskCard) {
+        const taskId = taskCard.dataset.id;
+        const task = service.getItem(taskId);
+        const view = createTaskView(task);
+        openModal({
+            view,
+            modal,
+            handleEdit: () => {
+                handlers.handleEditTaskBtn(taskCard, (editedTask) => refreshModal(createTaskView(editedTask), modal));
+            },
+        });
     }
     function renderNav(viewId = content.querySelector("div").dataset.id) {
         const list = document.createElement("ul");
@@ -135,10 +149,10 @@ export function UIController(service) {
             const projectCard = e.target.closest(".project-card");
             const item = e.target.closest(".list-item");
             const projectView = e.target.closest(".project-view");
-            const addProjectBtn = e.target.closest(".add-project-button");
-            const addTaskBtn = e.target.closest(".add-task-button");
-            const editProject = e.target.closest(".edit-project");
-            const editTask = e.target.closest(".item");
+            const allProjectsView = e.target.closest(".all-projects-view");
+            const taskView = e.target.closest(".task-view");
+            const addBtn = e.target.closest(".add-item-button");
+            const editBtn = e.target.closest(".edit-button");
             const checkItem = e.target.closest("#check");
 
             if (checkItem) {
@@ -154,22 +168,28 @@ export function UIController(service) {
                 renderNav();
                 return;
             }
-            if (addProjectBtn) {
+            if (addBtn && allProjectsView) {
                 handlers.handleAddProjectBtn();
                 return;
             }
-            if (addTaskBtn) {
+            if (addBtn && projectView) {
                 handlers.handleAddTaskBtn(projectView.dataset.id);
                 return;
             }
-            if (editProject) {
+            if (editBtn && projectView) {
                 handlers.handleEditProjectBtn(projectView);
+                return;
             }
-            if (editTask) {
-                handlers.handleEditTaskBtn(item, item.dataset.id)
+            if (editBtn && taskView) {
+                handlers.handleEditTaskBtn(item, item.dataset.id);
+                return;
             }
             if (projectCard) {
                 renderProjectView(projectCard.dataset.id);
+                return;
+            }
+            if (item && projectView) {
+                renderTaskView(item);
                 return;
             }
         });

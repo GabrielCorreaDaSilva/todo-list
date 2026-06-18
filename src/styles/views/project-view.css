@@ -3,26 +3,8 @@
     padding: 20px;
 }
 
-.item-list {
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 80vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.list-item {
-    transition: all ease 0.8s;
-}
-
 .list-item.completed .delete-button {
     background-color: #2b6cb0;
-}
-
-.item {
-    position: relative;
 }
 
 .item .delete-button {
@@ -67,108 +49,19 @@
     pointer-events: all;
 }
 
-.item,
-.add-task-button {
-    padding: 16px;
-    border-radius: 6px;
-    transition: all 0.1s ease;
-    font-size: 1.15rem;
-    font-family: 'Times New Roman', Times, serif;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    border: none;
-    background-color: transparent;
-}
-
-.list-item .item:hover,
-.add-task-button:hover {
-    background-color: rgb(239, 242, 242);
-}
-
-.add-task-button::first-letter {
-    color: rgb(29, 225, 26);
-    font-weight: bold;
-    letter-spacing: 1.2rem;
-}
-
-.add-task-button {
-    opacity: 0.7;
-    background-color: rgb(239, 242, 242, 0.7);
-    ;
-    margin-top: 6px;
-}
-
-.add-task-button:hover {
-    opacity: 1;
-}
-
 .add-task-line {
     margin: 12px 0;
-}
-
-.item-content {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
 }
 
 .item-content .name {
     font-weight: bold;
 }
 
-.add-task-button::before {
-    content: "";
-    width: 0.9em;
-    height: 0.9em;
-    display: inline-block;
-    background: rgb(12, 196, 12);
-    margin-right: 14px;
-
-    clip-path: polygon(45% 0%,
-            55% 0%,
-            55% 45%,
-            100% 45%,
-            100% 55%,
-            55% 55%,
-            55% 100%,
-            45% 100%,
-            45% 55%,
-            0% 55%,
-            0% 45%,
-            45% 45%);
-
-    position: relative;
-    top: 2px;
-    left: 1px;
-}
-
 .item-content input[type="checkbox"] {
     top: 1px;
 }
 
-.is-important {
-    color: rgba(239, 5, 5, 0.845);
-    border: 1px solid rgba(239, 5, 5, 0.845);
-    border-radius: 6px;
-    padding: 2px 4px;
-    font-weight: bold;
+.project-view .is-important,
+.project-view .due-date {
     font-size: 0.75rem;
-    position: relative;
-}
-
-.due-date {
-    color: rgba(5, 75, 239, 0.845);
-    border: 1px solid rgba(5, 75, 239, 0.845);
-    border-radius: 6px;
-    padding: 2px 4px;
-    font-weight: bold;
-    font-size: 0.75rem;
-    position: relative;
-}
-
-.completed .item,
-.completed .item:hover {
-    color: rgba(5, 75, 239, 0.845);
-    background-color: rgba(1, 124, 255, 0.116);
 }

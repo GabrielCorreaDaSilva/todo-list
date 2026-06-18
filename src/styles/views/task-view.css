@@ -1,0 +1,23 @@
+.task-view .title-container {
+    position: relative;
+    gap: 16px;
+}
+
+.task-view .title-container .title {
+width: 60%;
+}
+
+.task-view .list-container {
+    width: 50%;
+    height: 50vh;
+    border: 1px solid gray;
+    border-radius: 6px;
+    background-color: rgba(205, 205, 205, 0.897);
+}
+
+.task-view .due-date,
+.task-view .is-important {
+    align-self: center;
+    padding: 6px;
+    top: 6px;
+}

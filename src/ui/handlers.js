@@ -34,6 +34,7 @@ export function createHandlers({
         const editedTask = service.editItem(taskId, taskData);
         const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
+        return editedTask;
     }
     function handleAddProjectBtn() {
         openModal(
@@ -63,15 +64,19 @@ export function createHandlers({
             modal
         );
     }
-    function handleEditTaskBtn(taskCard, taskId = taskCard.dataset.id) {
+    function handleEditTaskBtn(taskCard, onFinish) {
+        const taskId = taskCard.dataset.id;
         const task = service.getItem(taskId);
-        openModal(
-            createTaskForm({
+        openModal({
+            view: createTaskForm({
                 ...task,
-                onSubmit: (taskData) => handleEditTask(taskData, taskId, taskCard)
+                onSubmit: (taskData) => {
+                    const editedTask = handleEditTask(taskData, taskId, taskCard);
+                    onFinish?.(editedTask);
+                }
             }),
             modal
-        );
+        });
     }
     function handleCheck(item, id = item.dataset.id) {
         service.toggleComplete(id);
