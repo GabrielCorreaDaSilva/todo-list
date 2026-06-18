@@ -1,0 +1,12 @@
+.project-container {
+    display: grid;
+    grid-template-rows: repeat(auto-fit, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 425px));
+    gap: 12px;
+    justify-content: center;
+}
+
+.all-projects-view {
+    position: relative;
+    padding: 20px;
+}

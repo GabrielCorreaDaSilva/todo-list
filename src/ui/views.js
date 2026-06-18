@@ -28,7 +28,7 @@ export function createProjectCard(project) {
 
 export function createAllProjectsView(projects) {
     const todoView = document.createElement("div");
-    todoView.classList.add("todo-view");
+    todoView.classList.add("all-projects-view");
     todoView.dataset.id = "all projects";
 
     const titleContainer = document.createElement("div");
@@ -67,16 +67,13 @@ export function createProjectView(project, tasks) {
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
 
-
     const title = document.createElement("h1");
     title.classList.add("title");
     title.textContent = project.name;
     titleContainer.append(title);
 
     if (project.type !== "system") {
-        const editBtn = document.createElement("button");
-        editBtn.classList.add("edit-button", "edit-project");
-        editBtn.innerHTML = EditIcon;
+        const editBtn = createEditBtn();
         titleContainer.append(editBtn);
     }
     components.push(titleContainer);
@@ -113,57 +110,58 @@ export function createProjectView(project, tasks) {
     return projectView;
 }
 
+
 export function createTaskItem(task) {
     const components = [];
     const li = document.createElement("li");
     li.classList.add("list-item");
     li.dataset.id = task.id;
-
+    
     const wrapper = document.createElement("button");
     wrapper.classList.add("item");
-
+    
     const content = document.createElement("div");
     content.classList.add("item-content");
-
+    
     const checkbox = document.createElement("input");
     Object.assign(checkbox, {
         id: "check",
         type: "checkbox",
     });
-
+    
     if (task.isCompleted) {
         checkbox.checked = true;
         li.classList.add("completed");
     }
     components.push(checkbox);
-
+    
     const name = document.createElement("p");
     name.classList.add("name");
     name.textContent = task.name;
     components.push(name);
-
+    
     if (task.dueDate) {
         const dueDate = document.createElement("p");
         dueDate.classList.add("due-date");
         isWithinWeek(task.dueDate)
-            ? dueDate.textContent = formatWeekDay(task.dueDate)
-            : dueDate.textContent = formatDayMonth(task.dueDate)
+        ? dueDate.textContent = formatWeekDay(task.dueDate)
+        : dueDate.textContent = formatDayMonth(task.dueDate)
         components.push(dueDate);
     }
-
+    
     if (task.isImportant) {
         const isImportant = document.createElement("p");
         isImportant.classList.add("is-important");
         isImportant.textContent = "Important";
         components.push(isImportant);
     }
-
+    
     createDelBtn(components);
-
+    
     content.append(...components);
     wrapper.append(content);
     li.append(wrapper);
-
+    
     return li;
 }
 
@@ -172,4 +170,10 @@ function createDelBtn(components) {
     delBtn.classList.add("delete-button");
     delBtn.textContent = "X";
     components.push(delBtn);
+}
+function createEditBtn() {
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("edit-button", "edit-project");
+    editBtn.innerHTML = EditIcon;
+    return editBtn;
 }
