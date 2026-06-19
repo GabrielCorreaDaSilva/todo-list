@@ -8,11 +8,13 @@ export default {
         path: path.resolve(import.meta.dirname, "dist"),
         clean: true,
     },
+    
     plugins: [
         new HtmlWebpackPlugin({
             template: "./src/index.html",
         }),
     ],
+    
     module: {
         rules: [
             {
@@ -26,3 +28,4 @@ export default {
         ],
     },
 };
+

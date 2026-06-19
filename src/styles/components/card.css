@@ -1,0 +1,22 @@
+.card {
+    position: relative;
+    border-radius: 6px;
+    padding: 12px;
+    line-break: auto;
+    transition: all 0.3s ease;
+    border: none;
+    background-color: white;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card p {
+    max-width: 45ch;
+    overflow-wrap: break-word;
+}
+
+.card .title {
+    padding-bottom: 8px;
+}

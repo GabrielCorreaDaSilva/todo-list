@@ -16,7 +16,6 @@
 
 }
 
-.input-container input,
 .input-container textarea {
     padding: 6px;
     border-radius: 6px;
@@ -24,7 +23,14 @@
     border: 1px solid var(--gray-background);
     outline: none;
     width: 100%;
+}
+
+.input-container textarea {
     resize: none;
+}
+
+.project-form textarea {
+    height: 80px;
 }
 
 /* Remove auto fill background color */
@@ -35,16 +41,20 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
-.input-container label {
+.input-container label.overhead {
     position: absolute;
-    top: 25px;
+    top: 26px;
     left: 28px;
     color: gray;
     transition: all ease 0.3s;
 }
 
-.input-container input:focus+label,
-.input-container input:not(:placeholder-shown)+label,
+.input-container label.is-important-label {
+    place-content: center;
+}
+
+.input-container input:not([type="checkbox"]):focus+label,
+.input-container input:not([type="checkbox"]):not(:placeholder-shown)+label,
 .input-container textarea:focus+label,
 .input-container textarea:not(:placeholder-shown)+label {
     top: 0;
@@ -52,21 +62,20 @@ input:-webkit-autofill:active {
     color: black;
 }
 
-.input-container input:user-valid,
-.input-container input:user-valid+label,
+.input-container input:not([type="checkbox"]):user-valid,
+.input-container input:not([type="checkbox"]):user-valid+label,
 .input-container textarea:user-valid,
 .input-container textarea:user-valid+label {
     color: green;
     border-color: green;
 }
 
-.input-container input:user-invalid,
-.input-container input:user-invalid+label,
+.input-container input:not([type="checkbox"]):user-invalid,
+.input-container input:not([type="checkbox"]):user-invalid+label,
 .input-container textarea:user-invalid,
 .input-container textarea:user-invalid+label {
     color: rgb(171, 2, 2);
     border-color: rgb(171, 2, 2);
-    ;
 }
 
 .input-container-wrapper {
@@ -101,7 +110,7 @@ input:-webkit-autofill:active {
 }
 
 .buttons-container button:hover {
-    background-color: #737373;
+    background-color: #4b4b4bdd;
 }
 
 .form button {

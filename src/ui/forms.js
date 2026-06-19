@@ -1,6 +1,10 @@
-export function createProjectForm({ name = "", onSubmit } = {}) {
+import { isToday } from "date-fns";
+import { parseInputToDate, formatToInputString } from "../utils/date.js";
+
+export function createProjectForm({ name = "", description = "", type, onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form", "form");
+    form.dataset.type = "project";
 
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -9,46 +13,19 @@ export function createProjectForm({ name = "", onSubmit } = {}) {
     const line = document.createElement("hr");
     line.classList.add("line");
 
-    const inputContainer = document.createElement("div");
-    inputContainer.classList.add("input-container");
-
-    const nameInput = document.createElement("input");
-    Object.assign(nameInput, {
-        id: "project-name",
-        type: "text",
-        name: "name",
-        placeholder: "",
-        value: name,
-        maxlength: 32,
-        required: true
-    });
-
-    const nameInputLabel = document.createElement("label");
-    nameInputLabel.setAttribute("for", "project-name");
-    nameInputLabel.textContent = "Project name (Max. 32):";
-
-    const buttonsContainer = document.createElement("div");
-    buttonsContainer.classList.add("buttons-container");
-
-    const confirmBtn = document.createElement("button");
-    confirmBtn.classList.add("confirm-button");
-    confirmBtn.textContent = "Confirm";
-    confirmBtn.type = "submit";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.classList.add("cancel-button");
-    cancelBtn.textContent = "Cancel";
-
-    inputContainer.append(nameInput, nameInputLabel);
-    buttonsContainer.append(confirmBtn, cancelBtn);
-
-    form.append(title, line, inputContainer, buttonsContainer);
+    form.append(
+        title,
+        line,
+        createName("project-name", "Name (max 32)*:", name),
+        createDescription("project-description", "Description (max 240)*: ", description),
+        createButtons());
     bindEvents(form, onSubmit);
     return form;
 }
-export function createTaskForm({ name = "", description = "", duration = "", onSubmit } = {}) {
+export function createTaskForm({ name = "", description = "", duration = "", dueDate, isImportant = false, onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form", "form");
+    form.dataset.type = "task";
 
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -60,82 +37,103 @@ export function createTaskForm({ name = "", description = "", duration = "", onS
     const wrapper = document.createElement("div");
     wrapper.classList.add("input-container-wrapper");
 
-    const nameContainer = createName(name);
-    const descriptionContainer = createDescription(description);
-    const durationContainer = createDuration(duration);
-    const buttonsContainer = createButtons();
-    wrapper.append(nameContainer, durationContainer, descriptionContainer);
+    wrapper.append(
+        createName("task-name", "Name (max 32)*:", name),
+        createDueDate(dueDate),
+        createImportant(isImportant),
+        createDescription("task-description", "Description (max 80)*: ", description),
+    );
 
-    form.append(title, line, wrapper, buttonsContainer);
+    form.append(title, line, wrapper, createButtons());
     bindEvents(form, onSubmit);
     return form;
-
-    function createName(name) {
-        const inputContainer = document.createElement("div");
-        inputContainer.classList.add("input-container");
-
-        const nameInput = document.createElement("input");
-        Object.assign(nameInput, {
-            id: "task-name",
-            type: "text",
-            name: "name",
-            placeholder: "",
-            value: name,
-            maxLength: 32,
-            required: true
-        });
-        const nameInputLabel = document.createElement("label");
-        nameInputLabel.setAttribute("for", "task-name");
-        nameInputLabel.textContent = "Name (Max. 32):";
-
-        inputContainer.append(nameInput, nameInputLabel);
-        return inputContainer;
-    }
-    function createDuration(duration) {
-        const inputContainer = document.createElement("div");
-        inputContainer.classList.add("input-container");
-
-        const durationInput = document.createElement("input");
-        Object.assign(durationInput, {
-            id: "task-duration",
-            name: "duration",
-            value: duration,
-            type: "number",
-            placeholder: "",
-            max: 128,
-            required: true
-        });
-
-        const durationInputLabel = document.createElement("label");
-        durationInputLabel.setAttribute("for", "task-duration");
-        durationInputLabel.textContent = "Duration: ";
-        inputContainer.append(durationInput, durationInputLabel);
-        return inputContainer;
-    }
-    function createDescription(description) {
-        const inputContainer = document.createElement("div");
-        inputContainer.classList.add("input-container");
-
-        const descriptionInput = document.createElement("textarea");
-        Object.assign(descriptionInput, {
-            id: "task-description",
-            name: "description",
-            placeholder: "",
-            maxLength: 80,
-            required: true
-        });
-        descriptionInput.value = description;
-
-        const descriptionInputLabel = document.createElement("label");
-        descriptionInputLabel.setAttribute("for", "task-description");
-        descriptionInputLabel.textContent = "Task description: ";
-
-        inputContainer.append(descriptionInput, descriptionInputLabel);
-        return inputContainer;
-    }
 }
 
+function createName(inputId, label, name) {
+    const inputContainer = document.createElement("div");
+    inputContainer.classList.add("input-container");
 
+    const nameInput = document.createElement("input");
+    Object.assign(nameInput, {
+        id: inputId,
+        type: "text",
+        name: "name",
+        placeholder: "",
+        value: name,
+        maxLength: 32,
+        required: true
+    });
+    const nameInputLabel = document.createElement("label");
+    nameInputLabel.setAttribute("for", inputId);
+    nameInputLabel.textContent = label;
+    nameInputLabel.classList.add("overhead");
+
+    inputContainer.append(nameInput, nameInputLabel);
+    return inputContainer;
+}
+function createDescription(inputId, label, description) {
+    const inputContainer = document.createElement("div");
+    inputContainer.classList.add("input-container");
+
+    const descriptionInput = document.createElement("textarea");
+    Object.assign(descriptionInput, {
+        id: inputId,
+        name: "description",
+        placeholder: "",
+        maxLength: 240,
+        required: true
+    });
+    descriptionInput.value = description;
+
+    const descriptionInputLabel = document.createElement("label");
+    descriptionInputLabel.setAttribute("for", inputId);
+    descriptionInputLabel.textContent = label;
+    descriptionInputLabel.classList.add("overhead");
+
+    inputContainer.append(descriptionInput, descriptionInputLabel);
+    return inputContainer;
+}
+function createDueDate(dueDate) {
+    const inputContainer = document.createElement("div");
+    inputContainer.classList.add("input-container");
+
+    const dateInput = document.createElement("input");
+    Object.assign(dateInput, {
+        id: "due-date",
+        type: "date",
+        name: "dueDate",
+        min: formatToInputString(Date.now()),
+        value: dueDate
+            ? formatToInputString(dueDate)
+            : "",
+    });
+    const dateInputLabel = document.createElement("label");
+    dateInputLabel.setAttribute("for", "due-date");
+    dateInputLabel.textContent = "Date:";
+    dateInputLabel.classList.add("overhead");
+
+    inputContainer.append(dateInput, dateInputLabel);
+    return inputContainer;
+}
+function createImportant(isImportant) {
+    const inputContainer = document.createElement("div");
+    inputContainer.classList.add("input-container");
+
+    const IsImportantInput = document.createElement("input");
+    Object.assign(IsImportantInput, {
+        id: "is-important-checkbox",
+        type: "checkbox",
+        name: "isImportant",
+        checked: isImportant,
+    });
+    const IsImportantInputLabel = document.createElement("label");
+    IsImportantInputLabel.setAttribute("for", "is-important-checkbox");
+    IsImportantInputLabel.textContent = "Important: ";
+    IsImportantInputLabel.classList.add("is-important-label");
+
+    inputContainer.append(IsImportantInputLabel, IsImportantInput);
+    return inputContainer;
+}
 
 function createButtons() {
     const buttonsContainer = document.createElement("div");
@@ -149,6 +147,8 @@ function createButtons() {
     const cancelBtn = document.createElement("button");
     cancelBtn.classList.add("cancel-button");
     cancelBtn.textContent = "Cancel";
+    cancelBtn.type = "button";
+
     buttonsContainer.append(confirmBtn, cancelBtn);
     return buttonsContainer;
 }
@@ -163,10 +163,13 @@ function bindEvents(form, onSubmit) {
             return;
 
         }
-        const projectId = form.dataset.id;
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-
+        data.isImportant = data.isImportant === "on";
+        data.type = form.dataset.type;
+        if (data.dueDate) {
+            data.dueDate = parseInputToDate(data.dueDate);
+        }
         onSubmit(data);
     });
 }

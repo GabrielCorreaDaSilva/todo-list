@@ -1,138 +1,204 @@
-import { createTaskCard, createProjectCard, createProjectView, createTodoView } from "./views.js";
+import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm } from "./forms.js";
-import { createModal, openModal } from "./modal.js";
+import { createModal, openModal, refreshModal } from "./modal.js";
+import { createHandlers } from "./handlers.js";
 
 export function UIController(service) {
 
     const content = document.querySelector("#content");
+    const nav = document.querySelector("#sidebar-nav");
     const modal = createModal();
+    const formModal = createModal();
 
-    function renderTodoView() {
-        content.replaceChildren(createTodoView(service.getProjects()));
+    const handlers = createHandlers({
+        service,
+        createTaskForm,
+        createProjectForm,
+        renderProjectView,
+        renderNav,
+        openModal,
+        createTaskItem,
+        createProjectCard,
+        modal: formModal,
+    })
+
+    function renderAllProjectsView() {
+        const projectList = service.getProjects();
+        content.replaceChildren(createAllProjectsView(projectList));
     }
     function renderProjectView(projectId) {
-        const project = service.getProject(projectId);
-        const tasks = service.getTasks(projectId);
-        content.replaceChildren(createProjectView(project, tasks));
+        const project = service.getItem(projectId);
+        const items = service.getChildren(projectId);
+        content.replaceChildren(createProjectView(project, items));
     }
-
-    function handleDelete(element, remove) {
-        element.classList.add("fade-out");
-        setTimeout(() => element.remove(), 300);
-        remove(element);
-    }
-
-    function handleCreateProject(projectData) {
-        const newProject = service.addProject(projectData);
-        const projectContainer = content.querySelector(".project-container");
-        projectContainer.append(createProjectCard(newProject));
-    }
-    function handleCreateTask(taskData, projectId) {
-        const newTask = service.addTask(projectId, { ...taskData, duration: parseInt(taskData.duration) });
-        const taskContainer = content.querySelector(".task-container");
-        taskContainer.append(createTaskCard(newTask));
-    }
-    function handleEditProject(projectId, projectData, projectView) {
-        const editedProject = service.editProject(projectId, projectData);
-        const projectTitle = projectView.querySelector(".title");
-        projectTitle.textContent = editedProject.name;
-    }
-    function handleEditTask(projectId, taskData, taskId, taskCard) {
-        const editedTask = service.editTask(projectId, taskId, taskData);
-        const editedCard = createTaskCard(editedTask);
-        taskCard.replaceWith(editedCard);
-    }
-
-    function handleAddProjectBtn() {
-        openModal(
-            createProjectForm({
-                onSubmit: handleCreateProject
-            }),
-            modal
-        );
-    }
-    function handleAddTaskBtn(projectId) {
-        openModal(
-            createTaskForm({
-                onSubmit: (taskData) => handleCreateTask(taskData, projectId)
+    function renderTaskView(taskCard) {
+        const taskId = taskCard.dataset.id;
+        const task = service.getItem(taskId);
+        const view = createTaskView(task);
+        openModal({
+            view,
+            modal,
+            handleEdit: () => {
+                handlers.handleEditTaskBtn(taskCard, (editedTask) => refreshModal(createTaskView(editedTask), modal));
             },
-                projectId),
-            modal
-        );
+        });
     }
-    function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
-        const project = service.getProject(projectId);
-        openModal(
-            createProjectForm({
-                name: project.name,
-                onSubmit: (projectData) => handleEditProject(projectId, projectData, projectView)
-            }),
-            modal
-        );
-    }
-    function handleEditTaskBtn(projectId, taskCard, taskId = taskCard.dataset.id) {
-        const task = service.getTask(projectId, taskId);
-        openModal(
-            createTaskForm({
-                ...task,
-                onSubmit: (taskData) => handleEditTask(projectId, taskData, taskId, taskCard)
-            },
-                projectId),
-            modal
-        );
-    }
+    function renderNav(viewId = content.querySelector("div").dataset.id) {
+        const list = document.createElement("ul");
+        list.id = "sidebar"
 
+        const personal = createPersonalBtn();
 
+        const AllProjects = createAllProjectsBtn();
+
+        const projects = createProjectsSection(service.getProjects().slice(0, 5));
+        const addProject = createAddProject();
+
+        list.append(personal, AllProjects, projects, addProject);
+        nav.replaceChildren(list);
+        changeCurrentNavItem(viewId);
+
+        function changeCurrentNavItem(viewId) {
+            const buttons = nav.querySelectorAll("button");
+            buttons.forEach(button => {
+                if (viewId === button.dataset.id) {
+                    button.classList.add("current-view");
+                } else {
+                    button.classList.remove("current-view");
+                }
+            });
+
+        }
+
+        function createPersonalBtn() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("open-personal", "current-view");
+            Btn.textContent = "My Tasks";
+            Btn.dataset.id = "personal";
+            Btn.addEventListener("click", (e) => {
+                changeCurrentNavItem(e.target.dataset.id);
+                renderProjectView(Btn.dataset.id)
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
+
+        function createAllProjectsBtn() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("open-projects");
+            Btn.textContent = "My Projects";
+            Btn.dataset.id = "all projects"
+            Btn.addEventListener("click", (e) => {
+                changeCurrentNavItem(e.target.dataset.id);
+                renderAllProjectsView();
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
+
+        function createAddProject() {
+            const Btn = document.createElement("button");
+            Btn.classList.add("add-project");
+            Btn.textContent = "+ New project";
+            Btn.dataset.id = "new project"
+            Btn.addEventListener("click", (e) => {
+                handlers.handleAddProjectBtn();
+                renderAllProjectsView();
+            });
+            const li = document.createElement("li");
+            li.classList.add("sidebar-item")
+            li.append(Btn);
+            return li;
+        }
+
+        function createProjectsSection(projects) {
+            const projectItem = (project) => {
+                const Btn = document.createElement("button");
+                Btn.dataset.id = project.id;
+                const symbol = document.createElement("p");
+                symbol.textContent = "#";
+                const text = document.createElement("p");
+                text.textContent = project.name;
+
+                Btn.append(symbol, text);
+                Btn.addEventListener("click", (e) => {
+                    changeCurrentNavItem(e.target.dataset.id);
+                    renderProjectView(project.id)
+                });
+                const li = document.createElement("li");
+                li.classList.add("sidebar-item")
+                li.append(Btn);
+                return li;
+            }
+
+            const projectList = document.createElement("ul");
+            projectList.classList.add("project-list");
+
+            projects.forEach(project => projectList.append(projectItem(project)));
+            return projectList;
+        }
+    }
 
     function bindEvents() {
         content.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
-            const taskCard = e.target.closest(".task-card");
-            const closeProjectView = e.target.closest(".close-project-view");
+            const item = e.target.closest(".list-item");
             const projectView = e.target.closest(".project-view");
-            const addProjectBtn = e.target.closest(".add-project-button");
-            const addTaskBtn = e.target.closest(".add-task-button");
-            const editProject = e.target.closest(".edit-project");
-            const editTask = e.target.closest(".edit-task");
+            const allProjectsView = e.target.closest(".all-projects-view");
+            const taskView = e.target.closest(".task-view");
+            const addBtn = e.target.closest(".add-item-button");
+            const editBtn = e.target.closest(".edit-button");
+            const checkItem = e.target.closest("#check");
 
-            if (addProjectBtn) {
-                handleAddProjectBtn();
+            if (checkItem) {
+                handlers.handleCheck(item);
                 return;
             }
-            if (addTaskBtn) {
-                handleAddTaskBtn(projectView.dataset.id);
-                return;
-            }
-            if (editProject) {
-                handleEditProjectBtn(projectView);
-            }
-            if (editTask) {
-                handleEditTaskBtn(projectView.dataset.id, taskCard)
-            }
-            if (closeProjectView) {
-                content.textContent = "";
-                renderTodoView();
+            if (item && deleteButton) {
+                handlers.handleDelete(item);
                 return;
             }
             if (projectCard && deleteButton) {
-                handleDelete(projectCard, () => service.removeProject(projectCard.dataset.id));
+                handlers.handleDelete(projectCard);
+                renderNav();
                 return;
             }
-            if (taskCard && deleteButton) {
-                handleDelete(taskCard, () => service.removeTask(projectView.dataset.id, taskCard.dataset.id));
+            if (addBtn && allProjectsView) {
+                handlers.handleAddProjectBtn();
+                return;
+            }
+            if (addBtn && projectView) {
+                handlers.handleAddTaskBtn(projectView.dataset.id);
+                return;
+            }
+            if (editBtn && projectView) {
+                handlers.handleEditProjectBtn(projectView);
+                return;
+            }
+            if (editBtn && taskView) {
+                handlers.handleEditTaskBtn(item, item.dataset.id);
                 return;
             }
             if (projectCard) {
                 renderProjectView(projectCard.dataset.id);
                 return;
             }
+            if (item && projectView) {
+                renderTaskView(item);
+                return;
+            }
         });
     }
 
     function init() {
-        renderTodoView();
+        renderProjectView("personal");
         bindEvents();
+        renderNav();
     }
 
     document.addEventListener("DOMContentLoaded", () => {

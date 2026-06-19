@@ -1,0 +1,21 @@
+@import "./base/shadows.css";
+@import "./base/styles.css";
+
+@import "./components/buttons.css";
+@import "./components/card.css";
+@import "./components/checkbox.css";
+@import "./components/item-list.css";
+@import "./components/modal.css";
+
+@import "./layout/sidebar.css";
+
+@import "./views/all-projects-view.css";
+@import "./views/forms.css";
+@import "./views/project-view.css";
+@import "./views/task-view.css";
+
+
+.task-view .title.container {
+    position: relative;
+    background-color: aqua;
+}

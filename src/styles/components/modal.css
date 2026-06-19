@@ -1,0 +1,30 @@
+.modal {
+    padding: 20px;
+    margin: auto;
+    border: none;
+    border-radius: 8px;
+    position: relative;
+}
+
+.modal .close-modal {
+    top: 2px;
+    right: 2px;
+    position: absolute;
+    background-color: transparent;
+    color: var(--gray-background);
+    transition: all ease 0.3s;
+    align-items: center;
+}
+
+.modal .close-modal:hover {
+    background-color: rgba(128, 128, 128, 0.426);
+}
+
+.modal .close-modal:active {
+    background-color: var(--gray-background);
+    color: white;
+}
+
+::backdrop {
+    background-color: rgb(0, 0, 0, 75%);
+}

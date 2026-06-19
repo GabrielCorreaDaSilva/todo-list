@@ -7,20 +7,33 @@ export function createModal() {
     return modal;
 }
 
-export function openModal(form, modal) {
-    modal.replaceChildren(form);
+export function openModal({ view, modal, handleEdit }) {
+    modal.replaceChildren(view);
+    const closeModalBtn = document.createElement("button");
+    closeModalBtn.textContent = "x"
+    closeModalBtn.classList.add("close-modal");
+    modal.addEventListener("click", (e) => {
+        if (e.target.closest(".edit-button")) {
+            handleEdit();
+            return;
+        }
+    })
+    modal.append(closeModalBtn);
     modal.showModal();
 }
 
-function bindEvents(modal, onProjectSubmit, onTaskSubmit) {
-    modal.addEventListener("click", (e) => {
-        const cancelBtn = e.target.closest(".cancel-button");
+export function refreshModal(view, modal) {
+    const current = modal.querySelector("." + view.className);
+    current.replaceWith(view);
+}
 
+function bindEvents(modal) {
+    modal.addEventListener("click", (e) => {
+        const cancelBtn = e.target.closest(".cancel-button") || e.target.closest(".close-modal");
         if (cancelBtn) {
             modal.close();
             return;
         }
-
     });
     modal.addEventListener("submit", (e) => {
         modal.close();

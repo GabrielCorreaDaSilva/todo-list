@@ -1,0 +1,67 @@
+.project-view {
+    position: relative;
+    padding: 20px;
+}
+
+.list-item.completed .delete-button {
+    background-color: #2b6cb0;
+}
+
+.item .delete-button {
+    right: 6px;
+    top: 16px;
+    align-self: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all ease 0.2s;
+}
+
+.item .delete-button {
+    color: var(--gray-background);
+    background-color: transparent;
+}
+
+.list-item.completed .delete-button {
+    color: #2b6cb0;
+    background-color: transparent;
+}
+
+.item .delete-button:hover {
+    color: white;
+    background-color: #30303060;
+}
+
+.list-item.completed .delete-button:hover {
+    background-color: #2b6cb060;
+}
+
+.item .delete-button:active {
+    color: white;
+    background-color: var(--gray-background);
+}
+
+.list-item.completed .delete-button:active {
+    background-color: #2b6cb0;
+}
+
+.item:hover .delete-button {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.add-task-line {
+    margin: 12px 0;
+}
+
+.item-content .name {
+    font-weight: bold;
+}
+
+.item-content input[type="checkbox"] {
+    top: 1px;
+}
+
+.project-view .is-important,
+.project-view .due-date {
+    font-size: 0.75rem;
+}

@@ -1,88 +1,106 @@
-export function todoService(todo) {
+import { formatToInputString } from "../utils/date.js";
+import { storage } from "../data/storage.js";
+
+export function todoService(todo, storage) {
+
+    const getTasks = () => {
+        const items = todo.getItems();
+        return items.filter(item => item.getType() === "task");
+    };
 
     const mapProject = (project) => {
-        const tasks = project.getTasks();
+        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus())
         return {
             id: project.getId(),
             name: project.getName(),
-            tasks: tasks.length,
-            duration: tasks.reduce((total, task) => total + task.getDuration(), 0)
+            description: project.getDescription(),
+            type: project.getType(),
+            remaining: remainingTodos.length || "0",
         };
     };
     const mapTask = (task) => ({
         id: task.getId(),
         name: task.getName(),
         description: task.getDescription(),
-        duration: task.getDuration(),
+        dueDate: task.getDueDate(),
+        type: task.getType(),
+        isImportant: task.getIsImportant(),
+        isCompleted: task.getStatus(),
     });
+    const mapItem = (item) => {
+        const type = item.getType();
+        if (type === "project" || type === "system") return mapProject(item);
+        if (type === "task" || type === "subtask") return mapTask(item);
+        return "WRONG TYPE";
+    }
+    const mapItemForStorage = (item) => {
+        const itemData = {
+            id: item.getId(),
+            name: item.getName(),
+            description: item.getDescription(),
+            type: item.getType(),
+        }
+
+        if (itemData.type === "task") {
+            if (item.getDueDate()) {
+                itemData.dueDate = formatToInputString(item.getDueDate())
+            }
+
+            return {
+                ...itemData,
+                parentId: item.getParentId(),
+                isImportant: item.getIsImportant(),
+                isComplete: item.getStatus(),
+            }
+        }
+        return itemData;
+    }
+
+    const exportData = () => {
+        return todo.getItems().map(mapItemForStorage);
+    }
 
     return {
-        getProjects: () => todo.getProjects().map(mapProject),
 
-        getProject: (id) => {
-            const project = todo.getProject(id);
-            if (!project) return null;
-
-            return mapProject(project);
+        exportData,
+        addItem: (data) => {
+            const item = todo.addItem(data);
+            storage.save(exportData());
+            return mapItemForStorage(item);
         },
 
-        addProject: (data) => {
-            const project = todo.addProject(data);
-
-            return mapProject(project);
+        getProjects: () => {
+            const items = todo.getItems();
+            return items.filter(item => ["project"].includes(item.getType())).map(mapItem);
         },
 
-        removeProject: (id) => {
-            const removed = todo.removeProject(id);
+        getChildren: (parentId, type = null) => todo.getChildren(parentId, type).map(mapItem),
 
-            return removed ? mapProject(removed) : null;
+        getItem: (id) => {
+            const item = todo.getItem(id);
+            if (!item) return null;
+            return mapItem(item);
         },
 
-        getTasks: (projectId) => {
-            const project = todo.getProject(projectId)
-            if (!project) return [];
-
-            return project.getTasks().map(mapTask);
+        removeItem: (id) => {
+            const removed = todo.removeItem(id);
+            storage.save(exportData());
+            return removed ? mapItem(removed) : null;
         },
-        getTask: (projectId, id) => {
-            const project = todo.getProject(projectId)
-            if (!project) return null;
 
-            const task = project.getTask(id);
-
-            return task ? mapTask(task) : null;
+        editItem: (id, data) => {
+            const item = todo.getItem(id);
+            if (!item) return null;
+            item.update(data);
+            storage.save(exportData());
+            return mapItem(item);
         },
-        addTask: (projectId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
 
-            const task = project.addTask(data);
-
-            return mapTask(task);
-        },
-        removeTask: (projectId, id) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-
-            const removed = project.removeTask(id);
-
-            return removed ? mapTask(removed) : null;
-        },
-        editProject: (projectId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-            project.setName(data.name);
-            return mapProject(project);
-        },
-        editTask: (projectId, taskId, data) => {
-            const project = todo.getProject(projectId);
-            if (!project) return null;
-            const task = project.getTask(taskId);
-            if (!task) return null;
-            task.setName(data.name);
-            task.setDescription(data.description);
-            task.setDuration(data.duration);
-            return mapTask(task);
-        },
+        toggleComplete: (id) => {
+            const item = todo.getItem(id);
+            item.toggleComplete();
+            storage.save(exportData());
+            return mapItem(item);
+        }
     }
 }

@@ -1,0 +1,61 @@
+#content button {
+    transition: all ease 0.333s;
+}
+
+.edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 1rem;
+}
+
+.task-view .edit-button {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+}
+
+.delete-button,
+.close-modal,
+.edit-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.delete-button,
+.close-modal {
+    text-align: center;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 1rem;
+}
+
+.delete-button,
+.close-modal,
+.edit-button:hover {
+    background-color: var(--gray-background);
+    color: white;
+}
+
+.edit-button svg {
+    width: 65%;
+    height: auto;
+}
+
+.edit-button:hover svg,
+.edit-button:active svg {
+    fill: white;
+}
+
+.task-view button:active,
+.project-card button:active,
+.title-container button:active {
+    background-color: #737373;
+}
+
