@@ -1,18 +1,81 @@
+.task-view {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-view button {
+    transition: all ease 0.3s;
+}
+
+.task-view .bottom-section .line {
+    border: none;
+    width: 2px;
+    background-color: #bdbdbd83;
+    opacity: 1;
+}
+
 .task-view .title-container {
     position: relative;
     gap: 16px;
 }
 
 .task-view .title-container .title {
-width: 60%;
+    width: 20ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-view .upper-section .line {
+    margin: 0;
+}
+
+.task-view .bottom-section {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.task-view .bottom-section>div {
+    flex: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .task-view .list-container {
-    width: 50%;
-    height: 50vh;
+    width: 90%;
+    height: 100%;
     border: 1px solid gray;
     border-radius: 6px;
-    background-color: rgba(205, 205, 205, 0.897);
+    background-color: rgba(225, 222, 222, 0);
+}
+
+.task-view .list-container .add-item-button {
+    margin: 0;
+}
+
+.task-view .bottom-section .line {
+    margin: 0 12px;
+}
+
+.task-view .notes {
+    height: 100%;
+    width: 90%;
+    margin-top: 6px;
+    resize: none;
+    outline: none;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: none;
+}
+
+.task-view .bottom-section .notes-label {
+    width: 100%;
+    padding-left: 20px;
 }
 
 .task-view .due-date,
@@ -20,4 +83,5 @@ width: 60%;
     align-self: center;
     padding: 6px;
     top: 6px;
+    font-size: 1.3rem;
 }

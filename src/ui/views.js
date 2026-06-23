@@ -103,65 +103,92 @@ export function createProjectView(project, tasks) {
 
     return projectView;
 }
-export function createTaskView(task) {
-    const components = [];
-
+export function createTaskView(task, handleUpdateNotes) {
     const taskView = document.createElement("div")
     taskView.classList.add("task-view");
     taskView.dataset.id = task.id;
 
-    const titleContainer = document.createElement("div");
-    titleContainer.classList.add("title-container");
+    const upperSection = createUpper();
 
-    const title = document.createElement("h1");
-    title.classList.add("title");
-    title.textContent = task.name;
-    titleContainer.append(title);
+    const bottomSection = createBottom();
 
-    if (task.dueDate) {
-        const dueDate = createDueDate(task);
-        titleContainer.append(dueDate);
-    }
-    if (task.isImportant) {
-        const isImportant = createImportant();
-        titleContainer.append(isImportant);
-    }
-
-    const editBtn = createEditBtn();
-    titleContainer.append(editBtn);
-
-    components.push(titleContainer);
-
-    if (task.description) {
-        const description = createDescription(task);
-        components.push(description);
-    }
-
-    
-
-    const line = document.createElement("hr");
-    line.classList.add("line");
-    components.push(line);
-
-    const itemListWrapper = document.createElement("div");
-    itemListWrapper.classList.add("list-container");
-
-    const itemList = document.createElement("ul");
-    itemList.classList.add("item-list");
-    // tasks.forEach(task => {
-    //     itemList.append(createTaskItem(task));
-    // });
-
-    const addChecklistBtn = createAddItemBtn("Add Checklist Item");
-
-    itemListWrapper.append(itemList, addChecklistBtn);
-
-    components.push(itemListWrapper);
-
-
-    taskView.append(...components)
+    taskView.append(upperSection, bottomSection)
 
     return taskView;
+
+    function createBottom() {
+        const bottomSection = document.createElement("div");
+        bottomSection.classList.add("bottom-section");
+
+        const itemListWrapper = document.createElement("div");
+        itemListWrapper.classList.add("list-container");
+        const itemList = document.createElement("ul");
+        itemList.classList.add("item-list");
+        const addChecklistBtn = createAddItemBtn("Add Checklist Item");
+        itemListWrapper.append(itemList, addChecklistBtn);
+        const checklistWrapper = document.createElement("div");
+        checklistWrapper.append(itemListWrapper);
+        bottomSection.append(checklistWrapper);
+
+        const line = document.createElement("hr");
+        line.classList.add("line");
+        bottomSection.append(line);
+
+        const notes = document.createElement("textarea");
+        notes.classList.add("notes");
+        notes.addEventListener("blur", (e) => {
+            handleUpdateNotes(task.id, { notes: notes.value });
+        });
+        Object.assign(notes, {
+            id: "notes",
+            name: "notes",
+            placeholder: "",
+            maxLength: 240,
+            required: true
+        });
+        notes.value = task.notes;
+        const notesLabel = document.createElement("label");
+        notesLabel.setAttribute("for", "notes");
+        notesLabel.textContent = "Notes";
+        notesLabel.classList.add("notes-label");
+        const notesWrapper = document.createElement("div");
+        notesWrapper.classList.add("notes-wrapper");
+        notesWrapper.append(notesLabel, notes);
+        bottomSection.append(notesWrapper)
+
+        return bottomSection;
+    }
+
+    function createUpper() {
+        const upperSection = document.createElement("div");
+        upperSection.classList.add("upper-section");
+        const titleContainer = document.createElement("div");
+        titleContainer.classList.add("title-container");
+        const title = document.createElement("h1");
+        title.classList.add("title");
+        title.textContent = task.name;
+        titleContainer.append(title);
+        if (task.dueDate) {
+            const dueDate = createDueDate(task);
+            titleContainer.append(dueDate);
+        }
+        if (task.isImportant) {
+            const isImportant = createImportant();
+            titleContainer.append(isImportant);
+        }
+        const editBtn = createEditBtn();
+        titleContainer.append(editBtn);
+        upperSection.append(titleContainer);
+
+        if (task.description) {
+            const description = createDescription(task);
+            upperSection.append(description);
+        }
+        const line = document.createElement("hr");
+        line.classList.add("line");
+        upperSection.append(line);
+        return upperSection;
+    }
 }
 
 
@@ -219,14 +246,12 @@ function createAddItemBtn(text) {
     addBtn.textContent = text;
     return addBtn;
 }
-
 function createImportant() {
     const isImportant = document.createElement("p");
     isImportant.classList.add("is-important");
     isImportant.textContent = "Important";
     return isImportant;
 }
-
 function createDueDate(task) {
     const dueDate = document.createElement("p");
     dueDate.classList.add("due-date");
@@ -235,14 +260,12 @@ function createDueDate(task) {
         : dueDate.textContent = formatDayMonth(task.dueDate);
     return dueDate;
 }
-
 function createDescription(item) {
     const description = document.createElement("p");
     description.classList.add("description");
     description.textContent = item.description;
     return description;
 }
-
 function createDelBtn(components) {
     const delBtn = document.createElement("button");
     delBtn.classList.add("delete-button");

@@ -34,7 +34,7 @@ export function UIController(service) {
     function renderTaskView(taskCard) {
         const taskId = taskCard.dataset.id;
         const task = service.getItem(taskId);
-        const view = createTaskView(task);
+        const view = createTaskView(task, handlers.handleUpdateNotes);
         openModal({
             view,
             modal,

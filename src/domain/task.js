@@ -13,7 +13,7 @@ export function createTask({ type = "task", isComplete = false, parentId = "pers
       toggleComplete: () => isComplete = !isComplete,
       getIsImportant: () => isImportant,
       getDueDate: () => dueDate,
-      updateNotes: (newNotes) => notes = newNotes,
+      getNotes: () => notes,
       update: (data) => {
          if ("notes" in data) notes = data.notes;
          if ("name" in data) name = data.name;

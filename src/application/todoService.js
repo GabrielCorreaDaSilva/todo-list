@@ -26,6 +26,7 @@ export function todoService(todo, storage) {
         type: task.getType(),
         isImportant: task.getIsImportant(),
         isCompleted: task.getStatus(),
+        notes: task.getNotes(),
     });
     const mapItem = (item) => {
         const type = item.getType();
@@ -51,6 +52,7 @@ export function todoService(todo, storage) {
                 parentId: item.getParentId(),
                 isImportant: item.getIsImportant(),
                 isComplete: item.getStatus(),
+                notes: item.getNotes(),
             }
         }
         return itemData;

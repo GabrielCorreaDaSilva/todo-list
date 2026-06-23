@@ -30,6 +30,9 @@ export function createHandlers({
         renderProjectView(editedProject.id);
         renderNav(editedProject.id);
     }
+    function handleUpdateNotes(taskId, taskData) {
+        service.editItem(taskId, taskData);
+    }
     function handleEditTask(taskData, taskId, taskCard) {
         const editedTask = service.editItem(taskId, taskData);
         const editedCard = createTaskItem(editedTask);
@@ -90,6 +93,7 @@ export function createHandlers({
         handleCreateProject,
         handleCreateTask,
         handleEditProject,
+        handleUpdateNotes,
         handleEditTask,
         handleAddProjectBtn,
         handleAddTaskBtn,
