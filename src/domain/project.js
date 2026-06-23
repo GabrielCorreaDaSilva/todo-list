@@ -1,4 +1,4 @@
-export function createProject({ type = "project", name,  description, id = crypto.randomUUID() }) {
+export function createProject({ type = "project", name, description, id = crypto.randomUUID() }) {
 
     return {
         getName: () => name,
@@ -6,8 +6,8 @@ export function createProject({ type = "project", name,  description, id = crypt
         getId: () => id,
         getType: () => type,
         update: (data) => {
-            name = data.name;
-            description = data.description;
+            if ("name" in data) name = data.name;
+            if ("description" in data) description = data.description;
         }
     }
 
