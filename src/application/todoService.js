@@ -7,7 +7,15 @@ export function todoService(todo, storage) {
         const items = todo.getItems();
         return items.filter(item => item.getType() === "task");
     };
+    const getTask = (id) => {
+        const item = todo.getItem(id);
+        return item?.getType() === "task" ? item : null;
+    }
 
+    const mapCheckListItem = (item) => ({
+        id: item.getId(),
+        name: item.getName(),
+    })
     const mapProject = (project) => {
         const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus())
         return {
@@ -27,6 +35,7 @@ export function todoService(todo, storage) {
         isImportant: task.getIsImportant(),
         isCompleted: task.getStatus(),
         notes: task.getNotes(),
+        checklist: task.getChecklist().map(mapCheckListItem),
     });
     const mapItem = (item) => {
         const type = item.getType();
@@ -53,11 +62,11 @@ export function todoService(todo, storage) {
                 isImportant: item.getIsImportant(),
                 isComplete: item.getStatus(),
                 notes: item.getNotes(),
+                checklist: item.getChecklist().map(mapCheckListItem),
             }
         }
         return itemData;
     }
-
     const exportData = () => {
         return todo.getItems().map(mapItemForStorage);
     }
@@ -97,12 +106,45 @@ export function todoService(todo, storage) {
             storage.save(exportData());
             return mapItem(item);
         },
-
+        toggleCheckListItemComplete: (id, itemId) => {
+            const task = getTask(id);
+            if (!task) return null;
+            const item = task.toggleCompleteChecklistItem(itemId);
+            storage.save(exportData());
+            return mapCheckListItem(item);
+        },
         toggleComplete: (id) => {
             const item = todo.getItem(id);
             item.toggleComplete();
             storage.save(exportData());
             return mapItem(item);
-        }
+        },
+        getChecklist: (id) => {
+            const task = getTask(id);
+            if (!task) return null;
+            const checklist = task.getChecklist();
+            return [...checklist].map(mapCheckListItem);
+        },
+        addChecklistItem: (id, data) => {
+            const task = getTask(id);
+            if (!task) return null;
+            const item = task.addChecklistItem(data)
+            storage.save(exportData());
+            return mapCheckListItem(item);
+        },
+        removeChecklistItem: (id, itemId) => {
+            const task = getTask(id);
+            if (!task) return null;
+            const item = task.removeChecklistItem(itemId);
+            storage.save(exportData());
+            return mapCheckListItem(item);
+        },
+        updateChecklistItem: (id, itemId, data) => {
+            const task = getTask(id);
+            if (!task) return null;
+            const item = task.updateChecklistItem(itemId, data);
+            storage.save(exportData());
+            return mapCheckListItem(item);
+        },
     }
 }

@@ -48,6 +48,29 @@ export function createTaskForm({ name = "", description = "", duration = "", due
     bindEvents(form, onSubmit);
     return form;
 }
+export function createCheckListForm({ name = "", onSubmit } = {}) {
+    const form = document.createElement("form");
+    form.classList.add("task-form", "form");
+    form.dataset.type = "checklist";
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = name || "New Checklist Item";
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("input-container-wrapper");
+
+    wrapper.append(
+        createName("task-name", "Name (max 32)*:", name),
+    );
+
+    form.append(title, line, wrapper, createButtons());
+    bindEvents(form, onSubmit);
+    return form;
+}
 
 function createName(inputId, label, name) {
     const inputContainer = document.createElement("div");

@@ -1,4 +1,29 @@
-export function createTask({ type = "task", isComplete = false, parentId = "personal", notes = "", name, description, dueDate, isImportant, id = crypto.randomUUID() }) {
+import { createChecklist } from "./checklist.js";
+export function createTask({
+   type = "task",
+   parentId = "personal",
+   notes = "",
+   name,
+   description,
+   dueDate,
+   isImportant,
+   isComplete = false,
+   id = crypto.randomUUID(),
+   checklist,
+}) {
+   const _checklist = createChecklist();
+   if(checklist) {
+      checklist.forEach(item => {
+         _checklist.addItem(item);
+      });
+   }
+
+   const getChecklist = () => _checklist.getChecklist();
+
+   const addChecklistItem = (data) => _checklist.addItem(data);
+   const removeChecklistItem = (id) => _checklist.removeItem(id);
+   const updateChecklistItem = (id, data) => _checklist.updateItem(id, data);
+   const toggleCompleteChecklistItem = (id) => _checklist.toggleComplete(id);
 
    return {
       getParentId: () => parentId,
@@ -21,6 +46,11 @@ export function createTask({ type = "task", isComplete = false, parentId = "pers
          if ("dueDate" in data) dueDate = data.dueDate;
          if ("isImportant" in data) isImportant = data.isImportant;
          if ("parentId" in data) parentId = data.parentId;
-      }
+      },
+      getChecklist,
+      addChecklistItem,
+      removeChecklistItem,
+      updateChecklistItem,
+      toggleCompleteChecklistItem,
    };
 }

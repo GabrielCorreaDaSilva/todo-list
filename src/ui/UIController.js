@@ -1,5 +1,5 @@
 import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createTaskView } from "./views.js";
-import { createProjectForm, createTaskForm } from "./forms.js";
+import { createProjectForm, createTaskForm, createCheckListForm } from "./forms.js";
 import { createModal, openModal, refreshModal } from "./modal.js";
 import { createHandlers } from "./handlers.js";
 
@@ -14,6 +14,7 @@ export function UIController(service) {
         service,
         createTaskForm,
         createProjectForm,
+        createCheckListForm,
         renderProjectView,
         renderNav,
         openModal,
@@ -34,14 +35,18 @@ export function UIController(service) {
     function renderTaskView(taskCard) {
         const taskId = taskCard.dataset.id;
         const task = service.getItem(taskId);
-        const view = createTaskView(task, handlers.handleUpdateNotes);
-        openModal({
+        const view = createTaskView(task,
+            {
+                handleUpdateNotes: handlers.handleUpdateNotes,
+                handleEdit: () => handlers.handleEditTaskBtn(taskCard, () => renderTaskView(taskCard)),
+                handleAddCheckListItem: (itemList) => handlers.handleAddChecklistBtn(taskId, itemList),
+                handleCheck: handlers.handleCheck,
+            }
+        );
+        openModal(
             view,
-            modal,
-            handleEdit: () => {
-                handlers.handleEditTaskBtn(taskCard, (editedTask) => refreshModal(createTaskView(editedTask), modal));
-            },
-        });
+            modal
+        );
     }
     function renderNav(viewId = content.querySelector("div").dataset.id) {
         const list = document.createElement("ul");
@@ -144,7 +149,7 @@ export function UIController(service) {
     }
 
     function bindEvents() {
-        content.addEventListener("click", (e) => {
+        document.addEventListener("click", (e) => {
             const deleteButton = e.target.closest(".delete-button");
             const projectCard = e.target.closest(".project-card");
             const item = e.target.closest(".list-item");
@@ -155,8 +160,16 @@ export function UIController(service) {
             const editBtn = e.target.closest(".edit-button");
             const checkItem = e.target.closest("#check");
 
+            if (checkItem && taskView) {
+                handlers.handleCompleteCheckListItem(item, taskView);
+                return;
+            }
             if (checkItem) {
                 handlers.handleCheck(item);
+                return;
+            }
+            if (item && deleteButton && taskView) {
+                handlers.handleDelete(item, service.removeChecklistItem(taskView.dataset.id, item.dataset.id));
                 return;
             }
             if (item && deleteButton) {

@@ -69,11 +69,11 @@ export function injectSampleData(todo) {
         getRandomDateInNext20Days()
     );
 
-    sampleProjects.forEach(projectName => {
+    // sampleProjects.forEach(projectName => {
 
-        const project = todo.addItem({ type: "project", name: projectName });
+    //     const project = todo.addItem({ type: "project", name: projectName });
 
-        addTask(project);
-    });
+    //     addTask(project);
+    // });
 
 }

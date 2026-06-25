@@ -1,5 +1,6 @@
 .task-view {
     height: 60vh;
+    width: 70vw;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -22,7 +23,7 @@
 }
 
 .task-view .title-container .title {
-    width: 20ch;
+    width: 80%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -54,6 +55,13 @@
     background-color: rgba(225, 222, 222, 0);
 }
 
+.task-view .list-container .item-list .item {
+    padding-left: 4px;
+}
+.task-view .item-list .item-content {
+    gap: 24px;
+}
+
 .task-view .list-container .add-item-button {
     margin: 0;
 }
@@ -74,8 +82,7 @@
 }
 
 .task-view .bottom-section .notes-label {
-    width: 100%;
-    padding-left: 20px;
+    width: 90%;
 }
 
 .task-view .due-date,

@@ -2,6 +2,7 @@ export function createHandlers({
     service,
     createTaskForm,
     createProjectForm,
+    createCheckListForm,
     renderProjectView,
     renderNav,
     openModal,
@@ -9,10 +10,10 @@ export function createHandlers({
     createProjectCard,
     modal,
 }) {
-    function handleDelete(element) {
+    function handleDelete(element, removeElement = service.removeItem(element.dataset.id)) {
         element.classList.add("fade-out");
         setTimeout(() => element.remove(), 300);
-        service.removeItem(element.dataset.id);
+        removeElement();
     }
     function handleCreateProject(projectData) {
         const newProject = service.addItem(projectData);
@@ -25,6 +26,11 @@ export function createHandlers({
         const itemList = content.querySelector(".item-list");
         itemList.append(createTaskItem(newTask));
     }
+    function handleCreateChecklistItem(data, taskId, itemList) {
+        const newItem = service.addChecklistItem(taskId, data);
+        itemList.append(createTaskItem(newItem));
+    }
+
     function handleEditProject(projectId, projectData, projectView) {
         const editedProject = service.editItem(projectId, projectData);
         renderProjectView(editedProject.id);
@@ -56,6 +62,16 @@ export function createHandlers({
             modal
         );
     }
+    function handleAddChecklistBtn(taskId, itemList) {
+        const test = document.createElement("div");
+
+        openModal(
+            createCheckListForm({
+                onSubmit: (taskData) => handleCreateChecklistItem(taskData, taskId, itemList)
+            }),
+            modal
+        );
+    }
     function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
         const project = service.getItem(projectId);
         console.log(project)
@@ -70,8 +86,8 @@ export function createHandlers({
     function handleEditTaskBtn(taskCard, onFinish) {
         const taskId = taskCard.dataset.id;
         const task = service.getItem(taskId);
-        openModal({
-            view: createTaskForm({
+        openModal(
+            createTaskForm({
                 ...task,
                 onSubmit: (taskData) => {
                     const editedTask = handleEditTask(taskData, taskId, taskCard);
@@ -79,7 +95,7 @@ export function createHandlers({
                 }
             }),
             modal
-        });
+        );
     }
     function handleCheck(item, id = item.dataset.id) {
         service.toggleComplete(id);
@@ -88,17 +104,28 @@ export function createHandlers({
         }
         else item.classList.add("completed");
     }
+    function handleCompleteCheckListItem(item, task) {
+        const itemId = item.dataset.id;
+        const id = task.dataset.id;
+        service.toggleCheckListItemComplete(id, itemId);
+        item.classList.add("completed", "fade-out");
+        setTimeout(() => item.remove(), 300);
+        service.removeChecklistItem(id, itemId);
+    }
     return {
         handleDelete,
         handleCreateProject,
         handleCreateTask,
+        handleCreateChecklistItem,
         handleEditProject,
         handleUpdateNotes,
         handleEditTask,
         handleAddProjectBtn,
         handleAddTaskBtn,
+        handleAddChecklistBtn,
         handleEditProjectBtn,
         handleEditTaskBtn,
         handleCheck,
+        handleCompleteCheckListItem
     };
 }

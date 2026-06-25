@@ -103,7 +103,7 @@ export function createProjectView(project, tasks) {
 
     return projectView;
 }
-export function createTaskView(task, handleUpdateNotes) {
+export function createTaskView(task, { handleUpdateNotes, handleEdit, handleAddCheckListItem, handleCheck }) {
     const taskView = document.createElement("div")
     taskView.classList.add("task-view");
     taskView.dataset.id = task.id;
@@ -124,7 +124,11 @@ export function createTaskView(task, handleUpdateNotes) {
         itemListWrapper.classList.add("list-container");
         const itemList = document.createElement("ul");
         itemList.classList.add("item-list");
+        task.checklist.forEach(item => {
+            itemList.append(createTaskItem(item));
+        });
         const addChecklistBtn = createAddItemBtn("Add Checklist Item");
+        addChecklistBtn.addEventListener("click", () => handleAddCheckListItem(itemList))
         itemListWrapper.append(itemList, addChecklistBtn);
         const checklistWrapper = document.createElement("div");
         checklistWrapper.append(itemListWrapper);
@@ -177,6 +181,7 @@ export function createTaskView(task, handleUpdateNotes) {
             titleContainer.append(isImportant);
         }
         const editBtn = createEditBtn();
+        editBtn.addEventListener("click", handleEdit)
         titleContainer.append(editBtn);
         upperSection.append(titleContainer);
 
@@ -190,7 +195,6 @@ export function createTaskView(task, handleUpdateNotes) {
         return upperSection;
     }
 }
-
 
 export function createTaskItem(task) {
     const components = [];
@@ -231,7 +235,7 @@ export function createTaskItem(task) {
         components.push(isImportant);
     }
 
-    createDelBtn(components);
+    components.push(createDelBtn());
 
     content.append(...components);
     wrapper.append(content);
@@ -266,11 +270,11 @@ function createDescription(item) {
     description.textContent = item.description;
     return description;
 }
-function createDelBtn(components) {
+function createDelBtn() {
     const delBtn = document.createElement("button");
     delBtn.classList.add("delete-button");
     delBtn.textContent = "X";
-    components.push(delBtn);
+    return delBtn;
 }
 function createEditBtn() {
     const editBtn = document.createElement("button");

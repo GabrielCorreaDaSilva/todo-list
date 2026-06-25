@@ -7,24 +7,13 @@ export function createModal() {
     return modal;
 }
 
-export function openModal({ view, modal, handleEdit }) {
+export function openModal( view, modal ) {
     modal.replaceChildren(view);
     const closeModalBtn = document.createElement("button");
     closeModalBtn.textContent = "x"
     closeModalBtn.classList.add("close-modal");
-    modal.addEventListener("click", (e) => {
-        if (e.target.closest(".edit-button")) {
-            handleEdit();
-            return;
-        }
-    })
     modal.append(closeModalBtn);
     modal.showModal();
-}
-
-export function refreshModal(view, modal) {
-    const current = modal.querySelector("." + view.className);
-    current.replaceWith(view);
 }
 
 function bindEvents(modal) {
