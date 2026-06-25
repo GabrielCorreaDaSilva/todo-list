@@ -10,7 +10,7 @@ export function createHandlers({
     createProjectCard,
     modal,
 }) {
-    function handleDelete(element, removeElement = service.removeItem(element.dataset.id)) {
+    function handleDelete(element, removeElement = () => service.removeItem(element.dataset.id)) {
         element.classList.add("fade-out");
         setTimeout(() => element.remove(), 300);
         removeElement();
@@ -43,7 +43,7 @@ export function createHandlers({
         const editedTask = service.editItem(taskId, taskData);
         const editedCard = createTaskItem(editedTask);
         taskCard.replaceWith(editedCard);
-        return editedTask;
+        return editedCard;
     }
     function handleAddProjectBtn() {
         openModal(
@@ -90,8 +90,8 @@ export function createHandlers({
             createTaskForm({
                 ...task,
                 onSubmit: (taskData) => {
-                    const editedTask = handleEditTask(taskData, taskId, taskCard);
-                    onFinish?.(editedTask);
+                    const editedCard = handleEditTask(taskData, taskId, taskCard);
+                    onFinish?.(editedCard);
                 }
             }),
             modal

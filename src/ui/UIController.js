@@ -38,7 +38,7 @@ export function UIController(service) {
         const view = createTaskView(task,
             {
                 handleUpdateNotes: handlers.handleUpdateNotes,
-                handleEdit: () => handlers.handleEditTaskBtn(taskCard, () => renderTaskView(taskCard)),
+                handleEdit: () => handlers.handleEditTaskBtn(taskCard, (editedCard) => renderTaskView(editedCard)),
                 handleAddCheckListItem: (itemList) => handlers.handleAddChecklistBtn(taskId, itemList),
                 handleCheck: handlers.handleCheck,
             }
@@ -169,7 +169,7 @@ export function UIController(service) {
                 return;
             }
             if (item && deleteButton && taskView) {
-                handlers.handleDelete(item, service.removeChecklistItem(taskView.dataset.id, item.dataset.id));
+                handlers.handleDelete(item, () => service.removeChecklistItem(taskView.dataset.id, item.dataset.id));
                 return;
             }
             if (item && deleteButton) {
@@ -191,10 +191,6 @@ export function UIController(service) {
             }
             if (editBtn && projectView) {
                 handlers.handleEditProjectBtn(projectView);
-                return;
-            }
-            if (editBtn && taskView) {
-                handlers.handleEditTaskBtn(item, item.dataset.id);
                 return;
             }
             if (projectCard) {
