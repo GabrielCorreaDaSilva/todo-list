@@ -19,7 +19,7 @@ export function createProjectCard(project) {
     taskCounter.textContent = `Remaining's: ${project.remaining || "0"}`;
     components.push(taskCounter);
 
-    createDelBtn(components);
+    components.push(createDelBtn());
 
     projectCard.append(...components);
 
@@ -147,7 +147,7 @@ export function createTaskView(task, { handleUpdateNotes, handleEdit, handleAddC
             id: "notes",
             name: "notes",
             placeholder: "",
-            maxLength: 240,
+            maxLength: 1200,
             required: true
         });
         notes.value = task.notes;
