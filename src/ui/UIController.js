@@ -25,24 +25,27 @@ export function UIController(service) {
 
     function renderAllProjectsView() {
         const projectList = service.getProjects();
-        content.replaceChildren(createAllProjectsView(projectList));
+        content.replaceChildren(createAllProjectsView(projectList, {
+            ...handlers, handleDelete: (projectCard) => {
+                handlers.handleDelete(projectCard);
+                renderNav();
+            }
+        }));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
         const items = service.getChildren(projectId);
-        content.replaceChildren(createProjectView(project, items));
+        content.replaceChildren(createProjectView(project, items, handlers));
     }
-    function renderTaskView(taskCard) {
-        const taskId = taskCard.dataset.id;
+    function renderTaskView(taskId) {
         const task = service.getItem(taskId);
-        const view = createTaskView(task,
+        const view = createTaskView(
+            task,
             {
-                handleUpdateNotes: handlers.handleUpdateNotes,
-                handleEdit: () => handlers.handleEditTaskBtn(taskCard, (editedCard) => renderTaskView(editedCard)),
-                handleAddCheckListItem: (itemList) => handlers.handleAddChecklistBtn(taskId, itemList),
-                handleCheck: handlers.handleCheck,
-            }
-        );
+                ...handlers,
+                handleEditTaskBtn: (taskCard) => handlers.handleEditTaskBtn(
+                    taskCard, () => renderTaskView(taskId)),
+            });
         openModal(
             view,
             modal
@@ -149,56 +152,16 @@ export function UIController(service) {
     }
 
     function bindEvents() {
-        document.addEventListener("click", (e) => {
-            const deleteButton = e.target.closest(".delete-button");
-            const projectCard = e.target.closest(".project-card");
-            const item = e.target.closest(".list-item");
+        content.addEventListener("click", (e) => {
+            const clickedProjectCard = e.target.closest(".project-card");
+            const clickedItem = e.target.closest(".list-item");
             const projectView = e.target.closest(".project-view");
-            const allProjectsView = e.target.closest(".all-projects-view");
-            const taskView = e.target.closest(".task-view");
-            const addBtn = e.target.closest(".add-item-button");
-            const editBtn = e.target.closest(".edit-button");
-            const checkItem = e.target.closest("#check");
-
-            if (checkItem && taskView) {
-                handlers.handleCompleteCheckListItem(item, taskView);
+            if (clickedProjectCard) {
+                renderProjectView(clickedProjectCard.dataset.id);
                 return;
             }
-            if (checkItem) {
-                handlers.handleCheck(item);
-                return;
-            }
-            if (item && deleteButton && taskView) {
-                handlers.handleDelete(item, () => service.removeChecklistItem(taskView.dataset.id, item.dataset.id));
-                return;
-            }
-            if (item && deleteButton) {
-                handlers.handleDelete(item);
-                return;
-            }
-            if (projectCard && deleteButton) {
-                handlers.handleDelete(projectCard);
-                renderNav();
-                return;
-            }
-            if (addBtn && allProjectsView) {
-                handlers.handleAddProjectBtn();
-                return;
-            }
-            if (addBtn && projectView) {
-                handlers.handleAddTaskBtn(projectView.dataset.id);
-                return;
-            }
-            if (editBtn && projectView) {
-                handlers.handleEditProjectBtn(projectView);
-                return;
-            }
-            if (projectCard) {
-                renderProjectView(projectCard.dataset.id);
-                return;
-            }
-            if (item && projectView) {
-                renderTaskView(item);
+            if (clickedItem) {
+                renderTaskView(clickedItem.dataset.id);
                 return;
             }
         });
@@ -206,8 +169,8 @@ export function UIController(service) {
 
     function init() {
         renderProjectView("personal");
-        bindEvents();
         renderNav();
+        bindEvents();
     }
 
     document.addEventListener("DOMContentLoaded", () => {

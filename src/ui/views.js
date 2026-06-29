@@ -26,10 +26,26 @@ export function createProjectCard(project) {
     return projectCard;
 }
 
-export function createAllProjectsView(projects) {
+export function createAllProjectsView(projects, handlers) {
+    const { handleDelete, handleAddProjectBtn } = handlers;
+
     const todoView = document.createElement("div");
     todoView.classList.add("all-projects-view");
     todoView.dataset.id = "all projects";
+    todoView.addEventListener("click", (e) => {
+        const clickedDelete = e.target.closest(".delete-button");
+        const clickedAddtask = e.target.closest(".add-item-button");
+        const item = e.target.closest(".project-card");
+        if (clickedDelete) {
+            e.stopPropagation();
+            handleDelete(item);
+            return;
+        }
+        if (clickedAddtask) {
+            handleAddProjectBtn();
+            return;
+        }
+    });
 
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
@@ -54,13 +70,39 @@ export function createAllProjectsView(projects) {
 
     return todoView;
 }
-export function createProjectView(project, tasks) {
+export function createProjectView(project, tasks, handlers) {
+    const { handleCheck, handleAddTaskBtn, handleEditProjectBtn, handleDelete } = handlers;
     const components = [];
     const isSystem = project.type === "system";
 
     const projectView = document.createElement("div")
     projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
+    projectView.addEventListener("click", (e) => {
+        const clickedCheckbox = e.target.closest(".check");
+        const clickedDelete = e.target.closest(".delete-button");
+        const clickedAddtask = e.target.closest(".add-item-button");
+        const clickedEditProject = e.target.closest(".edit-button");
+        const item = e.target.closest(".list-item");
+        if (clickedCheckbox) {
+            e.stopPropagation();
+            handleCheck(item);
+            return;
+        }
+        if (clickedDelete) {
+            e.stopPropagation();
+            handleDelete(item);
+            return;
+        }
+        if (clickedAddtask) {
+            handleAddTaskBtn(project.id);
+            return;
+        }
+        if (clickedEditProject) {
+            handleEditProjectBtn(projectView);
+            return;
+        }
+    });
 
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
@@ -93,6 +135,7 @@ export function createProjectView(project, tasks) {
     tasks.forEach(task => {
         itemList.append(createTaskItem(task));
     });
+
     itemListWrapper.append(itemList);
     components.push(itemListWrapper);
 
@@ -103,17 +146,22 @@ export function createProjectView(project, tasks) {
 
     return projectView;
 }
-export function createTaskView(task, { handleUpdateNotes, handleEdit, handleAddCheckListItem, handleCheck }) {
+export function createTaskView(task, handlers) {
+    const { handleEditTaskBtn, handleAddChecklistBtn, handleUpdateNotes, handleCompleteCheckListItem, handleDelete } = handlers;
+
     const taskView = document.createElement("div")
     taskView.classList.add("task-view");
     taskView.dataset.id = task.id;
-
+    taskView.addEventListener("click", (e) => {
+        const clickedCheckbox = e.target.closest(".check");
+        const item = e.target.closest(".list-item")
+        if (clickedCheckbox) {
+            handleCompleteCheckListItem(item, task.id);
+        }
+    });
     const upperSection = createUpper();
-
     const bottomSection = createBottom();
-
     taskView.append(upperSection, bottomSection)
-
     return taskView;
 
     function createBottom() {
@@ -128,7 +176,7 @@ export function createTaskView(task, { handleUpdateNotes, handleEdit, handleAddC
             itemList.append(createTaskItem(item));
         });
         const addChecklistBtn = createAddItemBtn("Add Checklist Item");
-        addChecklistBtn.addEventListener("click", () => handleAddCheckListItem(itemList))
+        addChecklistBtn.addEventListener("click", () => handleAddChecklistBtn(task.id, itemList))
         itemListWrapper.append(itemList, addChecklistBtn);
         const checklistWrapper = document.createElement("div");
         checklistWrapper.append(itemListWrapper);
@@ -181,7 +229,10 @@ export function createTaskView(task, { handleUpdateNotes, handleEdit, handleAddC
             titleContainer.append(isImportant);
         }
         const editBtn = createEditBtn();
-        editBtn.addEventListener("click", handleEdit)
+        editBtn.addEventListener("click", () => {
+            const taskCard = document.querySelector(`[data-id="${task.id}"]`);
+            handleEditTaskBtn(taskCard);
+        })
         titleContainer.append(editBtn);
         upperSection.append(titleContainer);
 
@@ -209,9 +260,11 @@ export function createTaskItem(task) {
     content.classList.add("item-content");
 
     const checkbox = document.createElement("input");
+    checkbox.classList.add("check");
     Object.assign(checkbox, {
         id: "check",
         type: "checkbox",
+        class: "check"
     });
 
     if (task.isCompleted) {
@@ -234,8 +287,8 @@ export function createTaskItem(task) {
         const isImportant = createImportant();
         components.push(isImportant);
     }
-
-    components.push(createDelBtn());
+    if (task.type === "task")
+        components.push(createDelBtn());
 
     content.append(...components);
     wrapper.append(content);

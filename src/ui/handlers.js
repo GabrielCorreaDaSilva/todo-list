@@ -63,8 +63,6 @@ export function createHandlers({
         );
     }
     function handleAddChecklistBtn(taskId, itemList) {
-        const test = document.createElement("div");
-
         openModal(
             createCheckListForm({
                 onSubmit: (taskData) => handleCreateChecklistItem(taskData, taskId, itemList)
@@ -104,13 +102,12 @@ export function createHandlers({
         }
         else item.classList.add("completed");
     }
-    function handleCompleteCheckListItem(item, task) {
+    function handleCompleteCheckListItem(item, taskId) {
         const itemId = item.dataset.id;
-        const id = task.dataset.id;
-        service.toggleCheckListItemComplete(id, itemId);
+        service.toggleCheckListItemComplete(taskId, itemId);
         item.classList.add("completed", "fade-out");
         setTimeout(() => item.remove(), 300);
-        service.removeChecklistItem(id, itemId);
+        service.removeChecklistItem(taskId, itemId);
     }
     return {
         handleDelete,

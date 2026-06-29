@@ -26,6 +26,31 @@
     cursor: pointer;
 }
 
+.all-projects-view .project-card {
+    cursor: pointer;
+}
+
+.all-projects-view .delete-button {
+    color: var(--gray-background);
+    background-color: transparent;
+}
+
+.all-projects-view .delete-button:hover {
+    color: white;
+    background-color: #30303060;
+}
+
+.all-projects-view .delete-button:active {
+    color: white;
+    background-color: var(--gray-background);
+}
+
+.all-projects-view .delete-button {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
 .all-projects-view .add-item-button:hover {
     background-color: rgb(149, 149, 149);
     color: white;
