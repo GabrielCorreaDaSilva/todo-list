@@ -22,9 +22,4 @@ if (savedData) {
     storage.save(service.exportData());
 }
 
-
-
 UIController(service);
-
-
-

@@ -2,6 +2,7 @@ import { formatToInputString } from "../utils/date.js";
 import { storage } from "../data/storage.js";
 
 export function todoService(todo, storage) {
+   
 
     const getTasks = () => {
         const items = todo.getItems();
@@ -94,6 +95,14 @@ export function todoService(todo, storage) {
         },
 
         removeItem: (id) => {
+            if (id === "personal") return;
+
+            const children = todo.getChildren(id);
+            children.forEach(child => {
+                const target = child.getId();
+                if (!target) return;
+                todo.removeItem(child.getId());
+            });
             const removed = todo.removeItem(id);
             storage.save(exportData());
             return removed ? mapItem(removed) : null;

@@ -3,15 +3,20 @@ import { parseInputToDate } from "../utils/date.js";
 
 export function createTodo(createProject, createTask) {
     const items = [];
+    function ensurePersonalProject() {
+        const hasPersonal = items.some(
+            item => item.getId() === "personal"
+        );
 
-
-    if (!storage.load()) {
-        const personal = createProject({
-            type: "system",
-            name: "My Tasks",
-            id: "personal"
-        });
-        items.push(personal);
+        if (!hasPersonal) {
+            items.unshift(
+                createProject({
+                    id: "personal",
+                    type: "system",
+                    name: "My Tasks",
+                })
+            );
+        }
     }
 
     function createItem(data) {
@@ -24,16 +29,20 @@ export function createTodo(createProject, createTask) {
     }
     return {
 
-        import: (savedData) => savedData.forEach(item => {
-            if (item.dueDate) {
-                item = {
-                    ...item,
-                    dueDate: parseInputToDate(item.dueDate)
-                };
-            }
-            items.push(createItem(item))
-        }),
-        getItems: () => [...items],
+        import: (savedData) => {
+            items.length = 0;
+            savedData.forEach(item => {
+                if (item.dueDate) {
+                    item = {
+                        ...item,
+                        dueDate: parseInputToDate(item.dueDate)
+                    };
+                }
+                items.push(createItem(item));
+            });
+            ensurePersonalProject();
+        },
+        getItems: () => items,
         getItem: (id) => {
             const result = items.find(item => item.getId() === id);
             return result || null;
