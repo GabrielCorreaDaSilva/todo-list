@@ -15,20 +15,24 @@ export const isWithinWeek = (date) => {
 }
 
 export const formatWeekDay = (date) => {
+    const today = new Date();
+    if (date.getDate() === today.getDate()) return "Today";
+    today.setDate(today.getDate() + 1);
+    if (date.getDate() === today.getDate()) return "Tomorow";
     return format((date), 'eee')
 }
 export const formatDayMonth = (date) => {
     return format(date, "d MMM");
 }
 export const formatToInputString = (date) => {
-    return format(date,"yyyy-MM-dd")
+    return format(date, "yyyy-MM-dd")
 }
 export function getRandomDateInNext20Days() {
-  const today = new Date();
+    const today = new Date();
 
-  const twentyDaysInMs = 20 * 24 * 60 * 60 * 1000; 
-  
-  const randomMs = Math.random() * twentyDaysInMs; 
-  
-  return new Date(today.getTime() + randomMs);
+    const twentyDaysInMs = 20 * 24 * 60 * 60 * 1000;
+
+    const randomMs = Math.random() * twentyDaysInMs;
+
+    return new Date(today.getTime() + randomMs);
 }
