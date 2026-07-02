@@ -1,6 +1,6 @@
 import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm, createCheckListForm } from "./forms.js";
-import { createModal, openModal, refreshModal } from "./modal.js";
+import { createModal, openModal, confirmModal } from "./modal.js";
 import { createHandlers } from "./handlers.js";
 
 export function UIController(service) {
@@ -27,15 +27,27 @@ export function UIController(service) {
         const projectList = service.getProjects();
         content.replaceChildren(createAllProjectsView(projectList, {
             ...handlers, handleDelete: (projectCard) => {
-                handlers.handleDelete(projectCard);
-                renderNav();
+                confirmModal(() => {
+                    handlers.handleDelete(projectCard);
+                    renderNav();
+                });
             }
+
         }));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
         const items = service.getChildren(projectId);
-        content.replaceChildren(createProjectView(project, items, handlers));
+        content.replaceChildren(
+            createProjectView(
+                project,
+                items,
+                {
+                    ...handlers,
+                    handleDelete: (item) => {
+                        confirmModal(() => handlers.handleDelete(item))
+                    }
+                }));
     }
     function renderTaskView(taskId) {
         const task = service.getItem(taskId);
