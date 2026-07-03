@@ -2,7 +2,7 @@ import { formatToInputString } from "../utils/date.js";
 import { storage } from "../data/storage.js";
 
 export function todoService(todo, storage) {
-   
+
 
     const getTasks = () => {
         const items = todo.getItems();
@@ -11,12 +11,12 @@ export function todoService(todo, storage) {
     const getTask = (id) => {
         const item = todo.getItem(id);
         return item?.getType() === "task" ? item : null;
-    }
+    };
 
     const mapCheckListItem = (item) => ({
         id: item.getId(),
         name: item.getName(),
-    })
+    });
     const mapProject = (project) => {
         const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus());
         return {
@@ -24,7 +24,7 @@ export function todoService(todo, storage) {
             name: project.getName(),
             description: project.getDescription(),
             type: project.getType(),
-            remaining: remainingTodos.length || "0",
+            remaining: remainingTodos.length || 0,
         };
     };
     const mapTask = (task) => ({
@@ -36,13 +36,23 @@ export function todoService(todo, storage) {
         isImportant: task.getIsImportant(),
         isCompleted: task.getStatus(),
         notes: task.getNotes(),
-        checklist: task.getChecklist().map(mapCheckListItem),
+        checklist: task.getChecklist().map(mapItem),
     });
+
+    const MAPPER_STRATEGY ={
+        "task": mapTask,
+        "project":mapProject,
+        "system":mapProject,
+        "checklist": mapCheckListItem,
+    };
+
     const mapItem = (item) => {
-        const type = item.getType();
-        if (type === "project" || type === "system") return mapProject(item);
-        if (type === "task" || type === "subtask") return mapTask(item);
-        return "WRONG TYPE";
+        const type = item?.getType();
+        const mapper = MAPPER_STRATEGY[type]
+        if (!mapper) {
+            throw new Error(`Unsupported item type: ${type}`);
+        }
+        return mapper(item);
     }
     const mapItemForStorage = (item) => {
         const itemData = {
@@ -63,7 +73,7 @@ export function todoService(todo, storage) {
                 isImportant: item.getIsImportant(),
                 isComplete: item.getStatus(),
                 notes: item.getNotes(),
-                checklist: item.getChecklist().map(mapCheckListItem),
+                checklist: item.getChecklist().map(mapItem),
             }
         }
         return itemData;
@@ -120,7 +130,7 @@ export function todoService(todo, storage) {
             if (!task) return null;
             const item = task.toggleCompleteChecklistItem(itemId);
             storage.save(exportData());
-            return mapCheckListItem(item);
+            return mapItem(item);
         },
         toggleComplete: (id) => {
             const item = todo.getItem(id);
@@ -132,28 +142,28 @@ export function todoService(todo, storage) {
             const task = getTask(id);
             if (!task) return null;
             const checklist = task.getChecklist();
-            return [...checklist].map(mapCheckListItem);
+            return [...checklist].map(mapItem);
         },
         addChecklistItem: (id, data) => {
             const task = getTask(id);
             if (!task) return null;
             const item = task.addChecklistItem(data)
             storage.save(exportData());
-            return mapCheckListItem(item);
+            return mapItem(item);
         },
         removeChecklistItem: (id, itemId) => {
             const task = getTask(id);
             if (!task) return null;
             const item = task.removeChecklistItem(itemId);
             storage.save(exportData());
-            return mapCheckListItem(item);
+            return mapItem(item);
         },
         updateChecklistItem: (id, itemId, data) => {
             const task = getTask(id);
             if (!task) return null;
             const item = task.updateChecklistItem(itemId, data);
             storage.save(exportData());
-            return mapCheckListItem(item);
+            return mapItem(item);
         },
     }
 }

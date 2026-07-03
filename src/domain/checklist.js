@@ -37,10 +37,11 @@ export function createChecklist() {
     }
 }
 
-function createItem({ name, id = crypto.randomUUID() }, isComplete = false) {
+function createItem({ name, id = crypto.randomUUID(), type = "checklist" }, isComplete = false) {
     return {
         setName: (newName) => newName = name,
         getName: () => name,
+        getType: () => type,
         getId: () => id,
         getStatus: () => isComplete,
         toggleComplete: () => isComplete = !isComplete,
