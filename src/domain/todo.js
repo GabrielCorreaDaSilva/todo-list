@@ -77,6 +77,7 @@ export function createTodo(createProject, createTask) {
                 const updatedChildren = childrenByParent.get(parentId).filter(id => id !== removed.getId());
                 childrenByParent.set(parentId, [updatedChildren]);
             }
+            return removed;
         },
     }
 }
