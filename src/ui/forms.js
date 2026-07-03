@@ -18,7 +18,8 @@ export function createProjectForm({ name = "", description = "", type, onSubmit 
         line,
         createName("project-name", "Name (max 32)*:", name),
         createDescription("project-description", "Description (max 240)*: ", description),
-        createButtons());
+        createButtons()
+    );
     bindEvents(form, onSubmit);
     return form;
 }
@@ -157,7 +158,6 @@ function createImportant(isImportant) {
     inputContainer.append(IsImportantInputLabel, IsImportantInput);
     return inputContainer;
 }
-
 function createButtons() {
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");

@@ -18,7 +18,7 @@ export function todoService(todo, storage) {
         name: item.getName(),
     })
     const mapProject = (project) => {
-        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus())
+        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus());
         return {
             id: project.getId(),
             name: project.getName(),

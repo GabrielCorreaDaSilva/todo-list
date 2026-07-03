@@ -3,6 +3,9 @@ import { parseInputToDate } from "../utils/date.js";
 
 export function createTodo(createProject, createTask) {
     const items = [];
+    const itemsById = new Map();
+    const childrenByParent = new Map();
+
     function ensurePersonalProject() {
         const hasPersonal = items.some(
             item => item.getId() === "personal"
@@ -27,6 +30,21 @@ export function createTodo(createProject, createTask) {
             return createProject(data);
         }
     }
+    const getItem = (id) => {
+        const result = itemsById.get(id);
+        return result || null;
+    };
+    const addItem = (item) => {
+        const newItem = createItem(item);
+        itemsById.set(newItem.getId(), newItem);
+        if (item.parentId) {
+            childrenByParent.has(item.parentId)
+                ? childrenByParent.get(item.parentId).push(item.id)
+                : childrenByParent.set(item.parentId, [item.id]);
+        };
+        return newItem;
+    }
+
     return {
 
         import: (savedData) => {
@@ -38,33 +56,27 @@ export function createTodo(createProject, createTask) {
                         dueDate: parseInputToDate(item.dueDate)
                     };
                 }
-                items.push(createItem(item));
+                addItem(item);
             });
             ensurePersonalProject();
         },
-        getItems: () => items,
-        getItem: (id) => {
-            const result = items.find(item => item.getId() === id);
-            return result || null;
-        },
-
+        getItemsById: () => itemsById,
+        getItems: () => [...itemsById.values()],
+        getItem,
         getChildren: (parentId, type = null) => {
-            return items.filter(item => item.getParentId?.() === parentId && (type === null || item.getType() === type))
+            if (!childrenByParent.has(parentId)) return [];
+            const children = childrenByParent.get(parentId);
+            return children.map(getItem);
         },
-
-        addItem: (data) => {
-            const newItem = createItem(data);
-            items.push(newItem);
-            return newItem;
-        },
+        addItem,
         removeItem: (id) => {
-            const index = items.findIndex(item => item.getId() === id);
-            if (index >= 0) {
-                const [removed] = items.splice(index, 1);
-                return removed;
+            const removed = itemsById.get(id);
+            itemsById.delete(id);
+            const parentId = removed.getParentId?.();
+            if (parentId) {
+                const updatedChildren = childrenByParent.get(parentId).filter(id => id !== removed.getId());
+                childrenByParent.set(parentId, [updatedChildren]);
             }
-
-            return null;
         },
     }
 }
