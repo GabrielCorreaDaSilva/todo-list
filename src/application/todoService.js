@@ -17,7 +17,7 @@ export function todoService(todo, storage) {
         name: item.getName(),
     });
     const mapProject = (project) => {
-        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus());
+        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus?.());
         return {
             id: project.getId(),
             name: project.getName(),
@@ -112,13 +112,8 @@ export function todoService(todo, storage) {
 
         removeItem: (id) => {
             if (id === "personal") return;
-            const children = todo.getChildren(id);
-            children.forEach(child => {
-                const target = child.getId();
-                if (!target) return;
-                todo.removeItem(child.getId());
-            });
             const removed = todo.removeItem(id);
+            console.log(mapItem(removed))
             saveData(removed);
         },
 

@@ -7,19 +7,12 @@ export function createTodo(createProject, createTask) {
     const childrenByParent = new Map();
 
     function ensurePersonalProject() {
-        const hasPersonal = items.some(
-            item => item.getId() === "personal"
-        );
-
-        if (!hasPersonal) {
-            items.unshift(
-                createProject({
-                    id: "personal",
-                    type: "system",
-                    name: "My Tasks",
-                })
-            );
-        }
+        if (itemsById.has("personal")) return;
+        addItem({
+            id: "personal",
+            type: "system",
+            name: "My Tasks",
+        });
     }
 
     function createItem(data) {
@@ -37,18 +30,16 @@ export function createTodo(createProject, createTask) {
     const addItem = (item) => {
         const newItem = createItem(item);
         itemsById.set(newItem.getId(), newItem);
-        if (item.parentId) {
-            childrenByParent.has(item.parentId)
-                ? childrenByParent.get(item.parentId).push(item.id)
-                : childrenByParent.set(item.parentId, [item.id]);
+        if (newItem.getParentId?.()) {
+            childrenByParent.has(newItem.getParentId())
+                ? childrenByParent.get(newItem.getParentId()).push(newItem.getId())
+                : childrenByParent.set(newItem.getParentId(), [newItem.getId()]);
         };
         return newItem;
     }
-
     return {
-
         import: (savedData) => {
-            items.length = 0;
+            ensurePersonalProject();
             savedData.forEach(item => {
                 if (item.dueDate) {
                     item = {
@@ -58,7 +49,6 @@ export function createTodo(createProject, createTask) {
                 }
                 addItem(item);
             });
-            ensurePersonalProject();
         },
         getItemsById: () => itemsById,
         getItems: () => [...itemsById.values()],
@@ -72,11 +62,15 @@ export function createTodo(createProject, createTask) {
         removeItem: (id) => {
             const removed = itemsById.get(id);
             itemsById.delete(id);
+            if (childrenByParent.has(id))
+                childrenByParent.delete(id);
             const parentId = removed.getParentId?.();
             if (parentId) {
                 const updatedChildren = childrenByParent.get(parentId).filter(id => id !== removed.getId());
                 childrenByParent.set(parentId, [updatedChildren]);
             }
+            console.log(itemsById.getItem?.(removed.getId()))
+            console.log(childrenByParent.getItem?.(removed.getId()))
             return removed;
         },
     }
