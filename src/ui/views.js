@@ -34,29 +34,20 @@ export function createAllProjectsView(projects, handlers) {
     todoView.dataset.id = "all projects";
     todoView.addEventListener("click", (e) => {
         const clickedDelete = e.target.closest(".delete-button");
-        const clickedAddtask = e.target.closest(".add-item-button");
+        const clickedAddProject = e.target.closest(".add-item-button");
         const item = e.target.closest(".project-card");
         if (clickedDelete) {
             e.stopPropagation();
             handleDelete(item);
             return;
         }
-        if (clickedAddtask) {
+        if (clickedAddProject) {
             handleAddProjectBtn();
             return;
         }
     });
 
-    const titleContainer = document.createElement("div");
-    titleContainer.classList.add("title-container");
-
-    const title = document.createElement("h1");
-    title.classList.add("title");
-    title.textContent = "My Projects";
-    titleContainer.append(title);
-
-    const line = document.createElement("hr");
-    line.classList.add("line");
+    const titleContainer = createTitleContainer("My Projects");
 
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
@@ -66,12 +57,13 @@ export function createAllProjectsView(projects, handlers) {
     });
 
     const addProjectBtn = createAddItemBtn("New Project")
-    todoView.append(titleContainer, line, projectContainer, addProjectBtn);
+    todoView.append(titleContainer, createLine(), projectContainer, addProjectBtn);
 
     return todoView;
 }
-export function createProjectView(project, tasks, handlers) {
-    const { handleCheck, handleAddTaskBtn, handleEditProjectBtn, handleDelete } = handlers;
+
+export function createProjectView(project, children, handlers) {
+    const { handleCheck, handleAddTaskBtn, handleAddSectionBtn, handleEditProjectBtn, handleEditSectionBtn, handleDelete } = handlers;
     const components = [];
     const isSystem = project.type === "system";
 
@@ -82,7 +74,11 @@ export function createProjectView(project, tasks, handlers) {
         const clickedCheckbox = e.target.closest(".check");
         const clickedDelete = e.target.closest(".delete-button");
         const clickedAddtask = e.target.closest(".add-item-button");
+        const clickedAddSection = e.target.closest(".add-section-button");
         const clickedEditProject = e.target.closest(".edit-button");
+        const clickedEditSection = e.target.closest(".section-container .edit-button");
+        const section = e.target.closest(".section-container");
+        const container = e.target.closest("ul");
         const item = e.target.closest(".list-item");
         if (clickedCheckbox) {
             e.stopPropagation();
@@ -95,7 +91,16 @@ export function createProjectView(project, tasks, handlers) {
             return;
         }
         if (clickedAddtask) {
-            handleAddTaskBtn(project.id);
+            handleAddTaskBtn(e.target.dataset.targetId, container);
+            return;
+        }
+        if (clickedAddSection) {
+            handleAddSectionBtn(project.id);
+            return;
+        }
+        if (clickedEditSection) {
+            console.log(section)
+            handleEditSectionBtn(section);
             return;
         }
         if (clickedEditProject) {
@@ -104,13 +109,7 @@ export function createProjectView(project, tasks, handlers) {
         }
     });
 
-    const titleContainer = document.createElement("div");
-    titleContainer.classList.add("title-container");
-
-    const title = document.createElement("h1");
-    title.classList.add("title");
-    title.textContent = project.name;
-    titleContainer.append(title);
+    const titleContainer = createTitleContainer(project.name);
 
     if (project.type !== "system") {
         const editBtn = createEditBtn();
@@ -123,29 +122,38 @@ export function createProjectView(project, tasks, handlers) {
         components.push(description);
     }
 
-    const line = document.createElement("hr");
-    line.classList.add("line");
+    const line = createLine();
     components.push(line);
+
+    const addSectionBtn = document.createElement("button");
+    addSectionBtn.classList.add("add-section-button");
+    addSectionBtn.textContent = "New Section";
+    components.push(addSectionBtn);
 
     const itemListWrapper = document.createElement("div");
     itemListWrapper.classList.add("list-container");
 
     const itemList = document.createElement("ul");
     itemList.classList.add("item-list");
-    tasks.forEach(task => {
-        itemList.append(createTaskItem(task));
-    });
+
 
     itemListWrapper.append(itemList);
     components.push(itemListWrapper);
+    projectView.append(...components);
 
-    const addTaskBtn = createAddItemBtn("Add Task")
-    components.push(addTaskBtn);
+    children.forEach(child => {
+        if (child.type === "task")
+            itemList.append(createTaskItem(child));
+        if (child.type === "section")
+            projectView.append(createSection(child));
+    });
 
-    projectView.append(...components)
+    const addTaskBtn = createAddItemBtn("Add Task", project.id);
+    itemList.append(addTaskBtn);
 
     return projectView;
 }
+
 export function createTaskView(task, handlers) {
     const { handleEditTaskBtn, handleAddChecklistBtn, handleUpdateNotes, handleCompleteCheckListItem, handleDelete } = handlers;
 
@@ -297,10 +305,47 @@ export function createTaskItem(task) {
     return li;
 }
 
-function createAddItemBtn(text) {
+export function createSection(section) {
+    const container = document.createElement("div");
+    container.classList.add("section-container");
+    container.dataset.id = section.id;
+
+    const titleContainer = createTitleContainer(section.name);
+    const editBtn = createEditBtn();
+    titleContainer.append(editBtn);
+    container.append(titleContainer, createLine());
+
+    const wrapper = document.createElement("ul");
+    wrapper.classList.add("section-items");
+    section.children.forEach(item => wrapper.append(createTaskItem(item)));
+    wrapper.append(createAddItemBtn("Add Task", section.id));
+    container.append(wrapper);
+
+    return container;
+}
+
+function createTitleContainer(titleName) {
+    const titleContainer = document.createElement("div");
+    titleContainer.classList.add("title-container");
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = titleName;
+    titleContainer.append(title);
+    return titleContainer;
+}
+
+function createLine() {
+    const line = document.createElement("hr");
+    line.classList.add("line");
+    return line;
+}
+
+function createAddItemBtn(text, parent = "none") {
     const addBtn = document.createElement("button");
     addBtn.classList.add("add-item-button");
     addBtn.textContent = text;
+    addBtn.dataset.targetId = parent;
     return addBtn;
 }
 function createImportant() {

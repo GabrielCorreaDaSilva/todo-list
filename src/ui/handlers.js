@@ -8,6 +8,8 @@ export function createHandlers({
     openModal,
     createTaskItem,
     createProjectCard,
+    createSection,
+    createSectionForm,
     modal,
 }) {
     function handleDelete(element, removeElement = () => service.removeItem(element.dataset.id)) {
@@ -21,10 +23,18 @@ export function createHandlers({
         projectContainer.append(createProjectCard(newProject));
         renderNav();
     }
-    function handleCreateTask(taskData, projectId) {
-        const newTask = service.addItem({ ...taskData, parentId: projectId });
-        const itemList = content.querySelector(".item-list");
-        itemList.append(createTaskItem(newTask));
+    function handleCreateSection(sectionData, parent) {
+        const newSection = service.addItem({ ...sectionData, parentId: parent });
+        const container = content.querySelector(".project-view");
+        container.append(createSection({
+            ...newSection,
+            children: service.getChildrenTree(newSection.id)
+        }));
+    }
+    function handleCreateTask(taskData, parent, container) {
+        const newTask = service.addItem({ ...taskData, parentId: parent });
+        const addBtn = container.lastElementChild;
+        addBtn.before(createTaskItem(newTask));
     }
     function handleCreateChecklistItem(data, taskId, itemList) {
         const newItem = service.addChecklistItem(taskId, data);
@@ -35,6 +45,13 @@ export function createHandlers({
         const editedProject = service.editItem(projectId, projectData);
         renderProjectView(editedProject.id);
         renderNav(editedProject.id);
+    }
+    function handleEditSection(data, sectionId, sectionView) {
+        const editedSection = service.editItem(sectionId, data);
+        sectionView.replaceWith(createSection({
+            ...editedSection,
+            children: service.getChildrenTree(editedSection.id)
+        }));
     }
     function handleUpdateNotes(taskId, taskData) {
         service.editItem(taskId, taskData);
@@ -53,10 +70,10 @@ export function createHandlers({
             modal
         );
     }
-    function handleAddTaskBtn(projectId) {
+    function handleAddTaskBtn(projectId, container) {
         openModal(
             createTaskForm({
-                onSubmit: (taskData) => handleCreateTask(taskData, projectId)
+                onSubmit: (taskData) => handleCreateTask(taskData, projectId, container)
             },
                 projectId),
             modal
@@ -70,13 +87,31 @@ export function createHandlers({
             modal
         );
     }
+    function handleAddSectionBtn(projectId) {
+        openModal(
+            createSectionForm({
+                onSubmit: (data) => handleCreateSection(data, projectId)
+            }),
+            modal
+        );
+    }
     function handleEditProjectBtn(projectView, projectId = projectView.dataset.id) {
         const project = service.getItem(projectId);
-        console.log(project)
         openModal(
             createProjectForm({
                 ...project,
                 onSubmit: (projectData) => handleEditProject(projectId, projectData, projectView)
+            }),
+            modal
+        );
+    }
+    function handleEditSectionBtn(sectionView, sectionId = sectionView.dataset.id) {
+        const section = service.getItem(sectionId);
+        console.log(section)
+        openModal(
+            createSectionForm({
+                ...section,
+                onSubmit: (data) => handleEditSection(data, sectionId, sectionView)
             }),
             modal
         );
@@ -118,6 +153,9 @@ export function createHandlers({
         handleUpdateNotes,
         handleEditTask,
         handleAddProjectBtn,
+        handleAddSectionBtn,
+        handleEditSection,
+        handleEditSectionBtn,
         handleAddTaskBtn,
         handleAddChecklistBtn,
         handleEditProjectBtn,

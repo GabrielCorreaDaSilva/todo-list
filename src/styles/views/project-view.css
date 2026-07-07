@@ -1,6 +1,16 @@
 .project-view {
     position: relative;
     padding: 20px;
+    overflow: auto;
+    height: 100vh;
+}
+
+.item-list {
+    direction: rtl;
+}
+
+.item-list div {
+    direction: ltr;
 }
 
 .list-item.completed .delete-button {
@@ -49,10 +59,6 @@
     pointer-events: all;
 }
 
-.add-task-line {
-    margin: 12px 0;
-}
-
 .item-content .name {
     font-weight: bold;
 }
@@ -64,4 +70,17 @@
 .project-view .is-important,
 .project-view .due-date {
     font-size: 0.75rem;
+}
+
+.item-list,
+.section-items {
+    position: relative;
+}
+
+.project-view .add-item-button {
+    margin-top: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    opacity: 1;
 }

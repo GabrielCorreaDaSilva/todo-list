@@ -1,7 +1,7 @@
 import { storage } from "../data/storage.js";
 import { parseInputToDate } from "../utils/date.js";
 
-export function createTodo(createProject, createTask) {
+export function createTodo(createProject, createTask, createSection) {
     const items = [];
     const itemsById = new Map();
     const childrenByParent = new Map();
@@ -15,13 +15,20 @@ export function createTodo(createProject, createTask) {
         });
     }
 
+    const CREATE_STRATEGY = {
+        "task": createTask,
+        "project": createProject,
+        "system": createProject,
+        "section": createSection,
+    };
+
     function createItem(data) {
-        if (data.type === "task") {
-            return createTask(data);
+        const type = data.type;
+        const create = CREATE_STRATEGY[type]
+        if (!create) {
+            throw new Error(`Unsupported item type: ${type}`);
         }
-        if (data.type === "project" || data.type === "system") {
-            return createProject(data);
-        }
+        return create(data);
     }
     const getItem = (id) => {
         const result = itemsById.get(id);
@@ -36,6 +43,21 @@ export function createTodo(createProject, createTask) {
                 : childrenByParent.set(newItem.getParentId(), [newItem.getId()]);
         };
         return newItem;
+    }
+    const getChildren = (parentId,) => {
+        if (!childrenByParent.has(parentId)) return [];
+        const children = childrenByParent.get(parentId);
+        return children.map(getItem);
+    };
+    const getChildrenTree = (parentId) => {
+        if (!childrenByParent.has(parentId)) return [];
+        const childrenIds = childrenByParent.get(parentId);
+        return childrenIds.map(childId => {
+            const item = getItem(childId);
+            const child = { item };
+            child.children = getChildrenTree(childId);
+            return child;
+        });
     }
     return {
         import: (savedData) => {
@@ -53,11 +75,8 @@ export function createTodo(createProject, createTask) {
         getItemsById: () => itemsById,
         getItems: () => [...itemsById.values()],
         getItem,
-        getChildren: (parentId, type = null) => {
-            if (!childrenByParent.has(parentId)) return [];
-            const children = childrenByParent.get(parentId);
-            return children.map(getItem);
-        },
+        getChildren,
+        getChildrenTree,
         addItem,
         removeItem: (id) => {
             const removed = itemsById.get(id);
@@ -69,8 +88,6 @@ export function createTodo(createProject, createTask) {
                 const updatedChildren = childrenByParent.get(parentId).filter(id => id !== removed.getId());
                 childrenByParent.set(parentId, [updatedChildren]);
             }
-            console.log(itemsById.getItem?.(removed.getId()))
-            console.log(childrenByParent.getItem?.(removed.getId()))
             return removed;
         },
     }

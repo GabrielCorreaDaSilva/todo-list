@@ -1,7 +1,7 @@
 import { isToday } from "date-fns";
 import { parseInputToDate, formatToInputString } from "../utils/date.js";
 
-export function createProjectForm({ name = "", description = "", type, onSubmit } = {}) {
+export function createProjectForm({ name = "", description = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("project-form", "form");
     form.dataset.type = "project";
@@ -18,6 +18,27 @@ export function createProjectForm({ name = "", description = "", type, onSubmit 
         line,
         createName("project-name", "Name (max 32)*:", name),
         createDescription("project-description", "Description (max 240)*: ", description),
+        createButtons()
+    );
+    bindEvents(form, onSubmit);
+    return form;
+}
+export function createSectionForm({ name = "", onSubmit } = {}) {
+    const form = document.createElement("form");
+    form.classList.add("section-form", "form");
+    form.dataset.type = "section";
+
+    const title = document.createElement("h1");
+    title.classList.add("title");
+    title.textContent = name || "New Section";
+
+    const line = document.createElement("hr");
+    line.classList.add("line");
+
+    form.append(
+        title,
+        line,
+        createName("section-name", "Name (max 32)*:", name),
         createButtons()
     );
     bindEvents(form, onSubmit);
@@ -184,7 +205,6 @@ function bindEvents(form, onSubmit) {
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
-
         }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());

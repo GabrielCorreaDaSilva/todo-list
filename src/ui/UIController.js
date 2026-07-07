@@ -1,5 +1,5 @@
-import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createTaskView } from "./views.js";
-import { createProjectForm, createTaskForm, createCheckListForm } from "./forms.js";
+import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
+import { createProjectForm, createTaskForm, createCheckListForm, createSectionForm } from "./forms.js";
 import { createModal, openModal, confirmModal } from "./modal.js";
 import { createHandlers } from "./handlers.js";
 
@@ -20,6 +20,8 @@ export function UIController(service) {
         openModal,
         createTaskItem,
         createProjectCard,
+        createSection,
+        createSectionForm,
         modal: formModal,
     })
 
@@ -37,7 +39,7 @@ export function UIController(service) {
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
-        const items = service.getChildren(projectId);
+        const items = service.getChildrenTree(projectId);
         content.replaceChildren(
             createProjectView(
                 project,

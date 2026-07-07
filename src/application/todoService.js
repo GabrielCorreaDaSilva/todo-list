@@ -11,7 +11,17 @@ export function todoService(todo, storage) {
         const item = todo.getItem(id);
         return item?.getType() === "task" ? item : null;
     }
-
+    const mapTask = (task) => ({
+        id: task.getId(),
+        name: task.getName(),
+        description: task.getDescription(),
+        dueDate: task.getDueDate(),
+        type: task.getType(),
+        isImportant: task.getIsImportant(),
+        isCompleted: task.getStatus(),
+        notes: task.getNotes(),
+        checklist: task.getChecklist().map(mapItem),
+    });
     const mapCheckListItem = (item) => ({
         id: item.getId(),
         name: item.getName(),
@@ -26,23 +36,25 @@ export function todoService(todo, storage) {
             remaining: remainingTodos.length || 0,
         };
     };
-    const mapTask = (task) => ({
-        id: task.getId(),
-        name: task.getName(),
-        description: task.getDescription(),
-        dueDate: task.getDueDate(),
-        type: task.getType(),
-        isImportant: task.getIsImportant(),
-        isCompleted: task.getStatus(),
-        notes: task.getNotes(),
-        checklist: task.getChecklist().map(mapItem),
-    });
+    const mapSection = (section) => ({
+        id: section.getId(),
+        name: section.getName(),
+        type: section.getType(),
+    })
+
+    const mapRecursive = (node) => {
+        const mappedNode = mapItem(node.item);
+        mappedNode.children = node.children.map(mapRecursive);
+        return mappedNode;
+    }
+
 
     const MAPPER_STRATEGY = {
         "task": mapTask,
         "project": mapProject,
         "system": mapProject,
         "checklist": mapCheckListItem,
+        "section": mapSection,
     };
 
     const mapItem = (item) => {
@@ -57,9 +69,16 @@ export function todoService(todo, storage) {
         const itemData = {
             id: item.getId(),
             name: item.getName(),
-            description: item.getDescription(),
             type: item.getType(),
         }
+
+        if(item.getDescription?.()) {
+            itemData.description = item.getDescription();
+        }
+        if(item.getParentId?.()) {
+            itemData.parentId = item.getParentId();
+        }
+
 
         if (itemData.type === "task") {
             if (item.getDueDate()) {
@@ -68,7 +87,6 @@ export function todoService(todo, storage) {
 
             return {
                 ...itemData,
-                parentId: item.getParentId(),
                 isImportant: item.getIsImportant(),
                 isComplete: item.getStatus(),
                 notes: item.getNotes(),
@@ -106,14 +124,15 @@ export function todoService(todo, storage) {
             return items.filter(item => ["project"].includes(item.getType())).map(mapItem);
         },
 
-        getChildren: (parentId, type = null) => todo.getChildren(parentId, type).map(mapItem),
+        getChildren: (parentId) => todo.getChildren(parentId).map(mapItem),
+
+        getChildrenTree: (parentId) => todo.getChildrenTree(parentId).map(mapRecursive),
 
         getItem: (id) => todo.getItem(id) ? mapItem(todo.getItem(id)) : null,
 
         removeItem: (id) => {
             if (id === "personal") return;
             const removed = todo.removeItem(id);
-            console.log(mapItem(removed))
             saveData(removed);
         },
 
