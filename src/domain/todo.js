@@ -44,7 +44,26 @@ export function createTodo(createProject, createTask, createSection) {
         };
         return newItem;
     }
-    const getChildren = (parentId,) => {
+    const removeItem = (id) => {
+        const removed = itemsById.get(id);
+        if (!removed) return null;
+
+        childrenByParent.get(id)?.forEach(removeItem);
+        childrenByParent.delete(id);
+
+        const parentId = removed.getParentId?.();
+        if (parentId) {
+            const updatedChildren =
+                childrenByParent
+                    .get(parentId)
+                    .filter(childId => childId !== id);
+            childrenByParent.set(parentId, updatedChildren);
+        }
+        itemsById.delete(id);
+
+        return removed;
+    }
+    const getChildren = (parentId) => {
         if (!childrenByParent.has(parentId)) return [];
         const children = childrenByParent.get(parentId);
         return children.map(getItem);
@@ -78,17 +97,6 @@ export function createTodo(createProject, createTask, createSection) {
         getChildren,
         getChildrenTree,
         addItem,
-        removeItem: (id) => {
-            const removed = itemsById.get(id);
-            itemsById.delete(id);
-            if (childrenByParent.has(id))
-                childrenByParent.delete(id);
-            const parentId = removed.getParentId?.();
-            if (parentId) {
-                const updatedChildren = childrenByParent.get(parentId).filter(id => id !== removed.getId());
-                childrenByParent.set(parentId, [updatedChildren]);
-            }
-            return removed;
-        },
+        removeItem,
     }
 }
