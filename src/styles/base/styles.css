@@ -24,7 +24,6 @@ html {
 }
 
 body {
-    margin: 0 5vw;
     background-color: white;
     display: grid;
     grid-template-columns: 300px 1fr;
