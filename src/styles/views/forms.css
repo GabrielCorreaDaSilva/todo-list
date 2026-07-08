@@ -93,14 +93,14 @@ input:-webkit-autofill:active {
     flex: 100%;
 }
 
-.buttons-container {
+.form .buttons-container {
     place-self: center;
     display: flex;
     flex-direction: row;
     gap: 18px;
 }
 
-.buttons-container button {
+.form .buttons-container button {
     background-color: var(--gray-background);
     color: white;
     padding: 10px;
@@ -109,7 +109,7 @@ input:-webkit-autofill:active {
     cursor: pointer;
 }
 
-.buttons-container button:hover {
+.form .buttons-container button:hover {
     background-color: #4b4b4bdd;
 }
 

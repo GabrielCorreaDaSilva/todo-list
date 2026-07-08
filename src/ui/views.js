@@ -78,8 +78,9 @@ export function createProjectView(project, children, handlers) {
         const clickedEditProject = e.target.closest(".edit-button");
         const clickedEditSection = e.target.closest(".section-container .edit-button");
         const section = e.target.closest(".section-container");
-        const container = e.target.closest("ul");
+        const list = e.target.closest("ul");
         const item = e.target.closest(".list-item");
+        const container = e.target.closest(".container");
         if (clickedCheckbox) {
             e.stopPropagation();
             handleCheck(item);
@@ -87,11 +88,11 @@ export function createProjectView(project, children, handlers) {
         }
         if (clickedDelete) {
             e.stopPropagation();
-            handleDelete(item);
+            handleDelete(container);
             return;
         }
         if (clickedAddtask) {
-            handleAddTaskBtn(e.target.dataset.targetId, container);
+            handleAddTaskBtn(e.target.dataset.targetId, list);
             return;
         }
         if (clickedAddSection) {
@@ -99,7 +100,6 @@ export function createProjectView(project, children, handlers) {
             return;
         }
         if (clickedEditSection) {
-            console.log(section)
             handleEditSectionBtn(section);
             return;
         }
@@ -112,8 +112,10 @@ export function createProjectView(project, children, handlers) {
     const titleContainer = createTitleContainer(project.name);
 
     if (project.type !== "system") {
-        const editBtn = createEditBtn();
-        titleContainer.append(editBtn);
+        const buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("buttons-container");
+        titleContainer.append(buttonContainer);
+        buttonContainer.append(createEditBtn());
     }
     components.push(titleContainer);
 
@@ -125,17 +127,13 @@ export function createProjectView(project, children, handlers) {
     const line = createLine();
     components.push(line);
 
-    const addSectionBtn = document.createElement("button");
-    addSectionBtn.classList.add("add-section-button");
-    addSectionBtn.textContent = "New Section";
-    components.push(addSectionBtn);
+    components.push(createAddSection());
 
     const itemListWrapper = document.createElement("div");
     itemListWrapper.classList.add("list-container");
 
     const itemList = document.createElement("ul");
     itemList.classList.add("item-list");
-
 
     itemListWrapper.append(itemList);
     components.push(itemListWrapper);
@@ -152,6 +150,20 @@ export function createProjectView(project, children, handlers) {
     itemList.append(addTaskBtn);
 
     return projectView;
+
+    function createAddSection() {
+        const addSectionBtn = document.createElement("button");
+        addSectionBtn.classList.add("add-section-button");
+        const addSectionText = document.createElement("p");
+        addSectionText.classList.add("text");
+        addSectionText.textContent = "New Section";
+        addSectionBtn.append(addSectionText);
+
+        const addSectionWrapper = document.createElement("div");
+        addSectionWrapper.classList.add("add-section-container");
+        addSectionWrapper.append(addSectionBtn);
+        return addSectionWrapper;
+    }
 }
 
 export function createTaskView(task, handlers) {
@@ -258,7 +270,7 @@ export function createTaskView(task, handlers) {
 export function createTaskItem(task) {
     const components = [];
     const li = document.createElement("li");
-    li.classList.add("list-item");
+    li.classList.add("list-item", "container");
     li.dataset.id = task.id;
 
     const wrapper = document.createElement("button");
@@ -307,12 +319,15 @@ export function createTaskItem(task) {
 
 export function createSection(section) {
     const container = document.createElement("div");
-    container.classList.add("section-container");
+    container.classList.add("section-container", "container");
     container.dataset.id = section.id;
 
     const titleContainer = createTitleContainer(section.name);
-    const editBtn = createEditBtn();
-    titleContainer.append(editBtn);
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("buttons-container");
+    buttonContainer.append(createEditBtn(), createDelBtn());
+    titleContainer.append(buttonContainer);
+
     container.append(titleContainer, createLine());
 
     const wrapper = document.createElement("ul");

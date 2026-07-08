@@ -3,13 +3,18 @@
     padding: 20px;
     overflow: auto;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-x: hidden;
 }
 
 .item-list {
     direction: rtl;
 }
 
-.item-list div {
+.item-list div,
+.item-list button {
     direction: ltr;
 }
 
@@ -26,7 +31,7 @@
     transition: all ease 0.2s;
 }
 
-.item .delete-button {
+.project-view .delete-button {
     color: var(--gray-background);
     background-color: transparent;
 }
@@ -36,7 +41,7 @@
     background-color: transparent;
 }
 
-.item .delete-button:hover {
+.project-view .delete-button:hover {
     color: white;
     background-color: #30303060;
 }
@@ -45,7 +50,7 @@
     background-color: #2b6cb060;
 }
 
-.item .delete-button:active {
+.project-view .delete-button:active {
     color: white;
     background-color: var(--gray-background);
 }
@@ -83,4 +88,93 @@
     bottom: 0;
     z-index: 10;
     opacity: 1;
+}
+
+.project-view .section-container {
+    margin-top: 26px;
+    position: relative;
+}
+
+.project-view .section-container .line {
+    margin-bottom: 8px;
+}
+
+.project-view .section-container .title {
+    font-size: 1.8rem;
+    color: var(--gray-background);
+}
+
+.project-view .add-section-container {
+    display: flex;
+    justify-content: right;
+}
+
+.project-view .add-section-button {
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background-color: rgb(225, 225, 225);
+    color: gray;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+}
+.project-view .add-section-button:hover {
+    background-color: gray;
+    color: white;
+    font-size: 1.0rem;
+}
+
+.project-view .add-section-button .text {
+    max-width: 0;
+    color: transparent;
+    white-space: nowrap;
+    transition:
+        max-width .3s ease,
+        transform .3s ease,
+        opacity .3s ease;
+    opacity: 0;
+    transform: translateX(-20px);
+}
+.project-view .add-section-button:hover .text {
+    max-width: 140px;
+    color: white;
+    opacity: 1;
+    transform: translateX(0);
+}
+.project-view .add-section-button::before {
+    background-color: gray;
+    display: inline-block;
+    font-size: 1.0rem;
+    margin: 0;
+    top: 0;
+    left: 1px;
+    transition: margin-right .3s ease;
+}
+.project-view .add-section-button:hover::before {
+    background-color: white;
+    margin-right: 10px;
+    top: 2px;
+}
+
+.project-view .add-section-button:active {
+    background-color: rgb(173, 173, 173);
+}
+
+.project-view .line {
+    margin-bottom: 0;
+}
+
+.project-view .buttons-container {
+    display: flex;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    align-items: center;
+}
+.project-view .buttons-container button {
+    position:static;
+}
+.project-view .title-container {
+    position:relative;
 }
