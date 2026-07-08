@@ -27,7 +27,7 @@ export function todoService(todo, storage) {
         name: item.getName(),
     });
     const mapProject = (project) => {
-        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus?.());
+        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus?.() && item.getType() === "task");
         return {
             id: project.getId(),
             name: project.getName(),
@@ -47,7 +47,6 @@ export function todoService(todo, storage) {
         mappedNode.children = node.children.map(mapRecursive);
         return mappedNode;
     }
-
 
     const MAPPER_STRATEGY = {
         "task": mapTask,

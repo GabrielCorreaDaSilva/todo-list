@@ -172,6 +172,7 @@ export function UIController(service) {
             const projectView = e.target.closest(".project-view");
             if (clickedProjectCard) {
                 renderProjectView(clickedProjectCard.dataset.id);
+                renderNav(clickedProjectCard.dataset.id)
                 return;
             }
             if (clickedItem) {

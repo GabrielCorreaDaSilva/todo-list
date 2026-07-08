@@ -56,3 +56,17 @@
 .confirm-modal .title {
     padding-bottom: 20px;
 }
+
+.modal .buttons-container {
+    place-self: center;
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+}
+.modal .buttons-container button {
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
