@@ -10,28 +10,32 @@
 }
 
 .list-item {
-    transition: all ease 0.8s;
+    transition: all ease 0.2s;
+    border-radius: 6px;
+    border: 1px solid rgba(176, 176, 176, 0.557);
+    margin: 0 10px;
 }
-
+.list-item .name {
+    color: var(--gray-background);
+}
 
 .item-content {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
-.item,
-.add-item-button {
+.list-item .item,
+.list-item .add-item-button {
     padding: 16px;
-    border-radius: 6px;
     transition: all 0.1s ease;
     font-size: 1.15rem;
     font-family: 'Times New Roman', Times, serif;
     width: 100%;
     text-align: left;
     cursor: pointer;
-    border: solid 1px rgba(167, 166, 166, 0.438);
     background-color: transparent;
+    border: none;
 }
 
 .item {
@@ -54,29 +58,28 @@
     letter-spacing: 1.2rem;
 }
 
-.list-item button:hover {
+.list-item:not(.dragging):hover {
     background-color: rgba(248, 248, 248, 0.716);
 }
 
-.list-item button:hover {
+.list-item:not(.dragging):hover {
     transform: translate(0.5%);
 }
 
-.list-item button:hover {
+.list-item:not(.dragging):hover {
     transform: scale(1.005);
 }
 
-.list-item {
-    padding: 0px 10px;
-}
-
-.completed .item {
-    color: rgba(5, 75, 239, 0.845);
+.completed {
     background-color: rgba(1, 124, 255, 0.116);
     border-color: rgba(5, 75, 239, 0.383);
 }
 
-.completed .item:hover {
+.completed .name {
+    color: rgba(5, 75, 239, 0.845);
+}
+
+.completed:not(.dragging):hover {
     color: rgba(5, 75, 239, 0.845);
     background-color: rgba(1, 124, 255, 0.198);
     border-color: rgba(5, 75, 239, 0.383);

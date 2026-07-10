@@ -11,6 +11,7 @@
 
 .item-list {
     direction: rtl;
+    scrollbar-gutter: stable;
 }
 
 .item-list div,
@@ -185,7 +186,7 @@
     position: static;
 }
 
-.project-view .title-container, 
+.project-view .title-container,
 .project-view .upper {
     position: relative;
 }

@@ -1,3 +1,5 @@
+import { th } from "date-fns/locale";
+
 export function createHandlers({
     service,
     createTaskForm,
@@ -12,9 +14,23 @@ export function createHandlers({
     createSectionForm,
     modal,
 }) {
+    function handleSaveState(lists) {
+
+        const newState = lists.map(list => {
+
+            const children = [...list.querySelectorAll(".list-item:not(.dragging):not(.add-row)")];
+            
+
+            return ({
+                id: list.dataset.id,
+                childrenId: children.map(element => element.dataset.id),
+            })
+        });
+        newState.forEach(parent => service.editChildren(parent.id, parent.childrenId));
+    }
     function handleDelete(element, removeElement = () => service.removeItem(element.dataset.id)) {
         element.classList.add("fade-out");
-        setTimeout(() => element.remove(), 300);
+        setTimeout(() => element.remove(), 500);
         removeElement();
     }
     function handleCreateProject(projectData) {
@@ -146,6 +162,7 @@ export function createHandlers({
         service.removeChecklistItem(taskId, itemId);
     }
     return {
+        handleSaveState,
         handleDelete,
         handleCreateProject,
         handleCreateTask,

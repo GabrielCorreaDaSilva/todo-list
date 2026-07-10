@@ -81,7 +81,7 @@ export function createTodo(createProject, createTask, createSection) {
     return {
         import: (savedData) => {
             ensurePersonalProject();
-            savedData.forEach(item => {
+            savedData.itemsById.forEach(item => {
                 if (item.dueDate) {
                     item = {
                         ...item,
@@ -90,6 +90,24 @@ export function createTodo(createProject, createTask, createSection) {
                 }
                 addItem(item);
             });
+            savedData.childrenByParent.forEach(item => {
+                const { parentId, children } = item;
+                if (parentId)
+                    childrenByParent.set(parentId, children);
+            });
+            console.log(childrenByParent.get("personal"))
+        },
+        getChildrenByParent: () => {
+            return Array.from(childrenByParent, ([key, value]) => ({
+                parentId: key,
+                children: value
+            }));
+        },
+        editChildren: (parentId, childrenId, save) => {
+            
+            childrenByParent.set(parentId, childrenId);
+            save();
+            console.log(childrenByParent.get(parentId))
         },
         getItemsById: () => itemsById,
         getItems: () => [...itemsById.values()],

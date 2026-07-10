@@ -64,11 +64,12 @@ export function createAllProjectsView(projects, handlers) {
 }
 
 export function createProjectView(project, children, handlers) {
-    const { handleCheck, handleAddTaskBtn, handleAddSectionBtn, handleEditProjectBtn, handleEditSectionBtn, handleDelete } = handlers;
+    const { handleCheck, handleAddTaskBtn, handleAddSectionBtn, handleEditProjectBtn, handleEditSectionBtn, handleDelete, handleSaveState } = handlers;
     const components = [];
     const isSystem = project.type === "system";
 
-    const projectView = document.createElement("div")
+    const projectView = document.createElement("div");
+    bindDraggableEvents(projectView, handleSaveState);
     projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
     projectView.addEventListener("click", (e) => {
@@ -93,6 +94,7 @@ export function createProjectView(project, children, handlers) {
             return;
         }
         if (clickedAddtask) {
+            e.stopPropagation();
             handleAddTaskBtn(e.target.dataset.targetId, list);
             return;
         }
@@ -138,6 +140,7 @@ export function createProjectView(project, children, handlers) {
 
     const itemList = document.createElement("ul");
     itemList.classList.add("item-list");
+    itemList.dataset.id = project.id;
 
     itemListWrapper.append(itemList);
     components.push(itemListWrapper);
@@ -152,7 +155,11 @@ export function createProjectView(project, children, handlers) {
 
     const addTaskBtn = createAddItemBtn("Add Task", project.id);
     const container = wrapWithListItem(addTaskBtn);
+    container.classList.add("add-row");
     itemList.append(container);
+
+
+
 
     return projectView;
 
@@ -174,7 +181,8 @@ export function createProjectView(project, children, handlers) {
 export function createTaskView(task, handlers) {
     const { handleEditTaskBtn, handleAddChecklistBtn, handleUpdateNotes, handleCompleteCheckListItem, handleDelete } = handlers;
 
-    const taskView = document.createElement("div")
+    const taskView = document.createElement("div");
+    bindDraggableEvents(taskView);
     taskView.classList.add("task-view");
     taskView.dataset.id = task.id;
     taskView.addEventListener("click", (e) => {
@@ -197,9 +205,8 @@ export function createTaskView(task, handlers) {
         itemListWrapper.classList.add("list-container");
         const itemList = document.createElement("ul");
         itemList.classList.add("item-list");
-        task.checklist.forEach(item => {
-            itemList.append(createTaskItem(item));
-        });
+        itemList.dataset.id = task.id;
+        task.checklist.forEach(item => itemList.append(createTaskItem(item)));
         const addChecklistBtn = wrapWithListItem(createAddItemBtn("Add Checklist Item"));
         addChecklistBtn.addEventListener("click", () => handleAddChecklistBtn(task.id, itemList));
         itemList.append(addChecklistBtn);
@@ -278,6 +285,7 @@ export function createTaskItem(task) {
     const li = document.createElement("li");
     li.classList.add("list-item", "container");
     li.dataset.id = task.id;
+    li.draggable = "true";
 
     const wrapper = document.createElement("button");
     wrapper.classList.add("item");
@@ -337,18 +345,21 @@ export function createSection(section) {
     container.append(titleContainer, createLine());
 
     const wrapper = document.createElement("ul");
-    wrapper.classList.add("section-items");
+    wrapper.classList.add("section-items", "item-list");
+    wrapper.dataset.id = section.id;
     section.children.forEach(item => wrapper.append(createTaskItem(item)));
-    wrapper.append(wrapWithListItem(createAddItemBtn("Add Task", section.id)));
+    const li = wrapWithListItem(createAddItemBtn("Add Task", section.id));
+    li.classList.add("add-row")
+    wrapper.append(li);
     container.append(wrapper);
 
     return container;
 }
 
-function wrapWithListItem(addTaskBtn) {
+function wrapWithListItem(element) {
     const container = document.createElement("li");
     container.classList.add("list-item", "container");
-    container.append(addTaskBtn);
+    container.append(element);
     return container;
 }
 
@@ -407,4 +418,34 @@ function createEditBtn() {
     editBtn.classList.add("edit-button");
     editBtn.innerHTML = EditIcon;
     return editBtn;
+}
+
+
+function bindDraggableEvents(view, saveState) {
+    const initSiblingsList = (e) => {
+        e.preventDefault();
+        const itemDragged = document.querySelector(".dragging");
+        const currentList = itemDragged.closest(".item-list");
+        const addRow = currentList.querySelector(".add-row")
+        const siblings = [...currentList.querySelectorAll(".list-item:not(.dragging):not(.add-row)")];
+
+        const nextSibling = siblings.find(sibling => {
+            const box = sibling.getBoundingClientRect();
+            return e.clientY < box.top + box.height / 2;
+        });
+
+        if (!nextSibling) {
+            currentList.insertBefore(itemDragged, addRow);
+        } else {
+            currentList.insertBefore(itemDragged, nextSibling);
+        }
+    }
+    view.addEventListener("dragstart", (e) => {
+        setTimeout(() => e.target.classList.add("dragging"), 0);
+    });
+    view.addEventListener("dragend", (e) => {
+        e.target.classList.remove("dragging");
+        saveState([...view.querySelectorAll(".item-list")]);
+    });
+    view.addEventListener("dragover", initSiblingsList);
 }

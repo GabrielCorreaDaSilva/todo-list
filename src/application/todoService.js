@@ -95,7 +95,13 @@ export function todoService(todo, storage) {
         return itemData;
     }
     const exportData = () => {
-        return todo.getItems().map(mapItemForStorage);
+        const itemsById = todo.getItems().map(mapItemForStorage);
+        const childrenByParent = todo.getChildrenByParent();
+        console.log(childrenByParent)
+        return ({
+            itemsById,
+            childrenByParent,
+        })
     }
 
     const saveData = (data, mapResult = (result) => Array.isArray(result) ? [...result].map(mapItem) : mapItem(result)) => {
@@ -108,9 +114,7 @@ export function todoService(todo, storage) {
         callback?.(item);
         return saveData(item);
     };
-
     return {
-
         exportData,
         addItem: (data) => {
             const item = todo.addItem(data);
@@ -145,6 +149,9 @@ export function todoService(todo, storage) {
             const task = todo.getItem(id);
             const checklistItem = task.addChecklistItem(data);
             return saveData(checklistItem);
+        },
+        editChildren: (parentId, childrenId) => {
+            todo.editChildren(parentId, childrenId, () => storage.save(exportData()));
         },
     }
 }
