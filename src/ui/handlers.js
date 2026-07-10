@@ -36,9 +36,10 @@ export function createHandlers({
         const addBtn = container.lastElementChild;
         addBtn.before(createTaskItem(newTask));
     }
-    function handleCreateChecklistItem(data, taskId, itemList) {
+    function handleCreateChecklistItem(data, taskId, container) {
         const newItem = service.addChecklistItem(taskId, data);
-        itemList.append(createTaskItem(newItem));
+        const addBtn = container.lastElementChild;
+        addBtn.before(createTaskItem(newItem));
     }
 
     function handleEditProject(projectId, projectData, projectView) {

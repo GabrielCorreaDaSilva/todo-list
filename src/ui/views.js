@@ -1,4 +1,3 @@
-import { add } from 'date-fns';
 import EditIcon from '../icons/square-edit-outline.svg';
 import { formatWeekDay, formatDayMonth, isWithinWeek } from '../utils/date.js';
 
@@ -201,9 +200,10 @@ export function createTaskView(task, handlers) {
         task.checklist.forEach(item => {
             itemList.append(createTaskItem(item));
         });
-        const addChecklistBtn = createAddItemBtn("Add Checklist Item");
-        addChecklistBtn.addEventListener("click", () => handleAddChecklistBtn(task.id, itemList))
-        itemListWrapper.append(itemList, addChecklistBtn);
+        const addChecklistBtn = wrapWithListItem(createAddItemBtn("Add Checklist Item"));
+        addChecklistBtn.addEventListener("click", () => handleAddChecklistBtn(task.id, itemList));
+        itemList.append(addChecklistBtn);
+        itemListWrapper.append(itemList);
         const checklistWrapper = document.createElement("div");
         checklistWrapper.append(itemListWrapper);
         bottomSection.append(checklistWrapper);

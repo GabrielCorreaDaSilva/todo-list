@@ -71,10 +71,10 @@ export function todoService(todo, storage) {
             type: item.getType(),
         }
 
-        if(item.getDescription?.()) {
+        if (item.getDescription?.()) {
             itemData.description = item.getDescription();
         }
-        if(item.getParentId?.()) {
+        if (item.getParentId?.()) {
             itemData.parentId = item.getParentId();
         }
 
@@ -102,7 +102,6 @@ export function todoService(todo, storage) {
         storage.save(exportData());
         return mapResult(data);
     }
-
     const withItem = (id, callback) => {
         const item = todo.getItem(id);
         if (!item) return null;
@@ -135,12 +134,17 @@ export function todoService(todo, storage) {
             saveData(removed);
         },
 
-        editItem: (id, data) => withItem(id, item => item.update(data)),
+        editItem: (id, data) => withItem(id, item => { item.update(data) }),
         toggleComplete: (id) => withItem(id, item => item.toggleComplete()),
         toggleCheckListItemComplete: (id, itemId) => withItem(id, (task) => task.toggleCompleteChecklistItem(itemId)),
         getChecklist: (id) => task.getChecklist().map(mapItem),
-        addChecklistItem: (id, data) => withItem(id, task => task.addChecklistItem(data)),
         removeChecklistItem: (id, itemId) => withItem(id, task => task.removeChecklistItem(itemId)),
-        updateChecklistItem: (id, itemId, data) => withItem(id, task => task.updateChecklistItem(itemId, data)),
+        addChecklistItem: (id, data) => {
+            const item = todo.getItem(id);
+            if (!item) return null;
+            const task = todo.getItem(id);
+            const checklistItem = task.addChecklistItem(data);
+            return saveData(checklistItem);
+        },
     }
 }

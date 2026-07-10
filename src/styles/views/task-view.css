@@ -58,6 +58,10 @@
 .task-view .list-container .item-list .item {
     padding-left: 4px;
 }
+.task-view .item-list  {
+    padding: 10px;
+    overflow: auto;
+}
 .task-view .item-list .item-content {
     gap: 24px;
 }
