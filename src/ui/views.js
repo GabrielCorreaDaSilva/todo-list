@@ -1,3 +1,4 @@
+import { add } from 'date-fns';
 import EditIcon from '../icons/square-edit-outline.svg';
 import { formatWeekDay, formatDayMonth, isWithinWeek } from '../utils/date.js';
 
@@ -56,7 +57,8 @@ export function createAllProjectsView(projects, handlers) {
         projectContainer.append(createProjectCard(project));
     });
 
-    const addProjectBtn = createAddItemBtn("New Project")
+    const addProjectBtn = createAddItemBtn("New Project");
+
     todoView.append(titleContainer, createLine(), projectContainer, addProjectBtn);
 
     return todoView;
@@ -110,22 +112,25 @@ export function createProjectView(project, children, handlers) {
     });
 
     const titleContainer = createTitleContainer(project.name);
+    const upperSection = document.createElement("div");
+    upperSection.classList.add("upper");
+    upperSection.append(titleContainer);
 
     if (project.type !== "system") {
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("buttons-container");
-        titleContainer.append(buttonContainer);
+        upperSection.append(buttonContainer);
         buttonContainer.append(createEditBtn());
     }
-    components.push(titleContainer);
 
     if (project.description) {
         const description = createDescription(project);
-        components.push(description);
+        upperSection.append(description);
     }
 
     const line = createLine();
-    components.push(line);
+    upperSection.append(line);
+    components.push(upperSection);
 
     components.push(createAddSection());
 
@@ -147,7 +152,8 @@ export function createProjectView(project, children, handlers) {
     });
 
     const addTaskBtn = createAddItemBtn("Add Task", project.id);
-    itemList.append(addTaskBtn);
+    const container = wrapWithListItem(addTaskBtn);
+    itemList.append(container);
 
     return projectView;
 
@@ -333,9 +339,16 @@ export function createSection(section) {
     const wrapper = document.createElement("ul");
     wrapper.classList.add("section-items");
     section.children.forEach(item => wrapper.append(createTaskItem(item)));
-    wrapper.append(createAddItemBtn("Add Task", section.id));
+    wrapper.append(wrapWithListItem(createAddItemBtn("Add Task", section.id)));
     container.append(wrapper);
 
+    return container;
+}
+
+function wrapWithListItem(addTaskBtn) {
+    const container = document.createElement("li");
+    container.classList.add("list-item", "container");
+    container.append(addTaskBtn);
     return container;
 }
 

@@ -99,6 +99,10 @@
     margin-bottom: 8px;
 }
 
+.project-view .title-container {
+    padding-bottom: 2px;
+}
+
 .project-view .section-container .title {
     font-size: 1.8rem;
     color: var(--gray-background);
@@ -119,6 +123,7 @@
     cursor: pointer;
     display: flex;
 }
+
 .project-view .add-section-button:hover {
     background-color: gray;
     color: white;
@@ -136,12 +141,14 @@
     opacity: 0;
     transform: translateX(-20px);
 }
+
 .project-view .add-section-button:hover .text {
     max-width: 140px;
     color: white;
     opacity: 1;
     transform: translateX(0);
 }
+
 .project-view .add-section-button::before {
     background-color: gray;
     display: inline-block;
@@ -151,6 +158,7 @@
     left: 1px;
     transition: margin-right .3s ease;
 }
+
 .project-view .add-section-button:hover::before {
     background-color: white;
     margin-right: 10px;
@@ -169,12 +177,15 @@
     display: flex;
     position: absolute;
     right: 20px;
-    top: 50%;
+    bottom: 2px;
     align-items: center;
 }
+
 .project-view .buttons-container button {
-    position:static;
+    position: static;
 }
-.project-view .title-container {
-    position:relative;
+
+.project-view .title-container, 
+.project-view .upper {
+    position: relative;
 }
