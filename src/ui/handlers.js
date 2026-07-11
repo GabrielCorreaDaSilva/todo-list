@@ -14,22 +14,18 @@ export function createHandlers({
     createSectionForm,
     modal,
 }) {
-    function handleSaveState(lists) {
-        const newState = lists.map(list => {
-
-            const children = [...list.querySelectorAll(".list-item:not(.dragging):not(.add-row)")];
-            
-            return ({
-                id: list.dataset.id,
-                childrenId: children.map(element => element.dataset.id),
-            })
-        });
-        newState.forEach(parent => service.editChildren(parent.id, parent.childrenId));
+    function handleSaveState(draggedElement, previousElement, targetContainer) {
+        const draggedElementId = draggedElement.dataset.id;
+        const previousElementId = previousElement?.dataset.id || null;
+        const containerId = targetContainer.dataset.id
+        service.editChildren(draggedElementId, previousElementId, containerId);
     }
     function handleDelete(element, removeElement = () => service.removeItem(element.dataset.id)) {
         element.classList.add("fade-out");
-        setTimeout(() => element.remove(), 500);
-        removeElement();
+        setTimeout(() => {
+            element.remove();
+            removeElement();
+        }, 300);
     }
     function handleCreateProject(projectData) {
         const newProject = service.addItem(projectData);
@@ -122,7 +118,6 @@ export function createHandlers({
     }
     function handleEditSectionBtn(sectionView, sectionId = sectionView.dataset.id) {
         const section = service.getItem(sectionId);
-        console.log(section)
         openModal(
             createSectionForm({
                 ...section,

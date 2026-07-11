@@ -32,4 +32,4 @@ if (savedData) {
 }
 
 UIController(service);
-console.log(service.exportData())
+

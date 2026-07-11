@@ -41,6 +41,7 @@ export function createTodo(createProject, createTask, createSection) {
     };
     const addItem = (item) => {
         if (!item) return;
+        if (item.dueDate) item.dueDate = parseInputToDate(item.dueDate);
         const newItem = createItem(item);
         const id = newItem.getId();
         itemsById.set(id, newItem);
@@ -121,10 +122,22 @@ export function createTodo(createProject, createTask, createSection) {
                 children: value
             }));
         },
-        editChildren: (parentId, childrenId, save) => {
-            childrenByParent.set(parentId, childrenId);
+        editChildren: (draggedElementId, previousElementId, containerId, save) => {
+            const target = itemsById.get(draggedElementId);
+            const parentId = target.getParentId();
+            const newChildren = childrenByParent.get(parentId).filter(childId => childId !== draggedElementId);
+            childrenByParent.set(parentId, newChildren);
+
+            const newParentChildren = childrenByParent.get(containerId);
+
+            if (previousElementId) {
+                const sibling = itemsById.get(previousElementId);
+                const newPosition = newParentChildren.findIndex(childId => childId === sibling.getId()) + 1;
+                newParentChildren?.splice(newPosition, 0, draggedElementId)
+            } else {
+                newParentChildren.unshift(draggedElementId);
+            }
             save();
-            console.log(childrenByParent.get(parentId))
         },
         getItemsById: () => itemsById,
         getItems: () => [...itemsById.values()],

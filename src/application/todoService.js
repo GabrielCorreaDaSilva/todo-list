@@ -49,6 +49,13 @@ export function todoService(todo, storage) {
         );
         return mappedNode;
     }
+    const mapRecursiveForStorage = (node) => {
+        const mappedNode = mapItemForStorage(node.item);
+        mappedNode.children = node.children.map(child =>
+            mapRecursiveForStorage(child)
+        );
+        return mappedNode;
+    }
 
     const MAPPER_STRATEGY = {
         "task": mapTask,
@@ -79,8 +86,6 @@ export function todoService(todo, storage) {
         if (item.getParentId?.()) {
             itemData.parentId = item.getParentId();
         }
-
-
         if (itemData.type === "task") {
             if (item.getDueDate()) {
                 itemData.dueDate = formatToInputString(item.getDueDate())
@@ -96,26 +101,16 @@ export function todoService(todo, storage) {
         }
         return itemData;
     }
-    const getChildrenTree = (parentId) => todo.getChildrenTree(parentId).map(mapRecursive);
-
-    // const exportData = () => {
-    //     const itemsById = todo.getItems().map(mapItemForStorage);//
-    //     const childrenByParent = todo.getChildrenByParent();
-    //     return ({
-    //         itemsById,
-    //         childrenByParent,
-    //     })
-    // }
+    const getChildrenTree = (parentId, mapper = mapRecursive) => todo.getChildrenTree(parentId).map(mapper);
 
     const exportData = () => {
         return todo.getChildrenByParent()
             .filter(({ parentId }) => !(todo.getItem(parentId).getParentId?.()))
             .map(({ parentId }) => ({
                 ...mapItemForStorage(todo.getItem(parentId)),
-                children: getChildrenTree(parentId),
+                children: getChildrenTree(parentId, mapRecursiveForStorage),
             }));
     }
-
 
     const saveData = (data, mapResult = (result) => Array.isArray(result) ? [...result].map(mapItem) : mapItem(result)) => {
         storage.save(exportData());
@@ -163,8 +158,10 @@ export function todoService(todo, storage) {
             const checklistItem = task.addChecklistItem(data);
             return saveData(checklistItem);
         },
-        editChildren: (parentId, childrenId) => {
-            todo.editChildren(parentId, childrenId, () => storage.save(exportData()));
+        editChildren: (...args) => {
+            todo.editChildren(...args, () => {
+                storage.save(exportData());
+            });
         },
 
     }

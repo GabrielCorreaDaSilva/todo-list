@@ -8,7 +8,6 @@ export function parseInputToDate(date) {
         new Date()
     )
 }
-
 export const isWithinWeek = (date) => {
     const today = startOfToday();
     return differenceInCalendarDays(date, today) < 7

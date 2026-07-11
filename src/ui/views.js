@@ -1,5 +1,5 @@
 import EditIcon from '../icons/square-edit-outline.svg';
-import { formatWeekDay, formatDayMonth, isWithinWeek } from '../utils/date.js';
+import { formatWeekDay, formatDayMonth, isWithinWeek, parseInputToDate } from '../utils/date.js';
 
 export function createProjectCard(project) {
     const components = [];
@@ -419,8 +419,11 @@ function bindDraggableEvents(view, saveState) {
         setTimeout(() => e.target.classList.add("dragging"), 0);
     });
     view.addEventListener("dragend", (e) => {
-        e.target.classList.remove("dragging");
-        saveState([...view.querySelectorAll(".item-list")]);
+        const element = e.target;
+        const previousElement = element.previousElementSibling;
+        const container = element.closest(".item-list");
+        element.classList.remove("dragging");
+        saveState(element, previousElement, container);
     });
     view.addEventListener("dragover", initSiblingsList);
 }

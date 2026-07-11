@@ -54,7 +54,7 @@ body {
 
 .fade-out {
     opacity: 0;
-    transform: scale(0.95);
+    transform:translateY(-25%)
 }
 
 .dragging > * {

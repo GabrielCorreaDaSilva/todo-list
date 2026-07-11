@@ -123,7 +123,7 @@
     font-size: 0.9rem;
     cursor: pointer;
     display: flex;
-    outline:none;
+    outline: none;
 }
 
 .project-view .add-section-button:hover {
@@ -190,4 +190,8 @@
 .project-view .title-container,
 .project-view .upper {
     position: relative;
+}
+
+.project-view .section-container {
+    transition: all ease 0.3s;
 }
