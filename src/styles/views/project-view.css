@@ -92,7 +92,7 @@
 }
 
 .project-view .section-container {
-    margin-top: 26px;
+    margin-top: 4px;
     position: relative;
 }
 
@@ -123,6 +123,7 @@
     font-size: 0.9rem;
     cursor: pointer;
     display: flex;
+    outline:none;
 }
 
 .project-view .add-section-button:hover {

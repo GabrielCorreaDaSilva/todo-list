@@ -34,7 +34,6 @@ export function UIController(service) {
                     renderNav();
                 });
             }
-
         }));
     }
     function renderProjectView(projectId) {

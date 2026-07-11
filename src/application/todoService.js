@@ -44,7 +44,9 @@ export function todoService(todo, storage) {
 
     const mapRecursive = (node) => {
         const mappedNode = mapItem(node.item);
-        mappedNode.children = node.children.map(mapRecursive);
+        mappedNode.children = node.children.map(child =>
+            mapRecursive(child)
+        );
         return mappedNode;
     }
 
@@ -94,15 +96,26 @@ export function todoService(todo, storage) {
         }
         return itemData;
     }
+    const getChildrenTree = (parentId) => todo.getChildrenTree(parentId).map(mapRecursive);
+
+    // const exportData = () => {
+    //     const itemsById = todo.getItems().map(mapItemForStorage);//
+    //     const childrenByParent = todo.getChildrenByParent();
+    //     return ({
+    //         itemsById,
+    //         childrenByParent,
+    //     })
+    // }
+
     const exportData = () => {
-        const itemsById = todo.getItems().map(mapItemForStorage);
-        const childrenByParent = todo.getChildrenByParent();
-        console.log(childrenByParent)
-        return ({
-            itemsById,
-            childrenByParent,
-        })
+        return todo.getChildrenByParent()
+            .filter(({ parentId }) => !(todo.getItem(parentId).getParentId?.()))
+            .map(({ parentId }) => ({
+                ...mapItemForStorage(todo.getItem(parentId)),
+                children: getChildrenTree(parentId),
+            }));
     }
+
 
     const saveData = (data, mapResult = (result) => Array.isArray(result) ? [...result].map(mapItem) : mapItem(result)) => {
         storage.save(exportData());
@@ -128,7 +141,7 @@ export function todoService(todo, storage) {
 
         getChildren: (parentId) => todo.getChildren(parentId).map(mapItem),
 
-        getChildrenTree: (parentId) => todo.getChildrenTree(parentId).map(mapRecursive),
+        getChildrenTree,
 
         getItem: (id) => todo.getItem(id) ? mapItem(todo.getItem(id)) : null,
 
@@ -153,5 +166,6 @@ export function todoService(todo, storage) {
         editChildren: (parentId, childrenId) => {
             todo.editChildren(parentId, childrenId, () => storage.save(exportData()));
         },
+
     }
 }

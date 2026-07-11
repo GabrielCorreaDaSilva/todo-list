@@ -15,12 +15,10 @@ export function createHandlers({
     modal,
 }) {
     function handleSaveState(lists) {
-
         const newState = lists.map(list => {
 
             const children = [...list.querySelectorAll(".list-item:not(.dragging):not(.add-row)")];
             
-
             return ({
                 id: list.dataset.id,
                 childrenId: children.map(element => element.dataset.id),

@@ -6,6 +6,11 @@ export function createTodo(createProject, createTask, createSection) {
     const itemsById = new Map();
     const childrenByParent = new Map();
 
+    const initDefault = (item) => {
+        const id = item.getId();
+        addItem({ parentId: id, id: id + "-default", name: "default", type: "section" });
+    }
+
     function ensurePersonalProject() {
         if (itemsById.has("personal")) return;
         addItem({
@@ -35,13 +40,19 @@ export function createTodo(createProject, createTask, createSection) {
         return result || null;
     };
     const addItem = (item) => {
+        if (!item) return;
         const newItem = createItem(item);
-        itemsById.set(newItem.getId(), newItem);
-        if (newItem.getParentId?.()) {
-            childrenByParent.has(newItem.getParentId())
-                ? childrenByParent.get(newItem.getParentId()).push(newItem.getId())
-                : childrenByParent.set(newItem.getParentId(), [newItem.getId()]);
+        const id = newItem.getId();
+        itemsById.set(id, newItem);
+        const parentId = newItem.getParentId?.();
+        if (parentId) {
+            childrenByParent.has(parentId) && !childrenByParent.get(parentId).includes(id)
+                ? childrenByParent.get(parentId).push(id)
+                : childrenByParent.set(parentId, [id]);
         };
+        if (["system", "project"].includes(newItem.getType())) {
+            initDefault(newItem);
+        }
         return newItem;
     }
     const removeItem = (id) => {
@@ -79,7 +90,7 @@ export function createTodo(createProject, createTask, createSection) {
         });
     }
     return {
-        import: (savedData) => {
+        importOld: (savedData) => {
             ensurePersonalProject();
             savedData.itemsById.forEach(item => {
                 if (item.dueDate) {
@@ -92,10 +103,17 @@ export function createTodo(createProject, createTask, createSection) {
             });
             savedData.childrenByParent.forEach(item => {
                 const { parentId, children } = item;
-                if (parentId)
+                if (parentId && children.length === childrenByParent.get(parentId)?.length)
                     childrenByParent.set(parentId, children);
             });
-            console.log(childrenByParent.get("personal"))
+        },
+        import: (savedData) => {
+            ensurePersonalProject();
+            const recursiveAddItem = (item) => {
+                addItem(item);
+                item.children?.forEach(recursiveAddItem);
+            }
+            savedData.forEach(recursiveAddItem);
         },
         getChildrenByParent: () => {
             return Array.from(childrenByParent, ([key, value]) => ({
@@ -104,7 +122,6 @@ export function createTodo(createProject, createTask, createSection) {
             }));
         },
         editChildren: (parentId, childrenId, save) => {
-            
             childrenByParent.set(parentId, childrenId);
             save();
             console.log(childrenByParent.get(parentId))

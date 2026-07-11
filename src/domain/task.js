@@ -1,7 +1,7 @@
 import { createChecklist } from "./checklist.js";
 export function createTask({
    type = "task",
-   parentId = "personal",
+   parentId,
    notes = "",
    name,
    description,
