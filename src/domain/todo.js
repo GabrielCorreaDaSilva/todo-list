@@ -45,6 +45,7 @@ export function createTodo(createProject, createTask, createSection) {
         const newItem = createItem(item);
         const id = newItem.getId();
         itemsById.set(id, newItem);
+        childrenByParent.set(id, [])
         const parentId = newItem.getParentId?.();
         if (parentId) {
             childrenByParent.has(parentId) && !childrenByParent.get(parentId).includes(id)
@@ -123,8 +124,8 @@ export function createTodo(createProject, createTask, createSection) {
             }));
         },
         editChildren: (draggedElementId, previousElementId, containerId, save) => {
-            const target = itemsById.get(draggedElementId);
-            const parentId = target.getParentId();
+            const item = itemsById.get(draggedElementId);
+            const parentId = item.getParentId();
             const newChildren = childrenByParent.get(parentId).filter(childId => childId !== draggedElementId);
             childrenByParent.set(parentId, newChildren);
 
@@ -132,11 +133,13 @@ export function createTodo(createProject, createTask, createSection) {
 
             if (previousElementId) {
                 const sibling = itemsById.get(previousElementId);
-                const newPosition = newParentChildren.findIndex(childId => childId === sibling.getId()) + 1;
+                const newPosition = newParentChildren.findIndex(childId => childId === sibling.getId());
                 newParentChildren?.splice(newPosition, 0, draggedElementId)
             } else {
                 newParentChildren.unshift(draggedElementId);
             }
+            const newParent = itemsById.get(containerId)
+            item.update({ parentId: newParent.getId() })
             save();
         },
         getItemsById: () => itemsById,

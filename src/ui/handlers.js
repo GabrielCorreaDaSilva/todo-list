@@ -14,10 +14,14 @@ export function createHandlers({
     createSectionForm,
     modal,
 }) {
+    function handleMoveItem(itemId, parentId) {
+        service.moveItem(itemId, parentId);
+        renderProjectView(service.getItem(parentId).getParentId);
+    }
     function handleSaveState(draggedElement, previousElement, targetContainer) {
         const draggedElementId = draggedElement.dataset.id;
         const previousElementId = previousElement?.dataset.id || null;
-        const containerId = targetContainer.dataset.id
+        const containerId = targetContainer.dataset.id;
         service.editChildren(draggedElementId, previousElementId, containerId);
     }
     function handleDelete(element, removeElement = () => service.removeItem(element.dataset.id)) {
@@ -43,13 +47,11 @@ export function createHandlers({
     }
     function handleCreateTask(taskData, parent, container) {
         const newTask = service.addItem({ ...taskData, parentId: parent });
-        const addBtn = container.lastElementChild;
-        addBtn.before(createTaskItem(newTask));
+        container.append(createTaskItem(newTask));
     }
     function handleCreateChecklistItem(data, taskId, container) {
         const newItem = service.addChecklistItem(taskId, data);
-        const addBtn = container.lastElementChild;
-        addBtn.before(createTaskItem(newItem));
+        container.append(createTaskItem(newItem));
     }
 
     function handleEditProject(projectId, projectData, projectView) {
@@ -156,6 +158,7 @@ export function createHandlers({
     }
     return {
         handleSaveState,
+        handleMoveItem,
         handleDelete,
         handleCreateProject,
         handleCreateTask,

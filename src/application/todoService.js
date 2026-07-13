@@ -163,6 +163,5 @@ export function todoService(todo, storage) {
                 storage.save(exportData());
             });
         },
-
     }
 }

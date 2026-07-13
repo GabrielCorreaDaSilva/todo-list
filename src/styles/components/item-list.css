@@ -4,13 +4,24 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+}
+
+.item-list {
     max-height: 80vh;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 4px;
+    scrollbar-gutter: stable;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.item-list::-webkit-scrollbar {
+    display: none;
 }
 
 .list-item {
+    list-style-type: none;
     transition:
         transform ease 0.2s,
         background-color ease 0.2s,

@@ -1,3 +1,4 @@
+import { el } from 'date-fns/locale';
 import EditIcon from '../icons/square-edit-outline.svg';
 import { formatWeekDay, formatDayMonth, isWithinWeek, parseInputToDate } from '../utils/date.js';
 
@@ -69,7 +70,7 @@ export function createProjectView(project, children, handlers) {
     const isSystem = project.type === "system";
 
     const projectView = document.createElement("div");
-    bindDraggableEvents(projectView, handleSaveState);
+    bindDraggableEvents(projectView, handlers);
     projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
     projectView.addEventListener("click", (e) => {
@@ -80,7 +81,8 @@ export function createProjectView(project, children, handlers) {
         const clickedEditProject = e.target.closest(".edit-button");
         const clickedEditSection = e.target.closest(".section-container .edit-button");
         const section = e.target.closest(".section-container");
-        const list = e.target.closest("ul");
+        const wrapper = e.target.closest(".list-wrapper");
+        const list = e.target.closest(".item-list") ?? wrapper?.querySelector("ul");
         const item = e.target.closest(".list-item");
         const container = e.target.closest(".container");
         if (clickedCheckbox) {
@@ -319,13 +321,15 @@ export function createSection(section) {
         container.append(titleContainer, createLine());
     }
 
+    const list = document.createElement("ul");
+    list.classList.add("section-items", "item-list");
+    list.dataset.id = section.id;
+    section.children.forEach(item => list.append(createTaskItem(item)));
+    const addBtn = wrapWithListItem(createAddItemBtn("Add Task", section.id));
+    addBtn.classList.add("add-row");
     const wrapper = document.createElement("ul");
-    wrapper.classList.add("section-items", "item-list");
-    wrapper.dataset.id = section.id;
-    section.children.forEach(item => wrapper.append(createTaskItem(item)));
-    const li = wrapWithListItem(createAddItemBtn("Add Task", section.id));
-    li.classList.add("add-row")
-    wrapper.append(li);
+    wrapper.append(list, addBtn);
+    wrapper.classList.add("list-wrapper");
     container.append(wrapper);
 
     return container;
@@ -337,7 +341,6 @@ function wrapWithListItem(element) {
     container.append(element);
     return container;
 }
-
 function createTitleContainer(titleName) {
     const titleContainer = document.createElement("div");
     titleContainer.classList.add("title-container");
@@ -348,13 +351,11 @@ function createTitleContainer(titleName) {
     titleContainer.append(title);
     return titleContainer;
 }
-
 function createLine() {
     const line = document.createElement("hr");
     line.classList.add("line");
     return line;
 }
-
 function createAddItemBtn(text, parent = "none") {
     const addBtn = document.createElement("button");
     addBtn.classList.add("add-item-button");
@@ -395,35 +396,56 @@ function createEditBtn() {
     return editBtn;
 }
 
+function bindDraggableEvents(view, handlers) {
+    let itemDragged;
+    const saveState = handlers.handleSaveState;
+    const moveItem = handlers.handleMoveItem;
+    const findClosestElementToMouse = (elementList, e) => {
+        if (!elementList) return;
+        const items = [...elementList];
 
-function bindDraggableEvents(view, saveState) {
-    const initSiblingsList = (e) => {
-        e.preventDefault();
-        const itemDragged = document.querySelector(".dragging");
-        const currentList = itemDragged.closest(".item-list");
-        const addRow = currentList.querySelector(".add-row")
-        const siblings = [...currentList.querySelectorAll(".list-item:not(.dragging):not(.add-row)")];
-
-        const nextSibling = siblings.find(sibling => {
+        const nextToMouse = items.find(sibling => {
             const box = sibling.getBoundingClientRect();
             return e.clientY < box.top + box.height / 2;
         });
+        return nextToMouse;
+    }
+    const initSiblingsList = (e) => {
+        e.preventDefault();
+        const itemDragged = document.querySelector(".dragging");
 
+        const targetList = e.target.closest(".list-wrapper")?.querySelector(".item-list");
+        if (!targetList) return;
+
+        const nextSibling = findClosestElementToMouse(targetList.querySelectorAll(".list-item:not(.dragging):not(.add-row)"), e);
         if (!nextSibling) {
-            currentList.insertBefore(itemDragged, addRow);
+            targetList.append(itemDragged);
         } else {
-            currentList.insertBefore(itemDragged, nextSibling);
+            targetList.insertBefore(itemDragged, nextSibling);
         }
     }
     view.addEventListener("dragstart", (e) => {
+        itemDragged = e.target;
         setTimeout(() => e.target.classList.add("dragging"), 0);
     });
     view.addEventListener("dragend", (e) => {
         const element = e.target;
-        const previousElement = element.previousElementSibling;
-        const container = element.closest(".item-list");
         element.classList.remove("dragging");
-        saveState(element, previousElement, container);
     });
-    view.addEventListener("dragover", initSiblingsList);
+    view.addEventListener("dragover", e => {
+        e.preventDefault();
+        initSiblingsList(e);
+    }
+    );
+
+    view.addEventListener("drop", e => {
+        e.preventDefault();
+        const container = e.target.closest(".list-wrapper")?.querySelector(".item-list");
+        const sibling = findClosestElementToMouse(container.querySelectorAll(".list-item:not(.dragging)"), e);
+        if (sibling) {
+            saveState(itemDragged, sibling, container);
+        } else {
+            saveState(itemDragged, null, container);
+        }
+    });
 }

@@ -9,9 +9,13 @@
     overflow-x: hidden;
 }
 
-.item-list {
+.list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     direction: rtl;
-    scrollbar-gutter: stable;
+
+    padding: 4px;
 }
 
 .item-list div,
