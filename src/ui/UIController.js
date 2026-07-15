@@ -1,7 +1,7 @@
 import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm, createCheckListForm, createSectionForm } from "./forms.js";
 import { createModal, openModal, confirmModal } from "./modal.js";
-import { createHandlers } from "./handlers.js";
+import { openCreateItemModal, openEditItemModal } from "./modalHandlers.js";
 
 export function UIController(service) {
 
@@ -10,31 +10,101 @@ export function UIController(service) {
     const modal = createModal();
     const formModal = createModal();
 
-    const handlers = createHandlers({
-        service,
-        createTaskForm,
-        createProjectForm,
-        createCheckListForm,
-        renderProjectView,
-        renderNav,
-        openModal,
-        createTaskItem,
-        createProjectCard,
-        createSection,
-        createSectionForm,
-        modal: formModal,
-    })
+    const UI_STRATEGY = {
+        project: {
+            create: (data) => createProjectCard(data),
+            afterEffect: (id, container) => {
+                if (!container) {
+                    renderProjectView(id);
+                }
+                else {
+                    renderAllProjectsView();
+                }
+                renderNav(id);
+            },
+            updateUI: (editedItem, element) => {
+                renderProjectView(editedItem.id);
+                renderNav(editedItem.id);
+            }
+        },
+        section: {
+            create: (data) => createSection(data),
+            updateUI: (editedItem, element) => element.replaceWith(createSection(editedItem))
+        },
+        task: {
+            create: (data) => createTaskItem(data),
+            updateUI: (editedItem, card) => {
+                renderTaskView(editedItem.id);
+                // const card = document.querySelector(`.item-list[data-id="${element.dataset.id}"]`);
+                card.replaceWith(createTaskItem(editedItem));
+            },
+
+        },
+        subtask: {
+            create: (data) => createTaskItem(data),
+        },
+    };
+
+    function createElement(item, container) {
+        const config = UI_STRATEGY[item.type];
+        if (!config) return;
+        config.afterEffect?.(item.id, container);
+        container?.append(config.create(item));
+    }
+    function updateElement(editedItem, element) {
+        const config = UI_STRATEGY[editedItem.type];
+        config.updateUI?.(editedItem, element);
+        config.afterEffect?.(editedItem.id);
+    }
+    function deleteElement(element) {
+        element.classList.add("fade-out");
+        setTimeout(() => {
+            element.remove();
+        }, 300);
+    }
+    function toggleCheck(item, id = item.dataset.id) {
+        service.toggleComplete(id);
+        item.classList.toggle("completed");
+    }
+
+    const onAdd = (type, container, parentId = container.dataset.id) => {
+        openCreateItemModal({
+            type,
+            modal: formModal,
+            onSubmit: (data) => {
+                const item = service.addItem({ ...data, parentId });
+                createElement(item, container);
+            }
+        });
+    };
+    const onEdit = (element, id = element.dataset.id, card) => {
+        const data = service.getItem(id);
+        openEditItemModal({
+            type: data.type,
+            data,
+            modal: formModal,
+            onSubmit: (data) => {
+                const editedItem = service.editItem(id, data);
+                updateElement(editedItem, element, card);
+            }
+        });
+    };
+    const onDelete = (element) => {
+        service.removeItem(element.dataset.id);
+        deleteElement(element);
+        renderNav();
+    };
+    const onMove = (draggedElement, previousElement, targetContainer) => {
+        const draggedElementId = draggedElement.dataset.id;
+        const previousElementId = previousElement?.dataset.id || null;
+        const containerId = targetContainer.dataset.id;
+        service.editChildren(draggedElementId, previousElementId, containerId);
+    };
+    const withConfirm = (onConfirm) => (...args) => confirmModal(() => onConfirm(...args));
 
     function renderAllProjectsView() {
         const projectList = service.getProjects();
-        content.replaceChildren(createAllProjectsView(projectList, {
-            ...handlers, handleDelete: (projectCard) => {
-                confirmModal(() => {
-                    handlers.handleDelete(projectCard);
-                    renderNav();
-                });
-            }
-        }));
+        content.replaceChildren(createAllProjectsView(projectList, withConfirm(onDelete), onAdd));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
@@ -43,22 +113,24 @@ export function UIController(service) {
             createProjectView(
                 project,
                 items,
-                {
-                    ...handlers,
-                    handleDelete: (item) => {
-                        confirmModal(() => handlers.handleDelete(item))
-                    }
-                }));
+                onAdd,
+                onEdit,
+                withConfirm(onDelete),
+                onMove,
+                toggleCheck
+            ));
     }
-    function renderTaskView(taskId) {
+    function renderTaskView(taskId, card) {
         const task = service.getItem(taskId);
         const view = createTaskView(
             task,
-            {
-                ...handlers,
-                handleEditTaskBtn: (taskCard) => handlers.handleEditTaskBtn(
-                    taskCard, () => renderTaskView(taskId)),
-            });
+            onAdd,
+            () => onEdit(card),
+            (id, data) => service.editItem(id, data),
+            onDelete,
+            onMove,
+            toggleCheck
+        );
         openModal(
             view,
             modal
@@ -127,8 +199,8 @@ export function UIController(service) {
             Btn.textContent = "+ New project";
             Btn.dataset.id = "new project"
             Btn.addEventListener("click", (e) => {
-                handlers.handleAddProjectBtn();
-                renderAllProjectsView();
+                const container = document.querySelector(".project-container");
+                onAdd("project", container, null);
             });
             const li = document.createElement("li");
             li.classList.add("sidebar-item")
@@ -175,7 +247,7 @@ export function UIController(service) {
                 return;
             }
             if (clickedItem) {
-                renderTaskView(clickedItem.dataset.id);
+                renderTaskView(clickedItem.dataset.id, clickedItem);
                 return;
             }
         });

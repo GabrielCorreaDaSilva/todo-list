@@ -22,6 +22,7 @@ export function createTodo(createProject, createTask, createSection) {
 
     const CREATE_STRATEGY = {
         "task": createTask,
+        "subtask": createTask,
         "project": createProject,
         "system": createProject,
         "section": createSection,
@@ -91,6 +92,7 @@ export function createTodo(createProject, createTask, createSection) {
             return child;
         });
     }
+    ensurePersonalProject();
     return {
         importOld: (savedData) => {
             ensurePersonalProject();

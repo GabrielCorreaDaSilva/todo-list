@@ -27,8 +27,7 @@ export function createProjectCard(project) {
     return projectCard;
 }
 
-export function createAllProjectsView(projects, handlers) {
-    const { handleDelete, handleAddProjectBtn } = handlers;
+export function createAllProjectsView(projects, onDelete, onAdd) {
 
     const todoView = document.createElement("div");
     todoView.classList.add("all-projects-view");
@@ -39,11 +38,11 @@ export function createAllProjectsView(projects, handlers) {
         const item = e.target.closest(".project-card");
         if (clickedDelete) {
             e.stopPropagation();
-            handleDelete(item);
+            onDelete(item);
             return;
         }
         if (clickedAddProject) {
-            handleAddProjectBtn();
+            onAdd("project", null, projectContainer);
             return;
         }
     });
@@ -64,13 +63,12 @@ export function createAllProjectsView(projects, handlers) {
     return todoView;
 }
 
-export function createProjectView(project, children, handlers) {
-    const { handleCheck, handleAddTaskBtn, handleAddSectionBtn, handleEditProjectBtn, handleEditSectionBtn, handleDelete, handleSaveState } = handlers;
+export function createProjectView(project, children, onAdd, onEdit, onDelete, onMove, toggleCheck) {
     const components = [];
     const isSystem = project.type === "system";
 
     const projectView = document.createElement("div");
-    bindDraggableEvents(projectView, handlers);
+    bindDraggableEvents(projectView, onMove);
     projectView.classList.add("project-view");
     projectView.dataset.id = project.id;
     projectView.addEventListener("click", (e) => {
@@ -87,29 +85,29 @@ export function createProjectView(project, children, handlers) {
         const container = e.target.closest(".container");
         if (clickedCheckbox) {
             e.stopPropagation();
-            handleCheck(item);
+            toggleCheck(item);
             return;
         }
         if (clickedDelete) {
             e.stopPropagation();
-            handleDelete(container);
+            onDelete(container);
             return;
         }
         if (clickedAddtask) {
             e.stopPropagation();
-            handleAddTaskBtn(e.target.dataset.targetId, list);
+            onAdd("task", list);
             return;
         }
         if (clickedAddSection) {
-            handleAddSectionBtn(project.id);
+            onAdd("section", project.id, projectView);
             return;
         }
         if (clickedEditSection) {
-            handleEditSectionBtn(section);
+            onEdit(section);
             return;
         }
         if (clickedEditProject) {
-            handleEditProjectBtn(projectView);
+            onEdit(projectView);
             return;
         }
     });
@@ -154,19 +152,31 @@ export function createProjectView(project, children, handlers) {
     }
 }
 
-export function createTaskView(task, handlers) {
-    const { handleEditTaskBtn, handleAddChecklistBtn, handleUpdateNotes, handleCompleteCheckListItem, handleDelete } = handlers;
+export function createTaskView(task, onAdd, onEdit,onNotesEdit, onDelete, onMove) {
 
     const taskView = document.createElement("div");
     taskView.classList.add("task-view");
     taskView.dataset.id = task.id;
     taskView.addEventListener("click", (e) => {
         const clickedCheckbox = e.target.closest(".check");
+        const clickedAddTask = e.target.closest(".add-item-button");
+        const clickedEditBtn = e.target.closest(".edit-button");
+        const wrapper = e.target.closest(".list-wrapper");
+        const list = e.target.closest(".item-list") ?? wrapper?.querySelector("ul");
         const item = e.target.closest(".list-item")
         if (clickedCheckbox) {
-            handleCompleteCheckListItem(item, task.id);
+            item.classList.add("completed");
+            onDelete(item, task.id);
+            return;
+        }
+        if (clickedAddTask) {
+            onAdd("subtask", list, list.dataset.id)
+        }
+        if (clickedEditBtn) {
+            onEdit(taskView);
         }
     });
+    bindDraggableEvents(taskView, onMove)
     const upperSection = createUpper();
     const bottomSection = createBottom();
     taskView.append(upperSection, bottomSection)
@@ -176,19 +186,8 @@ export function createTaskView(task, handlers) {
         const bottomSection = document.createElement("div");
         bottomSection.classList.add("bottom-section");
 
-        const itemListWrapper = document.createElement("div");
-        itemListWrapper.classList.add("list-container");
-        const itemList = document.createElement("ul");
-        itemList.classList.add("item-list");
-        itemList.dataset.id = task.id;
-        task.checklist.forEach(item => itemList.append(createTaskItem(item)));
-        const addChecklistBtn = wrapWithListItem(createAddItemBtn("Add Checklist Item"));
-        addChecklistBtn.addEventListener("click", () => handleAddChecklistBtn(task.id, itemList));
-        itemList.append(addChecklistBtn);
-        itemListWrapper.append(itemList);
-        const checklistWrapper = document.createElement("div");
-        checklistWrapper.append(itemListWrapper);
-        bottomSection.append(checklistWrapper);
+        const wrapper = createList(task);
+        bottomSection.append(wrapper);
 
         const line = document.createElement("hr");
         line.classList.add("line");
@@ -197,7 +196,7 @@ export function createTaskView(task, handlers) {
         const notes = document.createElement("textarea");
         notes.classList.add("notes");
         notes.addEventListener("blur", (e) => {
-            handleUpdateNotes(task.id, { notes: notes.value });
+            onNotesEdit(task.id, { notes: notes.value });
         });
         Object.assign(notes, {
             id: "notes",
@@ -237,10 +236,7 @@ export function createTaskView(task, handlers) {
             titleContainer.append(isImportant);
         }
         const editBtn = createEditBtn();
-        editBtn.addEventListener("click", () => {
-            const taskCard = document.querySelector(`[data-id="${task.id}"]`);
-            handleEditTaskBtn(taskCard);
-        })
+
         titleContainer.append(editBtn);
         upperSection.append(titleContainer);
 
@@ -296,6 +292,7 @@ export function createTaskItem(task) {
         const isImportant = createImportant();
         components.push(isImportant);
     }
+
     if (task.type === "task")
         components.push(createDelBtn());
 
@@ -321,18 +318,23 @@ export function createSection(section) {
         container.append(titleContainer, createLine());
     }
 
+    const wrapper = createList(section);
+    container.append(wrapper);
+
+    return container;
+}
+
+function createList(parent) {
     const list = document.createElement("ul");
-    list.classList.add("section-items", "item-list");
-    list.dataset.id = section.id;
-    section.children.forEach(item => list.append(createTaskItem(item)));
-    const addBtn = wrapWithListItem(createAddItemBtn("Add Task", section.id));
+    list.classList.add("item-list");
+    list.dataset.id = parent.id;
+    parent.children.forEach(item => list.append(createTaskItem(item)));
+    const addBtn = wrapWithListItem(createAddItemBtn("Add Task", parent.id));
     addBtn.classList.add("add-row");
     const wrapper = document.createElement("ul");
     wrapper.append(list, addBtn);
     wrapper.classList.add("list-wrapper");
-    container.append(wrapper);
-
-    return container;
+    return wrapper;
 }
 
 function wrapWithListItem(element) {
@@ -360,7 +362,6 @@ function createAddItemBtn(text, parent = "none") {
     const addBtn = document.createElement("button");
     addBtn.classList.add("add-item-button");
     addBtn.textContent = text;
-    addBtn.dataset.targetId = parent;
     return addBtn;
 }
 function createImportant() {
@@ -396,10 +397,9 @@ function createEditBtn() {
     return editBtn;
 }
 
-function bindDraggableEvents(view, handlers) {
+function bindDraggableEvents(view, onMove) {
     let itemDragged;
-    const saveState = handlers.handleSaveState;
-    const moveItem = handlers.handleMoveItem;
+    const saveState = onMove;
     const findClosestElementToMouse = (elementList, e) => {
         if (!elementList) return;
         const items = [...elementList];
@@ -425,20 +425,28 @@ function bindDraggableEvents(view, handlers) {
         }
     }
     view.addEventListener("dragstart", (e) => {
+        const item = e.target.closest?.(".list-item");
+        if (!item) return;
+
         itemDragged = e.target;
         setTimeout(() => e.target.classList.add("dragging"), 0);
     });
     view.addEventListener("dragend", (e) => {
         const element = e.target;
+        const item = e.target.closest?.(".list-item");
+        if (!item) return;
         element.classList.remove("dragging");
     });
     view.addEventListener("dragover", e => {
+        if (!itemDragged) return;
         e.preventDefault();
         initSiblingsList(e);
     }
     );
 
     view.addEventListener("drop", e => {
+        const item = e.target.closest?.(".list-item");
+        if (!item) return;
         e.preventDefault();
         const container = e.target.closest(".list-wrapper")?.querySelector(".item-list");
         const sibling = findClosestElementToMouse(container.querySelectorAll(".list-item:not(.dragging)"), e);

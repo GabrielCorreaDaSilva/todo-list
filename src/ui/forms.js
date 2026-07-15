@@ -17,7 +17,7 @@ export function createProjectForm({ name = "", description = "", onSubmit } = {}
         title,
         line,
         createName("project-name", "Name (max 32)*:", name),
-        createDescription("project-description", "Description (max 240)*: ", description),
+        createDescription("project-description", "Description (max 240): ", description, false),
         createButtons()
     );
     bindEvents(form, onSubmit);
@@ -63,7 +63,7 @@ export function createTaskForm({ name = "", description = "", duration = "", due
         createName("task-name", "Name (max 32)*:", name),
         createDueDate(dueDate),
         createImportant(isImportant),
-        createDescription("task-description", "Description (max 80)*: ", description),
+        createDescription("task-description", "Description (max 80): ", description, false),
     );
 
     form.append(title, line, wrapper, createButtons());
@@ -73,7 +73,7 @@ export function createTaskForm({ name = "", description = "", duration = "", due
 export function createCheckListForm({ name = "", onSubmit } = {}) {
     const form = document.createElement("form");
     form.classList.add("task-form", "form");
-    form.dataset.type = "checklist";
+    form.dataset.type = "subtask";
 
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -116,7 +116,7 @@ function createName(inputId, label, name) {
     inputContainer.append(nameInput, nameInputLabel);
     return inputContainer;
 }
-function createDescription(inputId, label, description) {
+function createDescription(inputId, label, description, isRequired) {
     const inputContainer = document.createElement("div");
     inputContainer.classList.add("input-container");
 
@@ -126,7 +126,7 @@ function createDescription(inputId, label, description) {
         name: "description",
         placeholder: "",
         maxLength: 240,
-        required: true
+        required: isRequired
     });
     descriptionInput.value = description;
 

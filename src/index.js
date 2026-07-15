@@ -26,9 +26,6 @@ if (savedData) {
         todo.importOld(savedData);
         console.log("Backup import");
     }
-} else {
-    injectSampleData(todo);
-    storage.save(service.exportData());
 }
 
 UIController(service);

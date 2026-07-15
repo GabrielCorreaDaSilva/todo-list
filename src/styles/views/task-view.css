@@ -10,6 +10,16 @@
     transition: all ease 0.3s;
 }
 
+.task-view .delete-button {
+    color: var(--gray-background);
+    background-color: transparent;
+}
+
+.task-view .delete-button:hover {
+    color: white;
+    background-color: #30303060;
+}
+
 .task-view .bottom-section .line {
     border: none;
     width: 2px;
@@ -39,15 +49,19 @@
     flex-grow: 1;
 }
 
+.task-view .bottom-section>ul,
 .task-view .bottom-section>div {
-    flex: 50%;
+    width: 50%;
+}
+
+.task-view .bottom-section>div {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.task-view .list-container {
+.task-view .list-wrapper {
     width: 90%;
     height: 100%;
     border: 1px solid gray;
@@ -55,12 +69,11 @@
     background-color: rgba(225, 222, 222, 0);
 }
 
-.task-view .list-container .item-list .item {
+.task-view .list-wrapper .item-list .item {
     padding-left: 4px;
 }
 
 .task-view .item-list {
-    padding: 10px;
     overflow: auto;
 }
 
@@ -68,12 +81,16 @@
     gap: 24px;
 }
 
-.task-view .list-container .add-item-button {
+.task-view .list-wrapper .add-item-button {
     margin: 0;
 }
 
 .task-view .bottom-section .line {
     margin: 0 12px;
+}
+
+.task-view .list-wrapper {
+    padding-top: 6px;
 }
 
 .task-view .notes {
@@ -99,6 +116,7 @@
     font-size: 1.3rem;
 }
 
-.task-view .item-list button:active {
+.task-view .item-list button:active,
+.task-view .add-row button:active {
     background-color: rgb(239, 239, 239);
 }
