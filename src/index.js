@@ -6,7 +6,7 @@ import { createTodo } from "./domain/todo.js";
 import { todoService } from "./application/todoService.js";
 import { UIController } from "./ui/UIController.js";
 import { storage } from "./data/storage.js";
-import { injectSampleData } from "./data/sampleData.js";
+
 
 const todo = createTodo(
     createProject,
