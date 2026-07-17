@@ -1,7 +1,10 @@
-.project-container {
+.projects-container {
     display: grid;
     grid-template-rows: repeat(auto-fit, 1fr);
+    /* grid style */
     grid-template-columns: repeat(auto-fit, minmax(250px, 425px));
+    /* grid list */
+    grid-template-columns: 1fr;
     gap: 12px;
     justify-content: center;
 }

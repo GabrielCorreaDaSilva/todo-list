@@ -1,4 +1,4 @@
-import { createProjectCard,createTaskCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
+import { createProjectCard, createTaskCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm, createCheckListForm, createSectionForm } from "./forms.js";
 import { createModal, openModal, confirmModal } from "./modal.js";
 import { openCreateItemModal, openEditItemModal } from "./modalHandlers.js";
@@ -103,7 +103,14 @@ export function UIController(service) {
 
     function renderAllProjectsView() {
         const projectList = service.getProjects();
-        content.replaceChildren(createAllProjectsView(projectList, withConfirm(onDelete), onAdd));
+        content.replaceChildren(createAllProjectsView(
+            projectList,
+            withConfirm(onDelete),
+            onAdd,
+            (...args) => {
+                onMove(...args);
+                renderNav();
+            }));
     }
     function renderProjectView(projectId) {
         const project = service.getItem(projectId);
@@ -198,7 +205,7 @@ export function UIController(service) {
             Btn.textContent = "+ New project";
             Btn.dataset.id = "new project"
             Btn.addEventListener("click", (e) => {
-                const container = document.querySelector(".project-container");
+                const container = document.querySelector(".projects-container");
                 onAdd("project", container, "projects");
             });
             const li = document.createElement("li");
@@ -253,7 +260,8 @@ export function UIController(service) {
     }
 
     function init() {
-        renderProjectView("personal");
+        // renderProjectView("personal");
+        renderAllProjectsView();
         renderNav();
         bindEvents();
     }

@@ -1,14 +1,14 @@
-import { el } from 'date-fns/locale';
 import EditIcon from '../icons/square-edit-outline.svg';
 import { formatWeekDay, formatDayMonth, isWithinWeek, parseInputToDate } from '../utils/date.js';
 
 export function createProjectCard(project) {
     const components = [];
-    const isSystem = project.type === "system"
 
     const projectCard = document.createElement("div");
     projectCard.classList.add("project-card", "card");
     projectCard.dataset.id = project.id;
+    projectCard.dataset.dragType = "project";
+    projectCard.draggable = true;
 
     const title = document.createElement("h2");
     title.classList.add("title");
@@ -27,11 +27,12 @@ export function createProjectCard(project) {
     return projectCard;
 }
 
-export function createAllProjectsView(projects, onDelete, onAdd) {
+export function createAllProjectsView(projects, onDelete, onAdd, onMove) {
 
     const todoView = document.createElement("div");
     todoView.classList.add("all-projects-view");
     todoView.dataset.id = projects.id;
+    bindDraggableEvents(todoView, onMove)
     todoView.addEventListener("click", (e) => {
         const clickedDelete = e.target.closest(".delete-button");
         const clickedAddProject = e.target.closest(".add-item-button");
@@ -50,7 +51,8 @@ export function createAllProjectsView(projects, onDelete, onAdd) {
     const titleContainer = createTitleContainer(projects.name);
 
     const projectContainer = document.createElement("div");
-    projectContainer.classList.add("project-container");
+    projectContainer.dataset.id = projects.id;
+    projectContainer.classList.add("projects-container");
 
     projects.children.forEach(project => {
         projectContainer.append(createProjectCard(project));
@@ -426,9 +428,12 @@ function bindDraggableEvents(view, onMove) {
         const selectors = {
             "section": element.closest(".section-list"),
             "task": element.closest(".list-wrapper")?.querySelector(".item-list"),
+            "project": element.closest(".projects-container"),
         }
         return selectors[type];
     }
+    const getDraggedItem = (element) => element.closest(".list-item, .section-container, .project-card");
+
     const initSiblingsList = (e) => {
         e.preventDefault();
         container = getTargetContainer(e.target, itemDragged.dataset.dragType);
@@ -446,19 +451,20 @@ function bindDraggableEvents(view, onMove) {
     const findElements = (targetContainer = container) => {
         const selectors = {
             "section": ".section-container:not(.dragging)[data-drag-type]",
-            "task": ".list-item:not(.dragging)"
+            "task": ".list-item:not(.dragging)",
+            "project": ".project-card:not(.dragging)",
         }
         const children = targetContainer?.querySelectorAll(selectors[itemDragged.dataset.dragType]);
         return children;
     }
     view.addEventListener("dragstart", (e) => {
-        itemDragged = e.target.closest(".list-item, .section-container");
+        itemDragged = getDraggedItem(e.target);
         if (!itemDragged) return;
-        container = itemDragged.closest(".list-wrapper")?.querySelector(".item-list") || itemDragged.closest(".section-list");
+        container = getTargetContainer(itemDragged);
         setTimeout(() => itemDragged.classList.add("dragging"), 0);
     });
     view.addEventListener("dragend", (e) => {
-        if (!e.target.closest(".list-item, .section-container")) return;
+        if (!getDraggedItem(e.target)) return;
         itemDragged.classList.remove("dragging");
         itemDragged = null;
         container = null;
