@@ -94,11 +94,11 @@ export function UIController(service) {
         deleteElement(element);
         renderNav();
     };
-    const onMove = (draggedElement, previousElement, targetContainer) => {
+    const onMove = (draggedElement, nextElement, targetContainer) => {
         const draggedElementId = draggedElement.dataset.id;
-        const previousElementId = previousElement?.dataset.id || null;
+        const nextElementId = nextElement?.dataset.id || null;
         const containerId = targetContainer.dataset.id;
-        service.editChildren(draggedElementId, previousElementId, containerId);
+        service.editChildren(draggedElementId, nextElementId, containerId);
     };
     const withConfirm = (onConfirm) => (...args) => confirmModal(() => onConfirm(...args));
 

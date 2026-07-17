@@ -135,6 +135,25 @@ export function createTodo(createProject, createTask, createSection) {
             item.update({ parentId: newParent.getId() })
             save();
         },
+        editChildren: (draggedElementId, nextElementId, containerId, save) => {
+            const item = itemsById.get(draggedElementId);
+            const parentId = item.getParentId();
+            const newChildren = childrenByParent.get(parentId).filter(childId => childId !== draggedElementId);
+            childrenByParent.set(parentId, newChildren);
+
+            const newParentChildren = childrenByParent.get(containerId);
+
+            if (nextElementId) {
+                const sibling = itemsById.get(nextElementId);
+                const newPosition = newParentChildren.findIndex(childId => childId === sibling.getId());
+                newParentChildren?.splice(newPosition, 0, draggedElementId)
+            } else {
+                newParentChildren.push(draggedElementId);
+            }
+            const newParent = itemsById.get(containerId)
+            item.update({ parentId: newParent.getId() })
+            save();
+        },
         getItemsById: () => itemsById,
         getItems: () => [...itemsById.values()],
         getItem,
