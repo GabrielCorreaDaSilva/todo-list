@@ -32,7 +32,7 @@ export function UIController(service) {
             updateUI: (editedItem, element) => element.replaceWith(createSection(editedItem))
         },
         task: {
-            create: (data) => createTaskItem(data),
+            create: (data) => createTaskCard(data),
             updateUI: (editedItem, element, card) => {
                 renderTaskView(editedItem.id, card);
                 card.replaceChildren(createTaskItem(editedItem));
@@ -143,7 +143,7 @@ export function UIController(service) {
 
         const AllProjects = createAllProjectsBtn();
 
-        const projects = createProjectsSection(service.getProjects().slice(0, 5));
+        const projects = createProjectsSection(service.getProjects().children.slice(0, 5));
         const addProject = createAddProject();
 
         list.append(personal, AllProjects, projects, addProject);
@@ -181,7 +181,7 @@ export function UIController(service) {
             const Btn = document.createElement("button");
             Btn.classList.add("open-projects");
             Btn.textContent = "My Projects";
-            Btn.dataset.id = "all projects"
+            Btn.dataset.id = "projects"
             Btn.addEventListener("click", (e) => {
                 changeCurrentNavItem(e.target.dataset.id);
                 renderAllProjectsView();
@@ -199,7 +199,7 @@ export function UIController(service) {
             Btn.dataset.id = "new project"
             Btn.addEventListener("click", (e) => {
                 const container = document.querySelector(".project-container");
-                onAdd("project", container, null);
+                onAdd("project", container, "projects");
             });
             const li = document.createElement("li");
             li.classList.add("sidebar-item")

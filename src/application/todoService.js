@@ -134,8 +134,8 @@ export function todoService(todo, storage) {
         getProjects: () => {
             const items = todo.getItems();
             return items.filter(item => ["project"].includes(item.getType())).map(mapItem);
-        },
-
+        },//
+        getProjects: () => mapItem(todo.getItem("projects")),
         getChildren: (parentId) => todo.getChildren(parentId).map(mapItem),
 
         getChildrenTree,

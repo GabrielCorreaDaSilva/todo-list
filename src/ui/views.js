@@ -31,7 +31,7 @@ export function createAllProjectsView(projects, onDelete, onAdd) {
 
     const todoView = document.createElement("div");
     todoView.classList.add("all-projects-view");
-    todoView.dataset.id = "all projects";
+    todoView.dataset.id = projects.id;
     todoView.addEventListener("click", (e) => {
         const clickedDelete = e.target.closest(".delete-button");
         const clickedAddProject = e.target.closest(".add-item-button");
@@ -42,17 +42,17 @@ export function createAllProjectsView(projects, onDelete, onAdd) {
             return;
         }
         if (clickedAddProject) {
-            onAdd("project", null, projectContainer);
+            onAdd("project", projectContainer, projects.id);
             return;
         }
     });
 
-    const titleContainer = createTitleContainer("My Projects");
+    const titleContainer = createTitleContainer(projects.name);
 
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-container");
 
-    projects.forEach(project => {
+    projects.children.forEach(project => {
         projectContainer.append(createProjectCard(project));
     });
 

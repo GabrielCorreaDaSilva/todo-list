@@ -11,13 +11,19 @@ export function createTodo(createProject, createTask, createSection) {
         addItem({ parentId: id, id: id + "-default", name: "default", type: "section" });
     }
 
-    function ensurePersonalProject() {
-        if (itemsById.has("personal")) return;
-        addItem({
-            id: "personal",
-            type: "system",
-            name: "My Tasks",
-        });
+    function ensureSystemComponents() {
+        if (!itemsById.has("personal"))
+            addItem({
+                id: "personal",
+                type: "system",
+                name: "My Tasks",
+            });
+        if (!itemsById.has("projects"))
+            addItem({
+                id: "projects",
+                type: "system",
+                name: "My Projects",
+            });
     }
 
     const CREATE_STRATEGY = {
@@ -52,7 +58,7 @@ export function createTodo(createProject, createTask, createSection) {
                 ? childrenByParent.get(parentId).push(id)
                 : childrenByParent.set(parentId, [id]);
         };
-        if (["system", "project"].includes(newItem.getType())) {
+        if (["system", "project"].includes(newItem.getType()) && !(newItem.getId() === "projects")) {
             initDefault(newItem);
         }
         return newItem;
@@ -91,10 +97,10 @@ export function createTodo(createProject, createTask, createSection) {
             return child;
         });
     }
-    ensurePersonalProject();
+    ensureSystemComponents();
     return {
         importOld: (savedData) => {
-            ensurePersonalProject();
+            ensureSystemComponents();
             savedData.itemsById.forEach(addItem);
             savedData.childrenByParent.forEach(item => {
                 const { parentId, children } = item;
@@ -103,7 +109,7 @@ export function createTodo(createProject, createTask, createSection) {
             });
         },
         import: (savedData) => {
-            ensurePersonalProject();
+            ensureSystemComponents();
             const recursiveAddItem = (item) => {
                 addItem(item);
                 item.children?.forEach(recursiveAddItem);

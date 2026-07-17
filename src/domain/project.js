@@ -1,6 +1,7 @@
-export function createProject({ type = "project", name, description, id = crypto.randomUUID() }) {
+export function createProject({ parentId, type = "project", name, description, id = crypto.randomUUID() }) {
 
     return {
+        getParentId: () => parentId,
         getName: () => name,
         getDescription: () => description,
         getId: () => id,
