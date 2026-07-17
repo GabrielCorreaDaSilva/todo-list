@@ -116,25 +116,7 @@ export function createTodo(createProject, createTask, createSection) {
                 children: value
             }));
         },
-        editChildren: (draggedElementId, previousElementId, containerId, save) => {
-            const item = itemsById.get(draggedElementId);
-            const parentId = item.getParentId();
-            const newChildren = childrenByParent.get(parentId).filter(childId => childId !== draggedElementId);
-            childrenByParent.set(parentId, newChildren);
 
-            const newParentChildren = childrenByParent.get(containerId);
-
-            if (previousElementId) {
-                const sibling = itemsById.get(previousElementId);
-                const newPosition = newParentChildren.findIndex(childId => childId === sibling.getId());
-                newParentChildren?.splice(newPosition, 0, draggedElementId)
-            } else {
-                newParentChildren.unshift(draggedElementId);
-            }
-            const newParent = itemsById.get(containerId)
-            item.update({ parentId: newParent.getId() })
-            save();
-        },
         editChildren: (draggedElementId, nextElementId, containerId, save) => {
             const item = itemsById.get(draggedElementId);
             const parentId = item.getParentId();

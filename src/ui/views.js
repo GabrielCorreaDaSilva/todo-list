@@ -259,14 +259,8 @@ export function createTaskView(task, onAdd, onEdit, onNotesEdit, onDelete, onMov
 
 export function createTaskItem(task) {
     const components = [];
-    const li = document.createElement("li");
-    li.classList.add("list-item", "container");
-    li.dataset.id = task.id;
-    li.draggable = "true";
-    li.dataset.dragType = "task";
-
-    const wrapper = document.createElement("button");
-    wrapper.classList.add("item");
+    const button = document.createElement("button");
+    button.classList.add("item");
 
     const content = document.createElement("div");
     content.classList.add("item-content");
@@ -281,7 +275,6 @@ export function createTaskItem(task) {
 
     if (task.isCompleted) {
         checkbox.checked = true;
-        li.classList.add("completed");
     }
     components.push(checkbox);
 
@@ -304,12 +297,19 @@ export function createTaskItem(task) {
         components.push(createDelBtn());
 
     content.append(...components);
-    wrapper.append(content);
-    li.append(wrapper);
+    button.append(content);
 
-    return li;
+    return button;
 }
 
+export function createTaskCard(task) {
+    const button = createTaskItem(task);
+    const li = wrapWithListItem(button);
+    li.dataset.id = task.id;
+    li.draggable = true;
+    li.dataset.dragType = task.type;
+    return li;
+}
 export function createSection(section) {
     const container = document.createElement("div");
     container.classList.add("section-container", "container");
@@ -337,7 +337,9 @@ function createList(parent) {
     const list = document.createElement("ul");
     list.classList.add("item-list");
     list.dataset.id = parent.id;
-    parent.children.forEach(item => list.append(createTaskItem(item)));
+
+    parent.children.forEach(item => list.append(createTaskCard(item)));
+
     const addBtn = wrapWithListItem(createAddItemBtn("Add Task", parent.id));
     addBtn.classList.add("add-row");
     const wrapper = document.createElement("ul");
@@ -420,16 +422,19 @@ function bindDraggableEvents(view, onMove) {
         });
         return nextToMouse;
     }
+    const getTargetContainer = (element, type = element.dataset.dragType) => {
+        const selectors = {
+            "section": element.closest(".section-list"),
+            "task": element.closest(".list-wrapper")?.querySelector(".item-list"),
+        }
+        return selectors[type];
+    }
     const initSiblingsList = (e) => {
         e.preventDefault();
-        const selectors = {
-            "section": e.target.closest(".section-list"),
-            "task": e.target.closest(".list-wrapper")?.querySelector(".item-list"),
-        }
-        container = selectors[itemDragged.dataset.dragType]
+        container = getTargetContainer(e.target, itemDragged.dataset.dragType);
         if (!container) return;
 
-        const children = findElements(e);
+        const children = findElements();
         const nextSibling = findClosestElementToMouse(children, e);
         if (!nextSibling) {
             container.append(itemDragged);
@@ -438,7 +443,7 @@ function bindDraggableEvents(view, onMove) {
         }
     }
 
-    const findElements = (e, targetContainer = container) => {
+    const findElements = (targetContainer = container) => {
         const selectors = {
             "section": ".section-container:not(.dragging)[data-drag-type]",
             "task": ".list-item:not(.dragging)"
@@ -454,7 +459,7 @@ function bindDraggableEvents(view, onMove) {
     });
     view.addEventListener("dragend", (e) => {
         if (!e.target.closest(".list-item, .section-container")) return;
-        e.target.classList.remove("dragging");
+        itemDragged.classList.remove("dragging");
         itemDragged = null;
         container = null;
     });
@@ -465,14 +470,10 @@ function bindDraggableEvents(view, onMove) {
     }
     );
     view.addEventListener("drop", e => {
-        const selectors = {
-            "section": itemDragged.closest(".section-list"),
-            "task": itemDragged.closest(".list-wrapper")?.querySelector(".item-list"),
-        }
-        container = selectors[itemDragged.dataset.dragType];
+        container = getTargetContainer(itemDragged);
         if (!container) return;
         e.preventDefault();
-        const children = findElements(e);
+        const children = findElements();
         const sibling = findClosestElementToMouse(children, e);
         if (sibling) {
             saveState(itemDragged, sibling, container);

@@ -1,4 +1,4 @@
-import { createProjectCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
+import { createProjectCard,createTaskCard, createProjectView, createAllProjectsView, createTaskItem, createSection, createTaskView } from "./views.js";
 import { createProjectForm, createTaskForm, createCheckListForm, createSectionForm } from "./forms.js";
 import { createModal, openModal, confirmModal } from "./modal.js";
 import { openCreateItemModal, openEditItemModal } from "./modalHandlers.js";
@@ -33,10 +33,9 @@ export function UIController(service) {
         },
         task: {
             create: (data) => createTaskItem(data),
-            updateUI: (editedItem, card) => {
-                renderTaskView(editedItem.id);
-                // const card = document.querySelector(`.item-list[data-id="${element.dataset.id}"]`);
-                card.replaceWith(createTaskItem(editedItem));
+            updateUI: (editedItem, element, card) => {
+                renderTaskView(editedItem.id, card);
+                card.replaceChildren(createTaskItem(editedItem));
             },
 
         },
@@ -51,9 +50,9 @@ export function UIController(service) {
         config.afterEffect?.(item.id, container);
         container?.append(config.create(item));
     }
-    function updateElement(editedItem, element) {
+    function updateElement(editedItem, element, card) {
         const config = UI_STRATEGY[editedItem.type];
-        config.updateUI?.(editedItem, element);
+        config.updateUI?.(editedItem, element, card);
         config.afterEffect?.(editedItem.id);
     }
     function deleteElement(element) {
@@ -125,7 +124,7 @@ export function UIController(service) {
         const view = createTaskView(
             task,
             onAdd,
-            () => onEdit(card),
+            (element) => onEdit(element, taskId, card),
             (id, data) => service.editItem(id, data),
             onDelete,
             onMove,
