@@ -1,6 +1,10 @@
 export const storage = {
     save: (data) => localStorage.setItem("todo", JSON.stringify(data)),
 
-    load: () => JSON.parse(localStorage.getItem("todo")),
+    load: () => {
+        const data = localStorage.getItem("todo");
+        if (!data || data === "undefined") return;
+        return JSON.parse(data);
+    },
 
 }

@@ -42,7 +42,6 @@ export function createTodo(createProject, createTask, createSection) {
     };
     const addItem = (item) => {
         if (!item) return;
-        if (item.dueDate) item.dueDate = parseInputToDate(item.dueDate);
         const newItem = createItem(item);
         const id = newItem.getId();
         itemsById.set(id, newItem);
@@ -96,15 +95,7 @@ export function createTodo(createProject, createTask, createSection) {
     return {
         importOld: (savedData) => {
             ensurePersonalProject();
-            savedData.itemsById.forEach(item => {
-                if (item.dueDate) {
-                    item = {
-                        ...item,
-                        dueDate: parseInputToDate(item.dueDate)
-                    };
-                }
-                addItem(item);
-            });
+            savedData.itemsById.forEach(addItem);
             savedData.childrenByParent.forEach(item => {
                 const { parentId, children } = item;
                 if (parentId && children.length === childrenByParent.get(parentId)?.length)

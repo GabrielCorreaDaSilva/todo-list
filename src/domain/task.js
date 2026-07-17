@@ -1,3 +1,4 @@
+import { parseInputToDate } from "../utils/date.js";
 export function createTask({
    type = "task",
    parentId,
@@ -9,7 +10,11 @@ export function createTask({
    isComplete = false,
    id = crypto.randomUUID(),
 }) {
- 
+   dueDate = dueDate
+      ? (dueDate instanceof Date
+         ? dueDate
+         : parseInputToDate(dueDate))
+      : null;
 
    return {
       getParentId: () => parentId,
