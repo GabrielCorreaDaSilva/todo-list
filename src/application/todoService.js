@@ -28,13 +28,13 @@ export function todoService(todo, storage) {
         type: task.getType(),
     });
     const mapProject = (project) => {
-        const remainingTodos = todo.getChildren(project.getId()).filter(item => !item.getStatus?.() && item.getType() === "task");
+        const remainingTodos = todo.countDescendants(project.getId(), item => !item.getStatus?.() && item.getType?.() === "task" );
         return {
             id: project.getId(),
             name: project.getName(),
             description: project.getDescription(),
             type: project.getType(),
-            remaining: remainingTodos.length || 0,
+            remaining: remainingTodos,
             children: todo.getChildren(project.getId()).map(mapItem),
         };
     };
@@ -104,7 +104,7 @@ export function todoService(todo, storage) {
         return itemData;
     }
     const getChildrenTree = (parentId, mapper = mapRecursive) => todo.getChildrenTree(parentId).map(mapper);
-
+    const getChildren = (parentId) => todo.getChildren(parentId).map(mapItem);
     const exportData = () => {
         return todo.getChildrenByParent()
             .filter(({ parentId }) => !(todo.getItem(parentId).getParentId?.()))
@@ -130,14 +130,8 @@ export function todoService(todo, storage) {
             const item = todo.addItem(data);
             return saveData(item);
         },
-
-        getProjects: () => {
-            const items = todo.getItems();
-            return items.filter(item => ["project"].includes(item.getType())).map(mapItem);
-        },//
         getProjects: () => mapItem(todo.getItem("projects")),
-        getChildren: (parentId) => todo.getChildren(parentId).map(mapItem),
-
+        getChildren,
         getChildrenTree,
 
         getItem: (id) => todo.getItem(id) ? mapItem(todo.getItem(id)) : null,

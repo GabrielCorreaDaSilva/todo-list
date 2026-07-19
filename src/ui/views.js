@@ -184,12 +184,43 @@ export function createTaskView(task, onAdd, onEdit, onNotesEdit, onDelete, onMov
             onEdit(taskView);
         }
     });
-    bindDraggableEvents(taskView, onMove)
+    bindDraggableEvents(taskView, onMove);
     const upperSection = createUpper();
     const bottomSection = createBottom();
     taskView.append(upperSection, bottomSection)
     return taskView;
 
+    function createUpper() {
+        const upperSection = document.createElement("div");
+        upperSection.classList.add("upper-section");
+        const titleContainer = document.createElement("div");
+        titleContainer.classList.add("title-container");
+        const title = document.createElement("h1");
+        title.classList.add("title");
+        title.textContent = task.name;
+        titleContainer.append(title);
+        if (task.dueDate) {
+            const dueDate = createDueDate(task);
+            titleContainer.append(dueDate);
+        }
+        if (task.isImportant) {
+            const isImportant = createImportant();
+            titleContainer.append(isImportant);
+        }
+        const editBtn = createEditBtn();
+
+        titleContainer.append(editBtn);
+        upperSection.append(titleContainer);
+
+        if (task.description) {
+            const description = createDescription(task);
+            upperSection.append(description);
+        }
+        const line = document.createElement("hr");
+        line.classList.add("line");
+        upperSection.append(line);
+        return upperSection;
+    }
     function createBottom() {
         const bottomSection = document.createElement("div");
         bottomSection.classList.add("bottom-section");
@@ -224,38 +255,6 @@ export function createTaskView(task, onAdd, onEdit, onNotesEdit, onDelete, onMov
         bottomSection.append(notesWrapper)
 
         return bottomSection;
-    }
-
-    function createUpper() {
-        const upperSection = document.createElement("div");
-        upperSection.classList.add("upper-section");
-        const titleContainer = document.createElement("div");
-        titleContainer.classList.add("title-container");
-        const title = document.createElement("h1");
-        title.classList.add("title");
-        title.textContent = task.name;
-        titleContainer.append(title);
-        if (task.dueDate) {
-            const dueDate = createDueDate(task);
-            titleContainer.append(dueDate);
-        }
-        if (task.isImportant) {
-            const isImportant = createImportant();
-            titleContainer.append(isImportant);
-        }
-        const editBtn = createEditBtn();
-
-        titleContainer.append(editBtn);
-        upperSection.append(titleContainer);
-
-        if (task.description) {
-            const description = createDescription(task);
-            upperSection.append(description);
-        }
-        const line = document.createElement("hr");
-        line.classList.add("line");
-        upperSection.append(line);
-        return upperSection;
     }
 }
 
@@ -307,6 +306,9 @@ export function createTaskItem(task) {
 export function createTaskCard(task) {
     const button = createTaskItem(task);
     const li = wrapWithListItem(button);
+    if(task.isCompleted){
+        li.classList.add("completed")
+    }
     li.dataset.id = task.id;
     li.draggable = true;
     li.dataset.dragType = task.type;
@@ -428,6 +430,7 @@ function bindDraggableEvents(view, onMove) {
         const selectors = {
             "section": element.closest(".section-list"),
             "task": element.closest(".list-wrapper")?.querySelector(".item-list"),
+            "subtask": element.closest(".list-wrapper")?.querySelector(".item-list"),
             "project": element.closest(".projects-container"),
         }
         return selectors[type];
@@ -438,7 +441,6 @@ function bindDraggableEvents(view, onMove) {
         e.preventDefault();
         container = getTargetContainer(e.target, itemDragged.dataset.dragType);
         if (!container) return;
-
         const children = findElements();
         const nextSibling = findClosestElementToMouse(children, e);
         if (!nextSibling) {
@@ -452,6 +454,7 @@ function bindDraggableEvents(view, onMove) {
         const selectors = {
             "section": ".section-container:not(.dragging)[data-drag-type]",
             "task": ".list-item:not(.dragging)",
+            "subtask": ".list-item:not(.dragging)",
             "project": ".project-card:not(.dragging)",
         }
         const children = targetContainer?.querySelectorAll(selectors[itemDragged.dataset.dragType]);
@@ -471,6 +474,7 @@ function bindDraggableEvents(view, onMove) {
     });
     view.addEventListener("dragover", e => {
         if (!itemDragged) return;
+
         e.preventDefault();
         initSiblingsList(e);
     }

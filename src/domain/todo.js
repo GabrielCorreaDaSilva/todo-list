@@ -97,6 +97,18 @@ export function createTodo(createProject, createTask, createSection) {
             return child;
         });
     }
+    const countDescendants = (parentId, condition) => {
+        let count = 0;
+        const childrenId = childrenByParent.get(parentId) ?? [];
+        childrenId.forEach(childId => {
+            const child = getItem(childId);
+            if (condition(child)) {
+                count++
+            }
+            count += countDescendants(childId, condition);
+        });
+        return count;
+    };
     ensureSystemComponents();
     return {
         importOld: (savedData) => {
@@ -122,6 +134,8 @@ export function createTodo(createProject, createTask, createSection) {
                 children: value
             }));
         },
+
+        countDescendants,
 
         editChildren: (draggedElementId, nextElementId, containerId, save) => {
             const item = itemsById.get(draggedElementId);

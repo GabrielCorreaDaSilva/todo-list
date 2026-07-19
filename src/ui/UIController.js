@@ -40,7 +40,7 @@ export function UIController(service) {
 
         },
         subtask: {
-            create: (data) => createTaskItem(data),
+            create: (data) => createTaskCard(data),
         },
     };
 
@@ -260,8 +260,7 @@ export function UIController(service) {
     }
 
     function init() {
-        // renderProjectView("personal");
-        renderAllProjectsView();
+        renderProjectView("personal");
         renderNav();
         bindEvents();
     }
