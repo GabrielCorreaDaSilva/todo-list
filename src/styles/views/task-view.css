@@ -69,10 +69,6 @@
     background-color: rgba(225, 222, 222, 0);
 }
 
-.task-view .list-wrapper .item-list .item {
-    padding-left: 4px;
-}
-
 .task-view .item-list {
     overflow: auto;
 }

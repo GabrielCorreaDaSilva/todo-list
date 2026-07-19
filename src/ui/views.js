@@ -376,7 +376,10 @@ function createLine() {
 function createAddItemBtn(text, parent = "none") {
     const addBtn = document.createElement("button");
     addBtn.classList.add("add-item-button");
-    addBtn.textContent = text;
+    const btnText = document.createElement("p");
+    btnText.classList.add("text");
+    btnText.textContent = text;
+    addBtn.append(btnText);
     return addBtn;
 }
 function createImportant() {

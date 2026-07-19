@@ -25,7 +25,7 @@ export function UIController(service) {
             updateUI: (editedItem, element) => {
                 renderProjectView(editedItem.id);
                 renderNav(editedItem.id);
-            }
+            },
         },
         section: {
             create: (data) => createSection(data),
@@ -37,7 +37,6 @@ export function UIController(service) {
                 renderTaskView(editedItem.id, card);
                 card.replaceChildren(createTaskItem(editedItem));
             },
-
         },
         subtask: {
             create: (data) => createTaskCard(data),
@@ -48,15 +47,39 @@ export function UIController(service) {
         const config = UI_STRATEGY[item.type];
         if (!config) return;
         config.afterEffect?.(item.id, container);
-        container?.append(config.create(item));
+        const newItem = config.create(item);
+        container?.append(newItem);
+        animateFadeIn(newItem, config);
     }
+    function animateFadeIn(element) {
+        element.style.opacity = 0;
+        element.style.maxHeight = "0px";
+        requestAnimationFrame(() => {
+            element.style.opacity = 1;
+            element.style.maxHeight = `${element.scrollHeight}px`;
+        });
+    }
+    function animateFadeOut(element) {
+        element.style.maxHeight = `${element.scrollHeight}px`;
+
+        requestAnimationFrame(() => {
+            console.log({
+                element: element,
+                height: element.getBoundingClientRect().height,
+                scrollHeight: element.scrollHeight,
+            });
+            element.style.opacity = 0;
+            element.style.maxHeight = "0px";
+        });
+    }
+
     function updateElement(editedItem, element, card) {
         const config = UI_STRATEGY[editedItem.type];
         config.updateUI?.(editedItem, element, card);
         config.afterEffect?.(editedItem.id);
     }
     function deleteElement(element) {
-        element.classList.add("fade-out");
+        animateFadeOut(element);
         setTimeout(() => {
             element.remove();
         }, 300);

@@ -26,7 +26,8 @@
         transform ease 0.2s,
         background-color ease 0.2s,
         color ease 0.2s,
-        opacity ease 0.2s;
+        opacity ease 0.3s,
+        max-height 0.5s ease;
     border-radius: 6px;
     border: 1px solid rgba(176, 176, 176, 0.557);
     margin: 0 10px;
@@ -45,7 +46,6 @@
 .list-item .item,
 .list-item .add-item-button {
     padding: 16px;
-    transition: all 0.1s ease;
     font-size: 1.15rem;
     font-family: 'Times New Roman', Times, serif;
     width: 100%;
@@ -63,6 +63,10 @@
     opacity: 0.7;
     background-color: rgb(239, 242, 242, 0.7);
     margin-top: 6px;
+    direction: ltr;
+}
+.add-item-button .text {
+    display: inline;
 }
 
 .add-item-button:hover {

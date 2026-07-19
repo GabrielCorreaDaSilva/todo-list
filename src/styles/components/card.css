@@ -3,13 +3,16 @@
     border-radius: 6px;
     padding: 12px;
     line-break: auto;
-    transition: all 0.3s ease;
+    transition:
+        opacity 0.2s ease,
+        max-height 0.9s ease,
+        transform 0.12s ease;
     border: none;
     background-color: white;
 }
 
 .card:hover {
-    transform: scale(1.02);
+    transform: scale(1.009);
 }
 
 .card p {

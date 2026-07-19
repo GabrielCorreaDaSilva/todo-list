@@ -22,7 +22,6 @@ input[type="checkbox"] {
     cursor: pointer;
     position: relative;
     top: 7px;
-    left: 12px;
 }
 
 input[type="checkbox"]:checked {

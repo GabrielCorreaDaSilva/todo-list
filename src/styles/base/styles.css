@@ -5,11 +5,11 @@
 }
 
 :root {
-    --gray-background: #454545
+    --gray-background: #454545;
 }
 
 html {
-    overflow: hidden
+    overflow: hidden;
 }
 
 html,
@@ -54,9 +54,21 @@ body {
 
 .fade-out {
     opacity: 0;
-    transform:translateY(-25%)
+    transform: translateY(-25%)
 }
 
-.dragging > * {
+.fade-in  {
+    opacity: 0;
+    max-height: 0;
+        
+}
+
+.fade-in.visible {
+    opacity: 1;
+    max-height: 500px;
+}
+
+
+.dragging>* {
     opacity: 0;
 }
