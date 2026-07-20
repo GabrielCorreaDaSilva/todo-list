@@ -18,14 +18,7 @@ const service = todoService(todo, storage);
 const savedData = storage.load();
 
 if (savedData) {
-    try {
-        todo.import(savedData);
-        console.log("Sucessful import");
-    }
-    catch {
-        todo.importOld(savedData);
-        console.log("Backup import");
-    }
+    todo.import(savedData);
 }
 
 UIController(service);

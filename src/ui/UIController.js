@@ -63,11 +63,6 @@ export function UIController(service) {
         element.style.maxHeight = `${element.scrollHeight}px`;
 
         requestAnimationFrame(() => {
-            console.log({
-                element: element,
-                height: element.getBoundingClientRect().height,
-                scrollHeight: element.scrollHeight,
-            });
             element.style.opacity = 0;
             element.style.maxHeight = "0px";
         });

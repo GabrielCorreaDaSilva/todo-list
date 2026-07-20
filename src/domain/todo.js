@@ -111,15 +111,6 @@ export function createTodo(createProject, createTask, createSection) {
     };
     ensureSystemComponents();
     return {
-        importOld: (savedData) => {
-            ensureSystemComponents();
-            savedData.itemsById.forEach(addItem);
-            savedData.childrenByParent.forEach(item => {
-                const { parentId, children } = item;
-                if (parentId && children.length === childrenByParent.get(parentId)?.length)
-                    childrenByParent.set(parentId, children);
-            });
-        },
         import: (savedData) => {
             ensureSystemComponents();
             const recursiveAddItem = (item) => {
@@ -134,8 +125,6 @@ export function createTodo(createProject, createTask, createSection) {
                 children: value
             }));
         },
-
-        countDescendants,
 
         editChildren: (draggedElementId, nextElementId, containerId, save) => {
             const item = itemsById.get(draggedElementId);
@@ -163,5 +152,6 @@ export function createTodo(createProject, createTask, createSection) {
         getChildrenTree,
         addItem,
         removeItem,
+        countDescendants,
     }
 }
